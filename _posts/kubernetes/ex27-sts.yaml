@@ -1,0 +1,20 @@
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: sts27  # name of the StatefulSet
+spec:
+  replicas: 3 # to create 3 similar Pods, its default value is 1
+  serviceName: svc27  # this is a mandatory field
+  selector:  # this is the Pod selector section
+    matchLabels:  # we pick Pods based on labels
+      tag: label27  # this has to match with one of the Pod labels
+  template:  # the Pod configuration starts here
+    metadata:  # Pod name is not required, as it will be set by the sts
+      labels:
+        tag: label27
+    spec:
+      containers:
+      - name: ctr27
+        image: httpd  # this is an apache image
+...        

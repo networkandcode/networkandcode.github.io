@@ -1,0 +1,13 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: po24
+spec:
+  containers:
+    - name: ctr24
+      image: debian
+      command: ["/bin/sh"]
+      args: ["-c", "sleep 5 && echo Pod terminated > /tmp/pod-failure-log"]  # the Pod would terminate once there is an entry in the log file
+      terminationMessagePath: /tmp/pod-failure-log  # by default it's /dev/termination-log
+...

@@ -1,0 +1,17 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: po17-vol
+spec:
+  volumes:  # volumes are defined under Pod's spec
+  - name: vol17
+    configMap:  # config map details here
+      name: cm17
+  containers:
+  - name: ctr17
+    image: httpd  # this is an apache image
+    volumeMounts:  # volumes to be mounted in the container
+    - name: vol17 # this should match with one of the volume names
+      mountPath: /tmp/apache/  # this is the directory where the volume will be mounted
+...   

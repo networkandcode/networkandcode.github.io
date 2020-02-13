@@ -1,0 +1,45 @@
+# Tasks:
+# kubectl get pods
+# kubectl get rs
+# kubectk create -f ex6-rs.yaml
+# kubectl get rs
+# kubectl get pods
+# kubectl delete rs/rs6 --cascasde=false  # pods will not be deleted 
+# kubectl get pods
+# kubect delete pods --all
+# kubectl create -f ex6-rs.yml
+# kubect get pods
+# kubectl edit po/rs6-7q8b6
+# kubectl describe po/rs6-7q8b6
+# change the label
+# a new pod will be fired up by the rs
+# kubectl get pods | grep rs6
+# nano ex6-rs.yaml increase spec>replicas for example from 3 to 5
+# kubectl apply -f ex6-rs.yaml
+# kubectl get pods | grep rs6  # should have added extra pods
+# decrease spec>replicas for example from 5 to 3
+# kubectl apply -f ex6-rs.yaml
+# kubectl get pods | grep rs6  # the newly added one should have got deleted
+# kubectl delete rs --all
+---
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: rs6
+  namespace: default
+spec:
+  replicas: 3
+  selector:
+    matchLabels:  # both matchLabels and matchExpressions are ANDed together – they must all be satisfied in order to match
+      tag: label6
+    matchExpressions:  # A single {key,value} in the matchLabels map is equivalent to an element of matchExpressions
+    - {key: tag, operator: In, values: [label6]} 
+  template:
+    metadata:
+      labels:
+       tag: label6
+    spec:
+      containers:
+      - name: ctr6
+        image: nginx
+...

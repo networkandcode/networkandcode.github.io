@@ -1,0 +1,25 @@
+# Tasks
+# kubectl create -f ex11.yaml
+# kubectl get po/pod11
+# kubectl describe po/pod11 | grep Liveness  # repeatedly to see the no. of failures
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod11
+spec:
+  containers:
+  - name: ctr11
+    image: k8s.gcr.io/busybox
+    args:
+    - /bin/sh
+    - -c
+    - touch /tmp/healthy; sleep 30; rm -rf/tmp/healthy; sleep 600
+    livenessProbe: 
+      exec:
+        command:
+        - cat
+        - /tmp/healthy
+      initialDelaySeconds: 5
+      periodSeconds: 5
+...

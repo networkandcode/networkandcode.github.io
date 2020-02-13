@@ -1,0 +1,25 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+  name: deploy20
+  namespace: default
+spec:  #Deployments spec
+  replicas: 7  #7 replicas of the Pod, default value is 1
+  selector:  #Pod selection criteria
+    matchLabels:
+      tag: label20  #select Pods with metadata.labels tag: label20
+  template:  #define the Pod
+    metadata:  #Pod's metadata to identify it
+      labels:
+        tag: label20
+    spec:  #Pod's spec
+      containers:
+      - name: ctr20
+        image: httpd #apache container
+      tolerations:
+      - key: "tag"
+        operator: "Equal"  # if Exists is used, value is not required
+        value: "taint20"
+        effect: "NoSchedule"
+...

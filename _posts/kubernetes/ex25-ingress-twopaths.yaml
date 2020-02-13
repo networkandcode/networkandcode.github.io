@@ -1,0 +1,18 @@
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: ingress25-twopaths
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /*
+        backend:
+          serviceName: svc25-np
+          servicePort: 8080
+      - path: /v2/*
+        backend:
+          serviceName: svc25-np-hellov2
+          servicePort: 8080
+...

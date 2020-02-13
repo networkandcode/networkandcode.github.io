@@ -1,0 +1,18 @@
+---
+apiVersion: extensions/v1beta1
+kind: DaemonSet
+metadata:
+  name: ds22
+spec:
+  selector:
+    matchLabels:
+      tag: label22
+  template:
+    metadata:
+      labels:
+        tag: label22
+    spec:
+      containers:
+      - name: ctr22
+        image: nginx
+...

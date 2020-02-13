@@ -1,0 +1,42 @@
+---
+- Reference: https://kubernetes.io/docs/tasks/debug-application-cluster/debug-application/
+- Triage (pronounce Tree-azh) the issue first, i.e., troubleshoot it in order by finding first which object is causing the issue
+- Objects could be Pods, Replication Controllers, Deployments, Services, etc.
+- Check the associated Pod status first by executing 'kubectl describe pod <podname>'
+- The describe command should also present meaningful reasons for Pod's current state
+- Note alias for pods is pod or po
+- If the Pod's status is running, it's all fine
+- If the Pod's status is pending, it's more likely that the underlying nodes do not have sufficient capacity to schedule the Pod
+- Pending also means that the Pod has not found any node yet, where it could be scheduled
+- This can be due to taint configuration on the node
+- This can also due to hostPort configurations where a Pod is bind to a particular port on the node and that port is already used
+- In most cases its recommended to use services instead of hostPorts to server a similar purpose
+- It the Pod's status is waiting, it means it has found the node where it could be scheduled, but there is some other problem
+- The most likely problem is that the Pod is not able to pull the image from the Container registry
+- This could be due to a wrong container image name, or some authentication issue to login to a private registry and so on
+- Note that docker hub is the default container registry with Kubernetes
+- If we are using docker, we can try pulling the image manually with docker using docker pull and just to test if it works
+- Running state is the desired state for a Pod which means it is scheduled on a node and running succesfully
+- Pods and containers may also crash and restart, in such cases it's better to view the logs of the Pod or Container
+- To view the logs of a Pod, execute 'kubectl logs <podname>'
+- To view the logs of a specific Container (when there are more than one) inside the Pod, execute 'kubecl logs <podname> <containername>'
+- Let's say a container has crashed and got replaced with a new container
+- In such cases, to check why the previous container has got crashed
+- You may execute 'kubectl get logs --previous <podname> <containername>'
+- Here note that the container's name is not changed, however it just got replaced with a new instance of the container
+- We may also execute certain commands on the shell of the running container to analyse certain output
+- The format for execute commands on the container is 'kubectl exec <podname> -- <command and arguments>'
+- Similarly if there is one more than one container we may give 'kubectl exec <podname> -c <containername> -- <command and arguments>'
+- There could also be cases where there is some misconfiguration or typo errors in the Pod manifest or configuration
+- Its always good validate the configuration using 'kubectl apply -f <filename.yaml> --validate
+- We can compare the running configuration of the Pod from the apiServer with the configuration we applied and see if something is missing
+- This can be done by 'kubectl get <podname.yaml> -o yaml > <filename.yaml>
+- Once the Pods are troubleshooted, if we haven't fixed the issue and there any replicationControllers that are associated with these Pods
+- We can check the events associated with the replicaset using 'kubectl describe rs <replicasetname>'
+- Note that rs is the alias of replicaset(s)
+- 
+
+
+
+
+

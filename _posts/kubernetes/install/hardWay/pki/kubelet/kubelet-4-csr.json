@@ -1,0 +1,16 @@
+{
+    "CN": "system:nodes:4",
+    "key": {
+        "algo": "ecdsa",
+        "size": 256
+    },
+    "names": [
+        {
+            "C": "US",
+            "ST": "CA",
+            "L": "San Francisco",
+            "O": "system:nodes",
+            "OU": "k8s-hard-way"
+        }
+    ]
+}

@@ -1,0 +1,30 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deploy36
+spec:
+  selector:
+    matchLabels:
+      tag: label36
+  replicas: 20
+  template:
+    metadata:
+      labels:
+        tag: label36
+    spec:
+      affinity:
+        # nodeAffinity configuration starts here
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                - key: kubernetes.io/hostname
+                  operator: In
+                  values:
+                  - k8s-node-0
+        # nodeAffinity configuration ends here
+      containers:
+      - name: ctr35
+        image: nginx
+...

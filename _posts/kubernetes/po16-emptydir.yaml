@@ -1,0 +1,16 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: po16-emptydir
+spec:
+  containers:
+  - name: ctr16-emptydir
+    image: nginx
+    volumeMounts:
+    - name: vol16-emptydir
+      mountPath: /mnt/
+  volumes:
+  - name: vol16-emptydir-kubetrain
+    emptyDir: {}
+...

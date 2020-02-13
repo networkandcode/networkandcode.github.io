@@ -1,0 +1,23 @@
+# Tasks:
+# kubectl create -f ex14.yaml
+# kubectl get po/pod14 --watch
+# kubectl exec -it pod14 -- /bin/bash
+# cat /usr/share/message
+# exit
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod14
+spec:
+  containers:
+  - name: ctr14
+    image: nginx
+    lifecycle:
+      postStart:
+        exec:
+          command: ["/bin/sh", "-c", "echo Hello from the postStart handler > /usr/share/message"]
+      preStop:
+        exec:
+          command: ["/usr/bin/nginx", "-s", "quit"]
+...

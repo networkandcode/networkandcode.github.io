@@ -1,0 +1,11 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cm17
+  namespace: default
+data:  # we define all the key value pairs here
+  liked.color: green
+  liked.fruit: orange
+  liked.car: audi
+...

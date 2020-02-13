@@ -1,0 +1,13 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: svc29-jenkins-ha
+spec:
+  selector:
+    tag: label29-jenkins-ha
+  type: LoadBalancer
+  ports:
+  - port: 80
+    targetPort: 8080  # default port on container where Jenkins dashboard is launched
+...

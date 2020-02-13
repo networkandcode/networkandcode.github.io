@@ -1,0 +1,10 @@
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: ingress25
+spec:
+  backend:
+    serviceName: svc25-np
+    servicePort: 8080  # this is the serviceport, not nodeport
+...

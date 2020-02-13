@@ -1,0 +1,28 @@
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: deploy29-nfs
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      tag: label29-nfs
+  template:
+    metadata:
+      labels:
+        tag: label29-nfs
+    spec:
+      volumes:
+      - name: vol29-nfs
+        persistentVolumeClaim:
+          claimName: pvc29-nfs
+      containers:
+      - name: ctr29-nfs
+        image: k8s.gcr.io/volume-nfs:0.8
+        securityContext:
+          privileged: true
+        volumeMounts:
+        - name: vol29-nfs
+          mountPath: /exports
+...

@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: svc25-ci
+spec:
+  type: ClusterIP  # ClusterIP is the default service type even if not specified
+  selector:
+    tag: label25
+  ports:
+  - name: port25
+    protocol: TCP
+    port: 8080  # this is the service port
+    targetPort: 80 # this is the container port
+...

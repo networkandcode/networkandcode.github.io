@@ -1,0 +1,72 @@
+---
+# Reference: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/
+# Task: Create a deployment controller object
+# Tasks:
+# kubectl create -f ex7.yaml
+# kubectl rollout status deployment/deployment7
+# kubectl get deployments --watch
+# kubectl get rs | grep deployment7
+# kubectl get pods --watch
+# kubectl get pods | grep deployment7
+# kubectl scale deployments/deployment7 --replicas=5 
+# kubectl get pods --watch
+# KUBE_EDITOR="nano" kubectl edit deployments/deployment7
+# add spec>template>metadata>labels>extratag: label
+# kubectl describe deployments/deployment7 to see the added label
+# spec>replicas in the yaml file can be increased or decreased
+# kubectl apply -f ex7-deployment.yaml
+# new pods will be added or additonal pods could be removed according to the change in spec>replicas
+# kubectl set image deployment/deployment7 ctr7=nginx:1.16.0-alpine-perl  # new Pods will be created
+# kubectl rollout pause deployment/deployment7
+# kubectl rollout status deployment/deployment7
+# kubectl rollout resume deployment/deployment7
+# kubectl describe pods | grep Image:
+# kubectl get deployments/deployment7 -o wide
+# kubectl rollout undo  # new Pods will be created with old images
+# apiVersion: apps/v1
+# apiVersion: extensions/v1beta1
+# =======
+# kubectl delete deployments --all
+# kubectl create -f ex7-deployment.yaml
+# kubectl expose deployment/deployment7 --type="LoadBalancer" --name="svc7" --port=8080
+# node-hello image is better for the load balance exercise
+# kubectl get svc/svc7
+# curl <ClusterIP>:<Port>
+# should display Hello Kubernetes!
+# kubectl delete svc --all; kubectl delete deployments --all
+# kubectl create -f ex7-deployment7.yaml
+# kubectl get pods -o wide | grep deployments7
+# Pods spread across node1 and node2
+# kubectl taint nodes node1 tag=taint7:NoSchedule
+# kubectl label deployments/deployment7 tag=taint7
+# kubectl scale deployments/deployment7 --replicas=5
+# kubectl get pods -o wide | grep deployment7
+# new Pods will be spawned on node2 only
+
+#####################
+
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+  name: deploy7
+  namespace: default
+spec:  #Deployments spec
+  replicas: 10  #10 replicas of the Pod, default value is 1
+  selector:  #Pod selection criteria
+    matchLabels:
+      tag: label7  #select Pods with metadata.labels tag=label7
+  template:  #define the Pod
+    metadata:  #Pod's metadata to identify it
+      labels:
+        tag: label7
+    spec:  #Pod's spec
+      tolerations:
+      - key: "nodenumber"
+        operator: "Equal"
+        value: "node3"
+      containers:
+      - name: ctr7
+        #image: httpd #apache container
+        image: nginx
+        #image: gcr.io/google-samples/node-hello:1.0
+...

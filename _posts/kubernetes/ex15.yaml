@@ -1,0 +1,22 @@
+# Tasks:
+# kubectl explain jobs
+# kubectl create -f ex15.yaml
+# kubectl get jobs
+# kubectl describe jobs/job15
+# kubectl get pods | grep jobs15
+# kubect logs job15-czr6m
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: job15
+spec:
+  template:  # Pod template
+    spec:
+      containers:
+      - name: ctr15
+        image: perl
+        command: ["perl", "-Mbignum=bpi", "-wle", "print bpi(2000)"]
+      restartPolicy: Never
+  backoffLimit: 4
+...

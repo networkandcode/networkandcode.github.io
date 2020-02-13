@@ -1,0 +1,15 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: netpol25
+spec:
+  podSelector:
+    matchLabels:
+      tag: label25
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          tag: label25-apache
+...

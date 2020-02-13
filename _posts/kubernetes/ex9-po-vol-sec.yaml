@@ -1,0 +1,23 @@
+# Tasks:
+# kubectl create -f ex9-secret-2.yaml
+# kubectl create -f ex9-po.yaml
+# kubectl exec -it po9 -- /bin/bash
+# cat /etc/secret-volume/username
+# cat /etc/secret-volume/password
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: po9
+spec:
+  volumes:
+  - name: volume9
+    secret:
+      secretName: secret9-2 
+  containers:
+  - name: ctr9
+    image: nginx
+    volumeMounts:
+    - name: volume9
+      mountPath: /etc/secret-volume
+...

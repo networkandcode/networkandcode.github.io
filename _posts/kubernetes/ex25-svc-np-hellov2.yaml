@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: svc25-np-hellov2
+spec:
+  type: NodePort
+  selector:
+    tag: label25-hellov2
+  ports:
+  - name: port25-hellov2
+    protocol: TCP
+    port: 8080  # this is the service port
+    targetPort: 8080 # this is the container port
+...

@@ -1,0 +1,12 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: po28
+  labels:
+    tag: label28
+spec:
+  containers:
+  - name: ctr28
+    image: httpd
+...

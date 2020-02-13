@@ -1,0 +1,25 @@
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: deploy32
+spec:
+  selector:
+    matchLabels:
+      tag: label32
+  template:
+    metadata:
+      labels:
+        tag: label32
+    spec:
+      volumes:
+      - name: vol32
+        hostPath:
+          path: /etc/localtime
+      containers:
+      - name: ctr32
+        image: nginx
+        volumeMounts:
+        - name: vol32
+          mountPath: /usr/share/zoneinfo/Europe/London
+...

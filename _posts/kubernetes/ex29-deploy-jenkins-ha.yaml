@@ -1,0 +1,26 @@
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: deploy29-jenkins-ha
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      tag: label29-jenkins-ha
+  template:
+    metadata:
+      labels:
+        tag: label29-jenkins-ha
+    spec:
+      volumes:
+      - name: vol29-jenkins-ha
+        persistentVolumeClaim:
+          claimName: pvc29-jenkins-ha 
+      containers:
+      - name: ctr29-jenkins-ha
+        image: jenkins/jenkins
+        volumeMounts:
+        - name: vol29-jenkins-ha
+          mountPath: /var/jenkins_home/jobs
+...

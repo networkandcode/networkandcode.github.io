@@ -1,0 +1,28 @@
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: deploy31-mysql
+spec:
+  selector:
+    matchLabels:
+      tag: label31
+  template:
+    metadata:
+      labels:
+        tag: label31
+    spec:
+      #volumes:
+      #- name: vol31-mysql
+        #gcePersistentDisk:
+          #pdName: disk31-mysql
+      containers:
+      - name: ctr31-mysql
+        image: nginx
+        #volumeMounts:
+        #- name: vol31-mysql
+          #mountPath: /var/lib/mysql
+        envFrom:
+        - secretRef:
+            name: secret31-mysql 
+...

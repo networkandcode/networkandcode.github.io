@@ -1,0 +1,67 @@
+---
+- Security outline: TLS > Authenticate > Authorize > Admission control
+- Modules are configured for Authentication, Authorized, and Admission control
+- The choice of Modules to be used in the api server, is decided and setup by the Administrator during the cluster setup
+- There are two types of users in any Kubernetes cluster - Human users and Service Accounts
+- Human users are managed separately using private keys, Google accounts, OpenStack keystone etc.
+- Human users are not created as Kubernetes objects
+- Service Accounts are created as Kubernetes objects using API calls
+- Service Accounts are tied to set of credentials stored as objects called Secrets
+- Both Human users and Service Accounts can be authorized to access the API server
+- API requests other than those coming from a Human user or a Service Account are treated as anonymous requests
+- By default the kube-apiserver serves http on two ports: localhost port 8080, and secure port 6443
+- With the localhost port, authentication and authorization modules are bypassed, only the adminission control modules are used
+- With the secure port, authentication, authorization, and admission control modules are used
+- TLS is used with secure port, where as it's not used with localhost port
+- Once the cluster is created, the kube-apiserver listens on port 443 by default
+- The kube-apiserver presents a certificate which is often self signed
+- The control machine contains a root certificate for the api server's certificate
+- The root certificate is automatically written during cluster creation 
+- The root certificate is typically located in ~/.kube/config/ of the control machine
+- The root certificate could be shared with multiple users
+- When an HTTP request is sent to the api server, TLS is established
+- After TLS, the authentication module(s) of the kube-api-server checks the HTTP headers and/or client-certificate
+- Authentication modules associate the username, uid, groups, and any extra fields from the incoming http header
+- The system:authenticated group is included in the list of groups for all authenticated users
+- Authentication modules include client certficates, passwords, plain tokens, bootstrap tokens, and jwt tokens
+- If multiple authentication modules are used, they are tried in sequence until one module succeeds
+- The order of running authenticators is not guaranteed by the kube-apiserver
+- However atleast 2 authentication methods should be used
+  - service account tokens for service accounts
+  - atleast one authentication method for users
+- If the user could not be authenticated, then HTTP status code 401 is returned
+- Authorization happens after this
+- The HTTP request coming to the kube-apiserver must contain the username, requested action, and object affected
+- The above details are checked against an existing policy and the request is authorized or rejected accordingly
+- Example of a policy configuration:
+  ---
+  # The user 'alice' can only read Pods belonging to the namespace 'test'.
+  apiVersion: abac.authorization.kubernetes.io/v1beta1
+  kind: Policy
+  spec:
+    user: alice
+    namespace: test
+    resource: pods
+    readonly: true
+  ...
+- Example of a request:
+  ---
+  # If 'alice' sends this request to the kube-apiserver, it would be authorized
+  apiVersion: abac.authorization.kubernetes.io/v1beta1
+  kind: SubjectAccessReview
+  spec:
+    resourceAttributes:
+      namespace: test
+      verb: get
+      group: testgroup.org
+      resources: pods
+  ...
+- Kubernetes supports multiple authorization modes such as ABAC, RBAC, and Webhook
+- If multiple authorization modules are used, they are tried in sequence until one is succefful
+- If authorization fails, HTTP status code 403 is returned
+- Admission control modules access and act on objects that are being created, updated, deleted, or connected (proxy)
+- However they do not act on objects that are read
+- If multiple Admission control modules are used, there are tried in order
+- However the request will be rejected, even if one module rejects it
+- This behavior is different from that of Authentication/Authorizaton modules
+...

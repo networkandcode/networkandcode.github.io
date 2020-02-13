@@ -1,0 +1,19 @@
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: deploy30-mediawiki
+  namespace: ns30-mediawiki
+spec:
+  selector:
+    matchLabels:
+      tag: label30
+  template:
+    metadata:
+      labels:
+        tag: label30
+    spec:
+      containers:
+      - name: ctr30-mediawiki
+        image: mediawiki:stable
+...

@@ -1,0 +1,54 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: svc21
+  labels:
+    tag: label21 
+spec:
+  ports:
+  - port: 80
+    name: port21
+  clusterIP: None  # headless service
+  selector:
+    tag: label21
+...
+---
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: pv21
+  labels:
+    type: local
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/mnt/pv-data"
+...
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: sts21
+spec:
+  serviceName: svc21
+  replicas: 2
+  selector:
+    matchLabels:
+      tag: label21
+  template:
+    metadata:
+      labels:
+        tag: label21
+    spec:
+      containers:
+      - name: ctr21
+        image: image21
+        volumeMounts:
+        - name: pv21
+          mountPath: /usr/share/nginx/html
+...

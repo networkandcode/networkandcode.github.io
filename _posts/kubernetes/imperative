@@ -1,0 +1,33 @@
+# Tasks: 
+# Launch an nginx Pod imperatively
+# Access it
+# Set and verify the nginx home page
+# Delete the Pod
+
+# on the Master
+kubectl get pods  # to view the list of Pods in the default namespace
+kubectl run nginx-pod --image=nginx --generator=run-pod/v1  # use this
+kubectl get pods  # nginx-pod should appear
+kubectl exec -it nginx-pod /bin/bash  # access the Pod's shell
+
+# on the Pod 
+echo Hello nginx! > /usr/share/nginx/html/index.html  # set the index page
+apt-get update  # apt works even when the base host is centos
+apt-get install curl  # install curl
+curl localhost  # should display Hello nginx!
+exit
+
+# on the Master
+kubectl delete pod nginx-pod  # the Pod will be deleted
+
+Deprecated commands: # not to be used
+kubectl run nginx-deployment --image=nginx
+kubectl run nginx-deployment --image=nginx --deployment/apps.v1
+
+###############################################################
+
+kubectl run hello --schedule="*/1 * * * *" --restart=OnFailure --image=busybox -- /bin/sh -c "date; echo Hello from the Kubernetes cluster"  # deprecated
+kubectl get cronjob hello
+kubectl get pods --selector=job-name=job15
+kubectl get pods --selector=job-name=hello-1557817740
+kubectl logs hello-1557818160-2kv45

@@ -1,0 +1,53 @@
+# Tasks:
+# kubectl create -f nginx-pod.yaml  # to create the Pod
+# kubectl get pods # should show nginx-pod in running status
+# kubectl exec -it nginx-pod /bin/bash  # access the Pod's shell
+# on the Pod
+# echo Hello nginx! > /usr/share/nginx/html/index.html  # set the index page
+# apt-get update  # apt works even when the base host is centos
+# apt-get install curl  # install curl
+# curl localhost  # should display Hello nginx!
+# exit
+# Note:
+# - The Pod name is unique, it will not get created if there is different running Pod with the same name
+# - The flag --validate=false can be used with the create command, to ignore validation errors such as 'container name is
+# not defined'
+# kubectl get po/nginx-pod  # to see a brief status of the Pod
+# kubectl describe po/nginx-pod  # to view more details about the Pod
+# kubectl describe po/nginx-po | grep Image:  # to view the running image, should show nginx
+# sed -i 's/image: nginx/image: nginx:1.16.0-alpine-perl/g' nginx-pod.yaml  # to change the image on the Pod
+# kubectl apply -f nginx-pod.yaml  # the new image should get loaded
+# kubectl get pods  # the name is same
+# kubectl describe po/nginx-pod  # should show the new image details
+# Note:
+# We have changed the image from the standard nginx to a specific version of choice
+# You can visit hub.docker.com and check the nginx repository to see the list of available image versions or tags
+# Tasks:
+# To add a label to a node
+# Launch the Pod on a desired Node using nodeSelector
+# Verify the Node where the Pod is launched
+# kubectl get nodes  # to see the list of master and worker nodes
+# kubectl get nodes node1 --show-labels  # to see the list of labels associated with node1
+# kubectl label nodes node1 node-usage=web-server-pods  # to add a label with key node-usage and value web-server-pods
+# kubectl get nodes node1 --show-labels  # the new label should also show up
+# kubectl describe pods nginx-pod | grep Node:  # to see on which node the pod is currently running, showed node2
+# kubectl delete pod nginx-pod  # to delete the Pod
+# kubectl describe po/nginx-pod | grep Node:  # should show node1 and it's IP
+# kubectl get po/nginx-pod -o wide  # this should show the node name, but not the node IP
+# kubectl delete pods --all  # to delete all the pods
+# Note:
+# Pod updates using apply command will not work with nodeSelector, hence a new Pod has to be created using the create command
+# Labels can be added to Pods in the metadata > labels sections
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: po1-nginx  # this is a mandatory and unique, user defined name
+spec:
+  #nodeSelector:  # this is newly added, to pick a node of choice
+    #node-usage: web-server-pods  # this is newly added, use the label that was added to node1
+  containers:
+  - name: ctr1-nginx  # this is a mandatory and uniqe, user defined name
+    image: nginx:1.16.0-alpine-perl  # this is fetched from docker hub by default
+    imagePullPolicy: IfNotPresent # This the default pull policy which causes the Kubelet to skip pulling an image if it already exists
+...

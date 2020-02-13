@@ -1,0 +1,22 @@
+---
+kind: CronJob
+apiVersion: batch/v1beta1
+metadata:
+  name: cj34
+spec:
+  schedule: "*/1 * * * *"
+  jobTemplate:
+    spec:
+      completions: 9
+      parallelism: 3
+      template: # this is the Pod template
+        spec:
+          containers:
+          - name: ctr34
+            image: ubuntu
+            command:
+            - "/bin/bash"
+            - "-c"
+            - "echo Hi!; echo This hostname is ; hostname; echo The date/time is; date"
+          restartPolicy: Never
+...

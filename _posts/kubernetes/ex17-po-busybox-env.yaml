@@ -1,0 +1,16 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: po17
+  namespace: default
+spec:
+  containers:
+  - name: ctr17
+    image: k8s.gcr.io/busybox
+    command: ["/bin/sh", "-c", "env"]
+    envFrom:
+    - configMapRef:
+        name: cm17
+  restartPolicy: Never
+...

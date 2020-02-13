@@ -1,0 +1,10 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: po25-apache
+spec:
+  containers:
+  - name: ctr25-apache
+    image: httpd
+...

@@ -1,0 +1,11 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: svc27
+spec:
+  clusterIP: None  # None is specified to make this service headless
+  selector:
+    tag: label27  # to pick Pods with matching labels
+...   
+  

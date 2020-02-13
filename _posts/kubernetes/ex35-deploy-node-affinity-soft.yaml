@@ -1,0 +1,29 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deploy35
+spec:
+  selector:
+    matchLabels:
+      tag: label35
+  replicas: 20
+  template:
+    metadata:
+      labels:
+        tag: label35
+    spec:
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 1
+            preference:
+              matchExpressions:
+              - key: kubernetes.io/hostname
+                operator: In
+                values: 
+                - k8s-node-0
+      containers:
+      - name: ctr35
+        image: nginx
+...

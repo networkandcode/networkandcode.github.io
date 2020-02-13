@@ -1,0 +1,11 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: po37
+spec:
+  containers:
+  - name: ctr37
+    image: httpd
+  schedulerName: kube-extra-scheduler
+...

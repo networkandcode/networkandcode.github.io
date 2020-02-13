@@ -1,0 +1,19 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod1
+  namespace: default
+spec:
+  containers:
+  - name: ctr1
+    image: polinux/stress
+    resources:
+      limits:
+        memory: "150Mi"
+      requests:
+        memory: "100Mi"
+    command: ["stress"]
+    # --vm-bytes 120M lets the container try to allocates 150MiB of memory
+    args: ["--vm", "1", "--vm-bytes", "120M", "--vm-hang", "1"]
+...

@@ -1,0 +1,19 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deploy25
+spec:
+  template:
+    metadata:
+      labels:
+        tag: label25
+    spec:
+      containers:
+      - name: ctr25
+        image: nginx
+  replicas: 4
+  selector:
+    matchLabels:
+      tag: label25
+...

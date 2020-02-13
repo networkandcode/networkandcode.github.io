@@ -1,0 +1,19 @@
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: deploy-httpd
+spec:
+  replicas: 10
+  selector:
+    matchLabels:
+      image: httpd
+  template:
+    metadata:
+      labels:
+        image: httpd
+    spec:
+      containers:
+      - name: ctr-httpd
+        image: httpd
+...

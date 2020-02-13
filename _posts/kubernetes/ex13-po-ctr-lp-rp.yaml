@@ -1,0 +1,26 @@
+# Tasks:
+# kubectl create -f ex13.yaml
+# kubect get po/pod13 --watch
+# kubectl describe po/pod13 | grep 'Liveness\|Readiness' 
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod13
+spec:
+  containers:
+  - name: ctr13
+    image: k8s.gcr.io/goproxy:0.1
+    ports:
+    - containerPort: 8080
+    readinessProbe:  # to know when a Container is ready to start accepting traffic
+      tcpSocket:
+        port: 8080
+      initialDelaySeconds: 5
+      periodSeconds: 10
+    livenessProbe:  # to know when to restart a Container
+      tcpSocket:
+        port: 8080
+      initialDelaySeconds: 15
+      periodSeconds: 20
+...

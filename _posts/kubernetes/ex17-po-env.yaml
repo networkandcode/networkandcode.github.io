@@ -1,0 +1,13 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: po17-env
+spec:
+  containers:
+  - name: ctr17
+    image: httpd  # this is an apache image
+    envFrom:  # we can import environment varaiables here
+    - configMapRef:
+        name: cm17
+...        

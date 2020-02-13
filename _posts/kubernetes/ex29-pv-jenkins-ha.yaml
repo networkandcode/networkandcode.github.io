@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv29-jenkins-ha
+spec:
+  capacity:
+    storage: 100Mi
+  accessModes:
+  - "ReadWriteMany"
+  nfs:
+    # server contains the Domain name of the Service
+    server: svc29-nfs.default.svc.cluster.local
+    path: "/exports"
+...

@@ -1,0 +1,21 @@
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: deploy25-hellov2
+spec:
+  template:
+    metadata:
+      labels:
+        tag: label25-hellov2
+    spec:
+      containers:
+      - name: ctr25-hellov2
+        image: gcr.io/google-samples/hello-app:2.0
+        ports:
+        - containerPort: 8080
+  replicas: 4
+  selector:
+    matchLabels:
+      tag: label25-hellov2
+...

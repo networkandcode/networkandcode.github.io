@@ -1,0 +1,17 @@
+—
+apiVersion: v1
+kind: Pod
+metadata:
+ name: po16-gcepd
+spec:
+ containers:
+ – name: ctr16-gcepd
+   image: httpd
+   volumeMounts:
+   – name: vol16-gcepd
+     mountPath: /tmp/apache
+ volumes:
+ – name: vol16-gcepd
+   gcePersistentDisk:
+     pdName: disk16-gcepd
+…

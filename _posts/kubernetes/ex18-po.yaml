@@ -1,0 +1,22 @@
+# Tasks:
+# kubectl create -f ex18-po.yaml
+# kubectl get po -l tag=label18
+# kubectl exec -it po18 --- /bin/bash
+# printenv
+---
+apiVersion: v1
+kind: Pod
+metadata: 
+  name: po18
+  labels:
+    tag: label18
+spec:
+  containers:
+  - image: nginx
+    name: ctr18
+    env:
+    - name: A
+      value: "This is environment variable A"
+    - name: B
+      value: "This is environment variable B"
+...

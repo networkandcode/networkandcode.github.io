@@ -1,0 +1,25 @@
+# Tasks:
+# kubectl create -f ex12.yaml
+# kubectl get po/pod12
+# kubectl describe po/pod12 | grep Liveness  # repeatedly
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod12
+spec:
+  containers:
+  - name: ctr12
+    image: k8s.gcr.io/liveness
+    args: 
+    - /server
+    livenessProbe:
+      httpGet:
+        path: /healthz
+        port: 8080
+        httpHeaders: 
+        - name: X-Custom-Header
+          value: Awesome
+      initialDelaySeconds: 3
+      periodSeconds: 3
+...

@@ -1,0 +1,26 @@
+
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: deploy16 
+spec:
+  selector:
+    matchLabels:
+      tag: label16
+  template:
+    metadata:
+      labels:
+        tag: label16
+    spec:
+      volumes:
+      - name: vol16
+        persistentVolumeClaim:
+          claimName: pvc16
+      containers:
+      - name: ctr16
+        image: nginx
+        volumeMounts:
+        - name: vol16
+          mountPath: "/usr/share/nginx/html"
+...

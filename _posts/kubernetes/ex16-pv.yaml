@@ -1,0 +1,21 @@
+# Tasks:
+# mkdir /mnt/pv-data
+# echo 'The persistent volume works !!!' > /mnt/data/index.html
+# kubectl create -f ex16-pv.yaml
+# kubectl get pv 
+---
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: task-pv-volume
+  labels:
+    type: local
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteMany
+  hostPath:
+    path: "/mnt/pv-data"
+...

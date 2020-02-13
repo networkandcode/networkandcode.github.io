@@ -1,0 +1,17 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: po5
+  namespace: default
+spec:
+  containers:
+  - name: ctr5
+    image: vish/stress
+    resources:
+      requests:
+        cpu: "40"
+      limits:
+        cpu: "50"
+    args: ["-cpus", "2"]  #attempt to use 2 CPUs
+...

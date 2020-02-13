@@ -1,0 +1,16 @@
+---
+apiVersion: settings.k8s.io/v1alpha1
+kind: PodPreset
+metadata:
+  name: podpreset28
+spec:
+  selector:  # to select Pod(s) with matching label(s)
+    matchLabels:
+      tag: label28
+  env:  # these environment variables will be injected into the container of sele
+cted Pod(s)
+  - name: fruit
+    value: mango
+  - name: color
+    value: yellow
+...

@@ -1,0 +1,18 @@
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: deploy32
+spec:
+  selector:
+    matchLabels:
+      tag: label32
+  template:
+    metadata:
+      labels:
+        tag: label32
+    spec:
+      containers:
+      - name: ctr32
+        image: nginx
+...

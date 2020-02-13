@@ -1,0 +1,12 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod8
+  namespace: default
+spec:
+  serviceAccountName: sa8
+  containers:
+  - name: ctr8
+    image: httpd
+...
