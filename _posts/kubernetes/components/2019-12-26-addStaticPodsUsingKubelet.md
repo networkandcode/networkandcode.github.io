@@ -1,5 +1,6 @@
 ---
 title: kubernetes > add static pods
+categories: kubernetes
 ---
 
 We are going to see some information about Kubelet and how to add static Pods to a cluster. It is good to have some knowledge of the components of a Kubernetes cluster and some basics of services in Linux, for better understanding of this post.
