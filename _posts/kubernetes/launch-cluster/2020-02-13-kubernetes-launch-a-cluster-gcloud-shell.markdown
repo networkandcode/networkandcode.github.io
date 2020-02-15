@@ -156,8 +156,7 @@ cat setup-kubeconfig.sh | gcloud compute ssh k8s-master
 ***Prepare pod networking setup file, here we have chosen Calico plugin***
 ```
 cat > setup-pod-networking.sh <<EOF
-kubectl apply -f https://docs.projectcalico.org/v3.3/getting-started/kubernetes/installation/hosted/rbac-kdd.yaml
-kubectl apply -f https://docs.projectcalico.org/v3.3/getting-started/kubernetes/installation/hosted/kubernetes-datastore/calico-networking/1.7/calico.yaml
+kubectl apply -f https://docs.projectcalico.org/v3.11/manifests/calico.yaml
 EOF
 ```
 
