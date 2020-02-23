@@ -1,0 +1,86 @@
+---
+layout: post
+title: kubernetes > volumes > config map source
+date: 2020-02-05 10:39:14.000000000 +05:30
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags: []
+meta:
+  timeline_notification: '1580879357'
+  _publicize_job_id: '40331739295'
+author:
+  login: shak1r
+  email: shakir@techie.com
+  display_name: shakir
+  first_name: ''
+  last_name: ''
+permalink: "/2020/02/05/kubernetes-volumes-config-map-source/"
+---
+<p><!-- wp:jetpack/markdown {"source":"We could create Pod volumes based on Config Maps and mount those into containers. It's good to have some understanding of Config Maps and Volumes to make most use of this post. \n\nLet's define manifests for a config map and a pod as follows. \n\n```\nnetworkandcode: $ cat configmap-sample.yaml\n\u002d\u002d-\napiVersion:  v1\nkind: ConfigMap\nmetadata:\n  name: configmap-sample\ndata:\n  animal: lion\n  bird: dove\n  car: audi\n...  \n\nnetworkandcode: $ cat pod-sample.yaml\n\u002d\u002d-\napiVersion: v1\nkind: Pod\nmetadata:\n  name: pod-sample\nspec:\n  volumes:\n  - name: volume1\n    configMap:\n      name: configmap-sample\n  containers:\n  - name: apache\n    image: httpd\n    volumeMounts:\n    - name: volume1\n      mountPath: \/tmp\/apache\n...\n```\n\nThe ConfigMap and Pod are going to be created\n```\nnetworkandcode: $ kubectl create -f configmap-sample.yaml\nconfigmap\/configmap-sample created\n\nnetworkandcode: $ kubectl create -f pod-sample.yaml\npod\/pod-sample created\n```\n\nThe config map data gets imported to the container inside the pod, as files in the mount path, one file for a key\n```\nnetworkandcode: $ kubectl exec -it pod-sample \u002d\u002d ls \/tmp\/apache\nanimal  bird  car\n```\n\nThe contents of these files would have the values of the data keys, as defined in the config map's manifest\n```\nnetworkandcode: $ kubectl exec -it pod-sample \u002d\u002d cat \/tmp\/apache\/animal ; echo\nlion\n\nnetworkandcode: $ kubectl exec -it pod-sample \u002d\u002d cat \/tmp\/apache\/bird ; echo\ndove\n\nnetworkandcode: $ kubectl exec -it pod-sample \u002d\u002d cat \/tmp\/apache\/car ; echo\naudi\n```\n\nCleanup\n```\nnetworkandcode: $ kubectl delete cm configmap-sample\n\nnetworkandcode: $ kubectl delete pod pod-sample\n```\n\n\u002d\u002dend-of-post\u002d\u002d"} --></p>
+<div class="wp-block-jetpack-markdown">
+<p>We could create Pod volumes based on Config Maps and mount those into containers. It's good to have some understanding of Config Maps and Volumes to make most use of this post.</p>
+<p>Let's define manifests for a config map and a pod as follows.</p>
+<pre><code>networkandcode: $ cat configmap-sample.yaml
+---
+apiVersion:  v1
+kind: ConfigMap
+metadata:
+  name: configmap-sample
+data:
+  animal: lion
+  bird: dove
+  car: audi
+...  
+
+networkandcode: $ cat pod-sample.yaml
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-sample
+spec:
+  volumes:
+  - name: volume1
+    configMap:
+      name: configmap-sample
+  containers:
+  - name: apache
+    image: httpd
+    volumeMounts:
+    - name: volume1
+      mountPath: /tmp/apache
+...
+</code></pre>
+<p>The ConfigMap and Pod are going to be created</p>
+<pre><code>networkandcode: $ kubectl create -f configmap-sample.yaml
+configmap/configmap-sample created
+
+networkandcode: $ kubectl create -f pod-sample.yaml
+pod/pod-sample created
+</code></pre>
+<p>The config map data gets imported to the container inside the pod, as files in the mount path, one file for a key</p>
+<pre><code>networkandcode: $ kubectl exec -it pod-sample -- ls /tmp/apache
+animal  bird  car
+</code></pre>
+<p>The contents of these files would have the values of the data keys, as defined in the config map's manifest</p>
+<pre><code>networkandcode: $ kubectl exec -it pod-sample -- cat /tmp/apache/animal ; echo
+lion
+
+networkandcode: $ kubectl exec -it pod-sample -- cat /tmp/apache/bird ; echo
+dove
+
+networkandcode: $ kubectl exec -it pod-sample -- cat /tmp/apache/car ; echo
+audi
+</code></pre>
+<p>Cleanup</p>
+<pre><code>networkandcode: $ kubectl delete cm configmap-sample
+
+networkandcode: $ kubectl delete pod pod-sample
+</code></pre>
+<p>--end-of-post--</p>
+</div>
+<p><!-- /wp:jetpack/markdown --></p>

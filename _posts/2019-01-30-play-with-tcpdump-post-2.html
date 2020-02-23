@@ -1,0 +1,120 @@
+---
+layout: post
+title: play with tcp(dump) ~ post 2
+date: 2019-01-30 19:38:48.000000000 +05:30
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags:
+- tcp
+- tcpdump
+meta:
+  timeline_notification: '1548857331'
+  _rest_api_published: '1'
+  _rest_api_client_id: "-1"
+  _wpas_skip_18169689: '1'
+  _wpas_skip_18195285: '1'
+  _publicize_job_id: '27093481990'
+author:
+  login: shak1r
+  email: shakir@techie.com
+  display_name: shakir
+  first_name: ''
+  last_name: ''
+permalink: "/2019/01/30/play-with-tcpdump-post-2/"
+---
+<p>Here, we shall explore few different ways of capturing traffic</p>
+<p><span style="color:#3366ff;">Let's check interface eth0's details</span><br />
+cumulus@server01:~$ ip addr show eth0<br />
+2: eth0: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc pfifo_fast state UP group default qlen 1000<br />
+link/ether 44:38:39:00:08:00 brd ff:ff:ff:ff:ff:ff<br />
+inet <span style="color:#3366ff;">192.168.0.31/16</span> brd 192.168.255.255 scope global eth0<br />
+valid_lft forever preferred_lft forever<br />
+inet6 fe80::4638:39ff:fe00:800/64 scope link<br />
+valid_lft forever preferred_lft forever</p>
+<p>There are alternative ways of capturing traffic such as by using the network or host ip address, instead of mentioning the interface name</p>
+<p><span style="color:#3366ff;">Let's capture traffic associated with a network(example 192.168.0.0/16)</span><br />
+cumulus@server01:~$ sudo tcpdump <span style="color:#3366ff;">net</span> 192.168.0.0/16 -w eth0-network.cap<br />
+tcpdump: listening on eth0, link-type EN10MB (Ethernet), capture size 262144 bytes<br />
+^C2 packets captured<br />
+4 packets received by filter<br />
+0 packets dropped by kernel</p>
+<p><span style="color:#3366ff;">Another way is by mentioning the host IP</span>, which is the IP address assigned to eth0<br />
+cumulus@server01:~$ sudo tcpdump <span style="color:#3366ff;">host</span> 192.168.0.31 -w eth0-host.cap<br />
+tcpdump: listening on eth0, link-type EN10MB (Ethernet), capture size 262144 bytes<br />
+^C6 packets captured<br />
+8 packets received by filter<br />
+0 packets dropped by kernel</p>
+<p><span style="color:#3366ff;">Let's check the files' content</span><br />
+cumulus@server01:~$ sudo tcpdump -r eth0-network.cap<br />
+reading from file eth0-network.cap, link-type EN10MB (Ethernet)<br />
+13:42:34.063714 IP 192.168.0.31.ssh &gt; 192.168.0.254.50286: Flags [P.], seq 967908862:967908986, ack 1490256537, win 303, options [nop,nop,TS val 29968 ecr 100514], length 124<br />
+13:42:34.064503 IP 192.168.0.254.50286 &gt; 192.168.0.31.ssh: Flags [.], ack 124, win 692, options [nop,nop,TS val 100838 ecr 29968], length 0</p>
+<p>cumulus@server01:~$ sudo tcpdump -r eth0-host.cap<br />
+reading from file eth0-host.cap, link-type EN10MB (Ethernet)<br />
+13:52:38.300836 IP 192.168.0.31.ssh &gt; 192.168.0.254.50286: Flags [P.], seq 967924842:967924886, ack 149<br />
+0267165, win 303, options [nop,nop,TS val 181027 ecr 704755], length 44<br />
+13:52:38.300954 IP 192.168.0.31.ssh &gt; 192.168.0.254.50286: Flags [P.], seq 44:152, ack 1, win 303, opti<br />
+ons [nop,nop,TS val 181027 ecr 704755], length 108<br />
+13:52:38.300973 IP 192.168.0.31.ssh &gt; 192.168.0.254.50286: Flags [P.], seq 152:180, ack 1, win 303, opt<br />
+ions [nop,nop,TS val 181027 ecr 704755], length 28<br />
+13:52:38.301925 IP 192.168.0.254.50286 &gt; 192.168.0.31.ssh: Flags [.], ack 44, win 692, options [nop,nop<br />
+,TS val 705042 ecr 181027], length 0<br />
+13:52:38.302314 IP 192.168.0.254.50286 &gt; 192.168.0.31.ssh: Flags [.], ack 152, win 692, options [nop,no<br />
+p,TS val 705042 ecr 181027], length 0<br />
+13:52:38.302446 IP 192.168.0.254.50286 &gt; 192.168.0.31.ssh: Flags [.], ack 180, win 692, options [nop,no<br />
+p,TS val 705042 ecr 181027], length 0</p>
+<p>The contents of both the captures are similar, it's evident that these are just different ways of capturing the same traffic</p>
+<p><span style="color:#3366ff;">Let's capture and read only the outgoing traffic</span><br />
+cumulus@server01:~$ sudo tcpdump <span style="color:#3366ff;">src</span> 192.168.0.31 -w eth0-out.cap<br />
+tcpdump: listening on eth0, link-type EN10MB (Ethernet), capture size 262144 bytes<br />
+^C1 packet captured<br />
+2 packets received by filter<br />
+0 packets dropped by kernel<br />
+cumulus@server01:~$ sudo tcpdump -r eth0-out.cap<br />
+reading from file eth0-out.cap, link-type EN10MB (Ethernet)<br />
+13:58:30.909768 IP 192.168.0.31.ssh &gt; 192.168.0.254.50286: Flags [P.], seq 967929190:967929314, ack 149<br />
+0269517, win 303, options [nop,nop,TS val 269179 ecr 1057385], length 124</p>
+<p><span style="color:#3366ff;">Similarly to capture and read the incoming traffic</span><br />
+cumulus@server01:~$ sudo tcpdump <span style="color:#3366ff;">dst</span> 192.168.0.31 -w eth0-in.cap<br />
+tcpdump: listening on eth0, link-type EN10MB (Ethernet), capture size 262144 bytes<br />
+^X^C5 packets captured<br />
+6 packets received by filter<br />
+0 packets dropped by kernel<br />
+cumulus@server01:~$ sudo tcpdump -r eth0-in.cap<br />
+reading from file eth0-in.cap, link-type EN10MB (Ethernet)<br />
+14:01:06.318138 IP 192.168.0.254.50286 &gt; 192.168.0.31.ssh: Flags [.], ack 967937126, win 692, options [<br />
+nop,nop,TS val 1213121 ecr 308031], length 0<br />
+14:01:06.318345 IP 192.168.0.254.50286 &gt; 192.168.0.31.ssh: Flags [.], ack 109, win 692, options [nop,no<br />
+p,TS val 1213121 ecr 308031], length 0<br />
+14:01:06.318667 IP 192.168.0.254.50286 &gt; 192.168.0.31.ssh: Flags [.], ack 137, win 692, options [nop,no<br />
+p,TS val 1213122 ecr 308031], length 0<br />
+14:01:07.199087 IP 192.168.0.254.50286 &gt; 192.168.0.31.ssh: Flags [P.], seq 0:28, ack 137, win 692, opti<br />
+ons [nop,nop,TS val 1214002 ecr 308031], length 28<br />
+14:01:07.200126 IP 192.168.0.254.50286 &gt; 192.168.0.31.ssh: Flags [.], ack 165, win 692, options [nop,no<br />
+p,TS val 1214003 ecr 308252], length 0</p>
+<p>We have seen so far that the traffic we are capturing is only SSH, this is because I have logged into server01 through the management server, and there is no other traffic on eth0</p>
+<p><span style="color:#3366ff;">To capture traffic based on port(example 22 for SSH) and then read it</span><br />
+cumulus@server01:~$ sudo tcpdump <span style="color:#3366ff;">port</span> 22 -w ssh.cap<br />
+tcpdump: listening on eth0, link-type EN10MB (Ethernet), capture size 262144 bytes<br />
+^C6 packets captured<br />
+8 packets received by filter<br />
+0 packets dropped by kernel<br />
+cumulus@server01:~$ sudo tcpdump -r ssh.cap<br />
+reading from file ssh.cap, link-type EN10MB (Ethernet)<br />
+14:03:11.600825 IP 192.168.0.31.ssh &gt; 192.168.0.254.50286: Flags [P.], seq 967943402:967943446, ack 149<br />
+0278705, win 303, options [nop,nop,TS val 339352 ecr 1338131], length 44<br />
+14:03:11.600938 IP 192.168.0.31.ssh &gt; 192.168.0.254.50286: Flags [P.], seq 44:152, ack 1, win 303, opti<br />
+ons [nop,nop,TS val 339352 ecr 1338131], length 108<br />
+14:03:11.600956 IP 192.168.0.31.ssh &gt; 192.168.0.254.50286: Flags [P.], seq 152:180, ack 1, win 303, opt<br />
+ions [nop,nop,TS val 339352 ecr 1338131], length 28<br />
+14:03:11.601698 IP 192.168.0.254.50286 &gt; 192.168.0.31.ssh: Flags [.], ack 44, win 692, options [nop,nop<br />
+,TS val 1338411 ecr 339352], length 0<br />
+14:03:11.601897 IP 192.168.0.254.50286 &gt; 192.168.0.31.ssh: Flags [.], ack 152, win 692, options [nop,no<br />
+p,TS val 1338411 ecr 339352], length 0<br />
+14:03:11.602183 IP 192.168.0.254.50286 &gt; 192.168.0.31.ssh: Flags [.], ack 180, win 692, options [nop,no<br />
+p,TS val 1338411 ecr 339352], length 0</p>
+<p>--end-of-post--</p>

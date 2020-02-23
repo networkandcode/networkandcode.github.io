@@ -1,0 +1,103 @@
+---
+layout: post
+title: kubernetes > add static pods
+date: 2020-01-10 08:12:07.000000000 +05:30
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags: []
+meta:
+  _publicize_job_id: '39369525647'
+  timeline_notification: '1578624132'
+author:
+  login: shak1r
+  email: shakir@techie.com
+  display_name: shakir
+  first_name: ''
+  last_name: ''
+permalink: "/2020/01/10/kubernetes-add-static-pods/"
+---
+<p><!-- wp:jetpack/markdown {"source":"We are going to see some information about Kubelet and how to add static Pods to a cluster. It is good to have some knowledge of the components of a Kubernetes cluster and some basics of services in Linux, for better understanding of this post.\n\nA Kubelet is a core Kubernetes component which is present on all of the instances of a Kubernetes cluster, and it is responsible for executing Pods on the instance where it resides. Static Pods are those that are directly controlled by the kubelet with out the need of controlling those Pods using clients such as Kubectl. Usually we pass commands such as ``` 'kubectl create' ``` to create Pods as per the defined manifest. However with static Pods, we just keep the Pod manifests in a specific directory that the Kubelet is told to watch, and then create Pods called as static Pods from those manifests.\n\nA kubelet is usually present as a binary, and we could check its location using ```which```\n```\nnetworkancdcode@k8s-master-0:~$ which kubelet\n\/usr\/bin\/kubelet\n```\n\nNote that we are on the master instance, and there are unique kubelets on each instance that forms the cluster\n\nIn a typical kubeadm based cluster, the kubelet would usually run as a service, whose configuration is present in the following location\n```\nnetworkancdcode@k8s-master-0:~$ sudo ls \/etc\/systemd\/system\/kubelet.service.d\/\n10-kubeadm.conf\n```\n\nThe contents of the configuration file would be\n```\nnetworkancdcode@k8s-master-0:~$ sudo cat \/etc\/systemd\/system\/kubelet.service.d\/10-kubeadm.conf\n# Note: This dropin only works with kubeadm and kubelet v1.11+\n[Service]\nEnvironment=\u0022KUBELET_KUBECONFIG_ARGS=\u002d\u002dbootstrap-kubeconfig=\/etc\/kubernetes\/bootstrap-kubelet.conf \u002d\u002dkubeconfig=\/etc\/kubernetes\/kubelet.conf\u0022\nEnvironment=\u0022KUBELET_CONFIG_ARGS=\u002d\u002dconfig=\/var\/lib\/kubelet\/config.yaml\u0022\n# This is a file that \u0022kubeadm init\u0022 and \u0022kubeadm join\u0022 generates at runtime, populating the KUBELET_KUBEADM_ARGS variable dynamically\nEnvironmentFile=-\/var\/lib\/kubelet\/kubeadm-flags.env\n# This is a file that the user can use for overrides of the kubelet args as a last resort. Preferably, the user should use\n# the .NodeRegistration.KubeletExtraArgs object in the configuration files instead. KUBELET_EXTRA_ARGS should be sourced from this file.\nEnvironmentFile=-\/etc\/default\/kubelet\nExecStart=\nExecStart=\/usr\/bin\/kubelet $KUBELET_KUBECONFIG_ARGS $KUBELET_CONFIG_ARGS $KUBELET_KUBEADM_ARGS $KUBELET_EXTRA_ARGS\n```\n\nThe last line of the output above mentions the path where the kubelet binary is stored '\/usr\/bin\/kubelet', followed the options that it takes, one of the options is ```$KUBELET_CONFIG_ARGS``` which is defined in the same file above as ```KUBELET_CONFIG_ARGS=\u002d\u002dconfig=\/var\/lib\/kubelet\/config.yaml```. This is nothing but the configuration fle of the kubelet itself.\n\nLet's now check the kubelet configuration of the master instance, and filter only the staticPodPath section in it\n```\nnetworkancdcode@k8s-master-0:~$ sudo cat \/var\/lib\/kubelet\/config.yaml | grep staticPodPath\nstaticPodPath: \/etc\/kubernetes\/manifests\n```\n\nThis says that Pod manifests saved in the '\/etc\/kubernetes\/manifests' folder are watched by the kubelet and static Pods are created based on those manifests\n\nThis folder has some existing files which are responsible for those respective Static Pods running only in the master\n```\nnetworkancdcode@k8s-master-0:~$ ls \/etc\/kubernetes\/manifests\/\netcd.yaml  kube-apiserver.yaml  kube-controller-manager.yaml  kube-extra-scheduler.yaml  kube-scheduler.yaml\n```\n\nStatic Pods do not need any higher level controllers such as Deployments to control them, as that job is done directly by the kubelet itself. For instance, let's try deleting one of the static Pods 'etcd Pod' running in the kube-system namespace\n```\nnetworkancdcode@k8s-master-0:~$ kubectl get po -n kube-system | grep etcd\netcd-k8s-master-0                          1\/1     Running   7          8d\n\nnetworkancdcode@k8s-master-0:~$ kubectl delete po etcd-k8s-master-0 -n kube-system\npod \u0022etcd-k8s-master-0\u0022 deleted\n\nnetworkancdcode@k8s-master-0:~$ kubectl get po -n kube-system | grep etcd\netcd-k8s-master-0                          0\/1     Pending   0          4s\n\nnetworkancdcode@k8s-master-0:~$ kubectl get po -n kube-system | grep etcd\netcd-k8s-master-0                          1\/1     Running   7          11s\n```\n\nWe see that a new etcd Pod gets created by the kubelet keeps watching the manifests in the ```staticPodPath``` and creates a new etcd Pod based on the etcd manifest in ```\/etc\/kubernetes\/manifests\/etcd.yaml```\n\nLet's try adding a new Pod manifest to the staticPodPath directory\n```\nnetworkancdcode@k8s-master-0:~$ cd \/etc\/kubernetes\/manifests\/\nnetworkancdcode@k8s-master-0:~$ cat ex38-po-static.yaml\n\u002d\u002d-\napiVersion: v1\nkind: Pod\nmetadata:\n  name: po38\nspec:\n  containers:\n  - name: ctr38\n    image: httpd\n...\n```\n\nThis should create a Pod automatically\n```\nnetworkancdcode@k8s-master-0:~$ kubectl get po\nNAME                READY   STATUS    RESTARTS   AGE\npo38-k8s-master-0   1\/1     Running   0          78s\n```\n\nCleanup, removing the file should delete the Pod automatically\n```\nnetworkandcode@k8s-master-0:~$ sudo rm \/etc\/kubernetes\/manifests\/ex38-po-static.yaml\nnetworkandcode@k8s-master-0:~$ kubectl get po\nNo resources found in default namespace.\n```\n\nIn this post we have seen about kubelet and how kubelet controls static Pods. We have added a new staticPod and finally performed cleanup.\n\nThank you for reading and wish you happy learning.\n\nReference: https:\/\/kubernetes.io\/docs\/tasks\/configure-pod-container\/static-pod\/\n\n\u002d\u002dend-of-post\u002d\u002d"} --></p>
+<div class="wp-block-jetpack-markdown">
+<p>We are going to see some information about Kubelet and how to add static Pods to a cluster. It is good to have some knowledge of the components of a Kubernetes cluster and some basics of services in Linux, for better understanding of this post.</p>
+<p>A Kubelet is a core Kubernetes component which is present on all of the instances of a Kubernetes cluster, and it is responsible for executing Pods on the instance where it resides. Static Pods are those that are directly controlled by the kubelet with out the need of controlling those Pods using clients such as Kubectl. Usually we pass commands such as <code>'kubectl create'</code> to create Pods as per the defined manifest. However with static Pods, we just keep the Pod manifests in a specific directory that the Kubelet is told to watch, and then create Pods called as static Pods from those manifests.</p>
+<p>A kubelet is usually present as a binary, and we could check its location using <code>which</code></p>
+<pre><code>networkancdcode@k8s-master-0:~$ which kubelet
+/usr/bin/kubelet
+</code></pre>
+<p>Note that we are on the master instance, and there are unique kubelets on each instance that forms the cluster</p>
+<p>In a typical kubeadm based cluster, the kubelet would usually run as a service, whose configuration is present in the following location</p>
+<pre><code>networkancdcode@k8s-master-0:~$ sudo ls /etc/systemd/system/kubelet.service.d/
+10-kubeadm.conf
+</code></pre>
+<p>The contents of the configuration file would be</p>
+<pre><code>networkancdcode@k8s-master-0:~$ sudo cat /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+# Note: This dropin only works with kubeadm and kubelet v1.11+
+[Service]
+Environment=&quot;KUBELET_KUBECONFIG_ARGS=--bootstrap-kubeconfig=/etc/kubernetes/bootstrap-kubelet.conf --kubeconfig=/etc/kubernetes/kubelet.conf&quot;
+Environment=&quot;KUBELET_CONFIG_ARGS=--config=/var/lib/kubelet/config.yaml&quot;
+# This is a file that &quot;kubeadm init&quot; and &quot;kubeadm join&quot; generates at runtime, populating the KUBELET_KUBEADM_ARGS variable dynamically
+EnvironmentFile=-/var/lib/kubelet/kubeadm-flags.env
+# This is a file that the user can use for overrides of the kubelet args as a last resort. Preferably, the user should use
+# the .NodeRegistration.KubeletExtraArgs object in the configuration files instead. KUBELET_EXTRA_ARGS should be sourced from this file.
+EnvironmentFile=-/etc/default/kubelet
+ExecStart=
+ExecStart=/usr/bin/kubelet $KUBELET_KUBECONFIG_ARGS $KUBELET_CONFIG_ARGS $KUBELET_KUBEADM_ARGS $KUBELET_EXTRA_ARGS
+</code></pre>
+<p>The last line of the output above mentions the path where the kubelet binary is stored '/usr/bin/kubelet', followed the options that it takes, one of the options is <code>$KUBELET_CONFIG_ARGS</code> which is defined in the same file above as <code>KUBELET_CONFIG_ARGS=--config=/var/lib/kubelet/config.yaml</code>. This is nothing but the configuration fle of the kubelet itself.</p>
+<p>Let's now check the kubelet configuration of the master instance, and filter only the staticPodPath section in it</p>
+<pre><code>networkancdcode@k8s-master-0:~$ sudo cat /var/lib/kubelet/config.yaml | grep staticPodPath
+staticPodPath: /etc/kubernetes/manifests
+</code></pre>
+<p>This says that Pod manifests saved in the '/etc/kubernetes/manifests' folder are watched by the kubelet and static Pods are created based on those manifests</p>
+<p>This folder has some existing files which are responsible for those respective Static Pods running only in the master</p>
+<pre><code>networkancdcode@k8s-master-0:~$ ls /etc/kubernetes/manifests/
+etcd.yaml  kube-apiserver.yaml  kube-controller-manager.yaml  kube-extra-scheduler.yaml  kube-scheduler.yaml
+</code></pre>
+<p>Static Pods do not need any higher level controllers such as Deployments to control them, as that job is done directly by the kubelet itself. For instance, let's try deleting one of the static Pods 'etcd Pod' running in the kube-system namespace</p>
+<pre><code>networkancdcode@k8s-master-0:~$ kubectl get po -n kube-system | grep etcd
+etcd-k8s-master-0                          1/1     Running   7          8d
+
+networkancdcode@k8s-master-0:~$ kubectl delete po etcd-k8s-master-0 -n kube-system
+pod &quot;etcd-k8s-master-0&quot; deleted
+
+networkancdcode@k8s-master-0:~$ kubectl get po -n kube-system | grep etcd
+etcd-k8s-master-0                          0/1     Pending   0          4s
+
+networkancdcode@k8s-master-0:~$ kubectl get po -n kube-system | grep etcd
+etcd-k8s-master-0                          1/1     Running   7          11s
+</code></pre>
+<p>We see that a new etcd Pod gets created by the kubelet keeps watching the manifests in the <code>staticPodPath</code> and creates a new etcd Pod based on the etcd manifest in <code>/etc/kubernetes/manifests/etcd.yaml</code></p>
+<p>Let's try adding a new Pod manifest to the staticPodPath directory</p>
+<pre><code>networkancdcode@k8s-master-0:~$ cd /etc/kubernetes/manifests/
+networkancdcode@k8s-master-0:~$ cat ex38-po-static.yaml
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: po38
+spec:
+  containers:
+  - name: ctr38
+    image: httpd
+...
+</code></pre>
+<p>This should create a Pod automatically</p>
+<pre><code>networkancdcode@k8s-master-0:~$ kubectl get po
+NAME                READY   STATUS    RESTARTS   AGE
+po38-k8s-master-0   1/1     Running   0          78s
+</code></pre>
+<p>Cleanup, removing the file should delete the Pod automatically</p>
+<pre><code>networkandcode@k8s-master-0:~$ sudo rm /etc/kubernetes/manifests/ex38-po-static.yaml
+networkandcode@k8s-master-0:~$ kubectl get po
+No resources found in default namespace.
+</code></pre>
+<p>In this post we have seen about kubelet and how kubelet controls static Pods. We have added a new staticPod and finally performed cleanup.</p>
+<p>Thank you for reading and wish you happy learning.</p>
+<p>Reference: https://kubernetes.io/docs/tasks/configure-pod-container/static-pod/</p>
+<p>--end-of-post--</p>
+</div>
+<p><!-- /wp:jetpack/markdown --></p>

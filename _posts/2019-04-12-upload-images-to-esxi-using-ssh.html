@@ -1,0 +1,51 @@
+---
+layout: post
+title: Upload Images to ESXi using SSH
+date: 2019-04-12 16:53:54.000000000 +05:30
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags:
+- esxi
+- vmware
+meta:
+  _oembed_7dd2cc5da5b74d37559776f76d6a152a: "{{unknown}}"
+  _oembed_f5e164b7d74362e0ced285aea048958c: "{{unknown}}"
+  timeline_notification: '1555068238'
+  _publicize_job_id: '29681535643'
+author:
+  login: shak1r
+  email: shakir@techie.com
+  display_name: shakir
+  first_name: ''
+  last_name: ''
+permalink: "/2019/04/12/upload-images-to-esxi-using-ssh/"
+---
+<p>You can download images directly onto the datastore of an ESXi server by using wget, just as you would do on any other Linux Host</p>
+<p>You just need to make a note of the path of the datastore which is typically inside /root/vmfs/volumes/</p>
+<p>Enable SSH first by clicking Navigator &gt; Host &gt; Actions &gt; Host &gt; Services &gt; Enable Secure Shell (SSH), which would be disabled by default, and its secure to disable it after the image upload</p>
+<p><img title="NewImage.png" src="{{ site.baseurl }}/assets/newimage-4.png" alt="NewImage" width="598" height="182" border="0" /></p>
+<p>$ ssh root@esxi-server<br />
+~TRUNCATED~<br />
+Password:<br />
+The time and date of this login have been sent to the system logs.</p>
+<p>VMware offers supported, powerful system administration tools. Please<br />
+see www.vmware.com/go/sysadmintools for details.</p>
+<p>The ESXi Shell can be disabled by an administrative user. See the<br />
+vSphere Security documentation for more information.</p>
+<p>Navigate to the datastore<br />
+[root@localhost:~] cd vmfs/volumes/<br />
+[root@localhost:/vmfs/volumes] cd datastore1/</p>
+<p>Create a directory inside the datastore if desired<br />
+[root@localhost:/vmfs/volumes/some-hex-numbers] mkdir centos<br />
+[root@localhost:/vmfs/volumes/some-hex-numbers] cd centos</p>
+<p>wget followed by the path where the image is stored</p>
+<p><img title="NewImage.png" src="{{ site.baseurl }}/assets/newimage-5.png" alt="NewImage" width="598" height="274" border="0" /><br />
+[root@localhost:/vmfs/volumes/some-hex-numbers/centos] wget http://centos.mirror.snu.edu.in/centos/7.6.1810/isos/x86_64/CentOS-7-x86_64-Minimal-1810.iso<br />
+Connecting to centos.mirror.snu.edu.in (103.27.165.31:80)<br />
+CentOS-7-x86_64-Mini 1% |*</p>
+<p>Wait till it reaches 100%</p>
+<p>~end-of-post~</p>

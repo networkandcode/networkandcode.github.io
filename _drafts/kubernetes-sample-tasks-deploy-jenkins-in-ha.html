@@ -1,0 +1,292 @@
+---
+layout: post
+title: Kubernetes > Sample tasks > Deploy Jenkins in HA
+date: 
+type: post
+parent_id: '0'
+published: false
+password: ''
+status: draft
+categories: []
+tags: []
+meta: {}
+author:
+  login: shak1r
+  email: shakir@techie.com
+  display_name: shakir
+  first_name: ''
+  last_name: ''
+permalink: "/"
+---
+<p>Create a GCE persistent disk of capacity 10GB</p>
+<pre><code>
+networkandcode@cloudshell:~ gcloud compute disks create disk29-nfs --zone us-central1-a --size 10
+</code></pre>
+<p>Define a PVC manifest to claim the GCE PD created above</p>
+<pre><code>
+networkandcode@k8s-master:~ cat ex29-pvc-nfs.yaml
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pvc29-nfs
+spec:
+  accessModes:
+  - "ReadWriteOnce"
+  resources:
+    requests:
+      storage: 10Gi
+...
+</code></pre>
+<p>Create the PVC</p>
+<pre><code>
+networkandcode@k8s-master:~ kubectl create -f ex29-pvc-nfs.yaml
+</code></pre>
+<p>View the PVC's status</p>
+<pre><code>
+networkandcode@k8s-master:~ kubectl get pvc pvc29-nfs
+NAME        STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   AGE
+pvc29-nfs   Bound    pvc-41633f2b-c237-11e9-aeed-42010a800181   10Gi       RWO            standard       3m7s
+</code></pre>
+<p>To view more details about the PVC, tail -2 is used to view the last 2 lines of the output. The o/p shows a volume was claimed using a GCE PD.</p>
+<pre><code>
+networkandcode@k8s-master:~ kubectl describe pvc | tail -2
+  Normal     ProvisioningSucceeded  4m50s  persistentvolume-controller  Successfully provisioned volume pvc-41633f2b-c237-11e9-aeed-42010a800181 using kubernetes.
+io/gce-pd
+Mounted By:  
+</code></pre>
+<p>Let's define a manifest to deploy the NFS server and mount the volume provisioned above</p>
+<pre><code>
+networkandcode@k8s-master:~ cat ex29-deploy-nfs.yaml
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: deploy29-nfs
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      tag: label29-nfs
+  template:
+    metadata:
+      labels:
+        tag: label29-nfs
+    spec:
+      volumes:
+      - name: vol29-nfs
+        persistentVolumeClaim:
+          claimName: pvc29-nfs
+      containers:
+      - name: ctr29-nfs
+        image: k8s.gcr.io/volume-nfs:0.8
+        securityContext:
+          privileged: true
+        volumeMounts:
+        - name: vol29-nfs
+          mountPath: /exports
+...
+</code></pre>
+<p>Create the NFS deployment</p>
+<pre><code>
+networkandcode@k8s-master:~ kubectl create -f ex29-deploy-nfs.yaml
+</code></pre>
+<p>Let's check the NFS Pod's status</p>
+<pre><code>
+networkandcode@k8s-master:~ kubectl get po | grep nfs
+deploy29-nfs-5f84849dd9-wlzqj   1/1     Running   0          106s
+</code></pre>
+<p>Define a manifest for creating a Service exposing the NFS Pod</p>
+<pre><code>
+networkandcode@k8s-master:~ cat ex29-svc-nfs.yaml
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: svc29-nfs
+spec:
+  selector:
+    tag: label29-nfs
+  ports:
+  - name: nfs
+    port: 2049
+  - name: mountd
+    port: 20048
+  - name: rpcbind
+    port: 111
+...
+</code></pre>
+<p>Create the NFS Service</p>
+<pre><code>
+networkandcode@k8s-master:~ kubectl create -f ex29-svc-nfs.yaml
+service/svc29-nfs created
+</code></pre>
+<p>The NFS Service should have three endpoints as there are 3 ports</p>
+<pre><code>
+networkandcode@k8s-master:~ kubectl get ep svc29-nfs
+NAME        ENDPOINTS                                   AGE
+svc29-nfs   10.8.0.4:20048,10.8.0.4:111,10.8.0.4:2049   23s
+<code /></code></pre>
+<p>Check the Cluster-IP of the NFS service</p>
+<pre><code>
+networkandcode@k8s-master:~ kubectl get svc svc29-nfs
+NAME        TYPE        CLUSTER-IP    EXTERNAL-IP   PORT(S)                      AGE
+svc29-nfs   ClusterIP   10.12.2.178           2049/TCP,20048/TCP,111/TCP   3m45s
+</code></pre>
+<p>Define a manifest for the PV that would be used by the Jenkins Pods</p>
+<pre><code>
+networkandcode@k8s-master:~ cat ex29-pv-jenkins-ha.yaml 
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv29-jenkins-ha
+spec:
+  capacity:
+    storage: 100Mi
+  accessModes:
+  - "ReadWriteMany"
+  nfs:
+    # server contains the Domain name of the Service
+    server: svc29-nfs.default.svc.cluster.local
+    path: "/"
+...
+</code></pre>
+<p>Create the Persistent Volume</p>
+<pre><code>
+networkandcode@k8s-master:~ kubectl create -f ex29-pv-jenkins-ha.yaml
+persistentvolume/pv29-jenkins-ha created
+</code></pre>
+<p>Check the PV's status</p>
+<pre><code>
+networkandcode@k8s-master:~ kubectl get pv pv29-jenkins-ha
+NAME              CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS      CLAIM   STORAGECLASS   REASON   AGE
+pv29-jenkins-ha   100Mi      RWX            Retain           Available                                   38s
+</code></pre>
+<p>Define a PVC manifest to claim the Persistent volume created above</p>
+<pre><code>
+networkandcode@k8s-master:~ cat ex29-pvc-jenkins-ha.yaml
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pvc29-jenkins-ha
+spec:
+  accessModes:
+  - ReadWriteMany
+  storageClassName: ""
+  resources:
+    requests:
+      storage: 100Mi
+...
+</code></pre>
+<p>Create the PVC</p>
+<pre><code>
+networkandcode@k8s-master:~ kubectl create -f ex29-pvc-jenkins-ha.yaml
+persistentvolumeclaim/pvc29-jenkins-ha created
+</code></pre>
+<p>Check the Jenkins PVC's status</p>
+<pre><code>
+networkandcode@k8s-master:~ kubectl get pvc pvc29-jenkins-ha
+NAME               STATUS   VOLUME            CAPACITY   ACCESS MODES   STORAGECLASS   AGE
+pvc29-jenkins-ha   Bound    pv29-jenkins-ha   100Mi      RWX                           68s
+</code></pre>
+<p>Define a manifest for deploying Jenkins with 2 replicas, and attaching the PVC to both the Pods</p>
+<pre><code>
+networkandcode@k8s-master:~ cat ex29-deploy-jenkins-ha.yaml
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: deploy29-jenkins-ha
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      tag: label29-jenkins-ha
+  template:
+    metadata:
+      labels:
+        tag: label29-jenkins-ha
+    spec:
+      volumes:
+      - name: vol29-jenkins-ha
+        persistentVolumeClaim:
+          claimName: pvc29-jenkins-ha
+      containers:
+      - name: ctr29-jenkins-ha
+        image: jenkins/jenkins
+        volumeMounts:
+        - name: vol29-jenkins-ha
+          mountPath: /var/jenkins_home/jobs
+...
+</code></pre>
+<p>Create the Jenkins Deployment</p>
+<pre><code>
+networkandcode@k8s-master:~ kubectl create -f ex29-deploy-jenkins-ha.yaml
+deployment.extensions/deploy29-jenkins-ha created
+</code></pre>
+<p>The Jenkins Pods should now be running</p>
+<pre><code>
+networkandcode@k8s-master:~ kubectl get po | grep jenkins
+deploy29-jenkins-ha-7cb4599b5d-5c5st   1/1     Running   0          2m21s
+deploy29-jenkins-ha-7cb4599b5d-mwv6k   1/1     Running   0          2m21s
+</code></pre>
+<p>Define a Service manifest to expose the Jenkins Deployment</p>
+<pre><code>
+networkandcode@k8s-master:~ cat ex29-svc-jenkins-ha.yaml
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: svc29-jenkins-ha
+spec:
+  selector:
+    tag: label29-jenkins-ha
+  type: LoadBalancer
+  ports:
+  - port: 80
+    targetPort: 8080  # default port on container where Jenkins dashboard is launched
+...
+</code></pre>
+<p>Create the Jenkins Service</p>
+<pre><code>
+networkandcode@k8s-master:~ kubectl create -f ex29-svc-jenkins-ha.yaml
+</code></pre>
+<p>There should be two endpoints for the Jenkins service as there are two Pods</p>
+<pre><code>
+networkandcode@k8s-master:~ kubectl get ep svc29-jenkins-ha
+NAME               ENDPOINTS                       AGE
+svc29-jenkins-ha   10.32.1.7:8080,10.32.2.4:8080   51s
+</code></pre>
+<p>Check the Service's IP and Ports</p>
+<pre><code>
+networkandcode@k8s-master:~ kubectl get svc svc29-jenkins-ha
+NAME               TYPE           CLUSTER-IP   EXTERNAL-IP   PORT(S)        AGE
+svc29-jenkins-ha   LoadBalancer   10.0.4.207        80:31807/TCP   2m46s
+</code></pre>
+<p>The Jenkins Application may not be accessible unless the traffic is allowed through the firewall filter, depending on the NodePort value, a firewall rule may be defined as follows</p>
+<pre><code>
+networkandcode@cloudshell:~ gcloud compute firewall-rules create fwrule29-allow-node-port-jenkins-ha --network default --allow tcp:31807
+</code><pre>
+
+31807 is the NodePort in this case as per the output above, and it can be used to access the Jenkins application via the Node's external IP in the format http://NodeIP:NodePort. These steps are not shown here. The GUI has to be accessed and the credentials be set. We shall use the same credentials for both the Jenkins instances (as there are two Pods). 
+
+The initial key for the Jenkins instances could be found as follows
+&lt;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>

@@ -1,0 +1,142 @@
+---
+layout: post
+title: Kubernetes > Components
+date: 2019-10-23 11:04:44.000000000 +05:30
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags: []
+meta:
+  _publicize_job_id: '36636465426'
+  timeline_notification: '1571808890'
+author:
+  login: shak1r
+  email: shakir@techie.com
+  display_name: shakir
+  first_name: ''
+  last_name: ''
+permalink: "/2019/10/23/kubernetes-components/"
+---
+<p><!-- wp:jetpack/markdown {"source":"We are going to see the installed components of a Kubernetes cluster\n\nPrerequisites: \n- You already have a running cluster\n- Basic understandng of Kubernetes objects such as Namespaces, Pods, Deployments, DaemonSets\n- Basic 'get' commands of kubectl\n\n\u002d\u002d-\n\nI have a running cluster with a single master and three nodes, launched using kubeadm and calico network plugin\n```\nnetworkandcode@master:~$ kubectl get no\nNAME     STATUS   ROLES    AGE   VERSION\nmaster   Ready    master   10h   v1.16.2\nnode-0   Ready    \u003cnone\u003e   10h   v1.16.2\nnode-1   Ready    \u003cnone\u003e   10h   v1.16.2\nnode-2   Ready    \u003cnone\u003e   10h   v1.16.2\n```\n\nThere is a namespace called kube-system on which most of the Kubernetes software or system components are installed as Kubernetes objects itself\n```\nnetworkandcode@master:~$ kubectl get ns kube-system\nNAME          STATUS   AGE\nkube-system   Active   10h\n\nnetworkandcode@master:~$ kubectl get all -n kube-system\nNAME                                          READY   STATUS    RESTARTS   AGE\npod/calico-kube-controllers-55754f75c-wq2kn   1/1     Running   1          10h\npod/calico-node-4xcrk                         1/1     Running   1          10h\npod/calico-node-8fg7z                         1/1     Running   1          10h\npod/calico-node-bhz45                         1/1     Running   1          10h\npod/calico-node-z6zhd                         1/1     Running   1          10h\npod/coredns-5644d7b6d9-wfgv8                  1/1     Running   1          10h\npod/coredns-5644d7b6d9-x96d2                  1/1     Running   1          10h\npod/etcd-master                               1/1     Running   1          10h\npod/kube-apiserver-master                     1/1     Running   1          10h\npod/kube-controller-manager-master            1/1     Running   1          10h\npod/kube-proxy-hprv8                          1/1     Running   1          10h\npod/kube-proxy-ljfwh                          1/1     Running   1          10h\npod/kube-proxy-lmh8x                          1/1     Running   1          10h\npod/kube-proxy-m46d9                          1/1     Running   1          10h\npod/kube-scheduler-master                     1/1     Running   1          10h\n\nNAME               TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)                  AGE\nservice/kube-dns   ClusterIP   10.96.0.10   \u003cnone\u003e        53/UDP,53/TCP,9153/TCP   10h\n\nNAME                         DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR                 AGE\ndaemonset.apps/calico-node   4         4         4       4            4           beta.kubernetes.io/os=linux   10h\ndaemonset.apps/kube-proxy    4         4         4       4            4           beta.kubernetes.io/os=linux   10h\n\nNAME                                      READY   UP-TO-DATE   AVAILABLE   AGE\ndeployment.apps/calico-kube-controllers   1/1     1            1           10h\ndeployment.apps/coredns                   2/2     2            2           10h\n\nNAME                                                DESIRED   CURRENT   READY   AGE\nreplicaset.apps/calico-kube-controllers-55754f75c   1         1         1       10h\nreplicaset.apps/coredns-5644d7b6d9                  2         2         2       10h\n```\n\nIf we group them, we see there are primarily 8 software components: \n- calico-kube-controllers\n- calico-node \n- coredns\n- etcd-master\n- kube-apiserver-master\n- kube-controller-manager-master\n- kube-proxy\n- kube-scheduler-master\n\nLet's look at each of these components now\n\n### calico-kube-controllers\n\nIt is the calico network controller which is installed only on the master(s), It is an add on networking component though part of the calico network addon installation, and not a native Kubernetes component. The associated Pod is part of a deployment with replicas equal to the number of masters, as we have a single master here, the no. of Pod replicas is 1\n```\nnetworkandcode@master:~$ kubectl get po -n kube-system -o wide | grep calico-kube-controllers\ncalico-kube-controllers-55754f75c-wq2kn   1/1     Running   1          11h   192.168.219.70   master   \u003cnone\u003e           \u003cnone\u003e\n```\n\n### calico-node\n\nIt is launched on all of the instances, i.e. both master(s) and nodes. It's part of a daemonSet, which launches Pods on all the available instances by default. This software piece enables inter Pod communication in the cluster. This is an addon component too which has formed as I have chosen calico network plugin during the launch of the cluster\n```\nnetworkandcode@master:~$ kubectl get po -n kube-system -o wide | grep calico-node\ncalico-node-4xcrk                         1/1     Running   1          11h   10.128.15.226    master   \u003cnone\u003e           \u003cnone\u003e\ncalico-node-8fg7z                         1/1     Running   1          11h   10.128.15.229    node-1   \u003cnone\u003e           \u003cnone\u003e\ncalico-node-bhz45                         1/1     Running   1          11h   10.128.15.228    node-2   \u003cnone\u003e           \u003cnone\u003e\ncalico-node-z6zhd                         1/1     Running   1          11h   10.128.15.227    node-0   \u003cnone\u003e           \u003cnone\u003e\n```\n\n### coredns\n\nIt is reponsible for the DNS lookups in the cluster, which do the IP / Domian name resolutions. These Pods are part of a deployment with 2 replicas, both launched on the master\n```\nnetworkandcode@master:~$ kubectl get po -n kube-system -o wide | grep coredns\ncoredns-5644d7b6d9-wfgv8                  1/1     Running   1          11h   192.168.219.68   master   \u003cnone\u003e           \u003cnone\u003e\ncoredns-5644d7b6d9-x96d2                  1/1     Running   1          11h   192.168.219.69   master   \u003cnone\u003e           \u003cnone\u003e\n```\n\n## etcd-master\nThis a persistent key value style datastore which stores all the configuration of the Kubernetes objects. Hence it's highly important to backup this. As the name suggests it runs only on the master(s). It's a standalone Pod and not controller by higher level objects such as Deployments / DaemonSets\n```\nnetworkandcode@master:~$ kubectl get po -n kube-system -o wide | grep etcd-master\netcd-master                               1/1     Running   1          11h   10.128.15.226    master   \u003cnone\u003e           \u003cnone\u003e\n```\n\n### kube-apiserver-master\nThis is the apiserver which exposes all the objects, and our client tools such as kubectl interact with this to make CRUD operations on the cluster. This is typically launched only on the master(s). This Pod is standalone as well\n```\nnetworkandcode@master:~$ kubectl get po -n kube-system -o wide | grep kube-apiserver-master\nkube-apiserver-master                     1/1     Running   1          11h   10.128.15.226    master   \u003cnone\u003e           \u003cnone\u003e\n```\n\n### kube-controller-manager-master\nThis standalone Pod is a combination of multiple controllers such as replication controller, endpoints controller, namespace controller, and serviceaccounts controller. Each responsible for achieving the desired state of the cluster from it's current state for their respective scope. This Pod runs on the master(s)\n```\nnetworkandcode@master:~$ kubectl get po -n kube-system -o wide | grep kube-controller-manager\nkube-controller-manager-master            1/1     Running   1          11h   10.128.15.226    master   \u003cnone\u003e           \u003cnone\u003e\n```\n\n### kube-proxy\nThis is responsible for networking concepts such as services, port forwarding etc. and help exposing the Pods/Applications. These Pods are controlled by DaemonSets and are launched on all instances\n```\nnetworkandcode@master:~$ kubectl get po -n kube-system -o wide | grep kube-proxy\nkube-proxy-hprv8                          1/1     Running   1          11h   10.128.15.228    node-2   \u003cnone\u003e           \u003cnone\u003e\nkube-proxy-ljfwh                          1/1     Running   1          11h   10.128.15.227    node-0   \u003cnone\u003e           \u003cnone\u003e\nkube-proxy-lmh8x                          1/1     Running   1          11h   10.128.15.229    node-1   \u003cnone\u003e           \u003cnone\u003e\nkube-proxy-m46d9                          1/1     Running   1          11h   10.128.15.226    master   \u003cnone\u003e           \u003cnone\u003e\n```\n\n### kube-scheduler-master\nStandalone Pod running on the master responsible for scheduling Pods on available Nodes\n```\nnetworkandcode@master:~$ kubectl get po -n kube-system -o wide | grep kube-scheduler-master\nkube-scheduler-master                     1/1     Running   1          11h   10.128.15.226    master   \u003cnone\u003e           \u003cnone\u003e\n```\n\n\u002d\u002d-\n\nSo we have seen important standard components that make the Kubernetes cluster, and we could also add many other addon components like Promethus, Grafana etc. However we haven't seen an very important component yet, which is 'kubelet' that runs on nodes and helps registering the node with the kube-apiserver. 'kubelet' doesn't run like a Pod as other components. rather it runs as a binary. Note that when we launch a cluster using kubeadm, kubelet has to be installed separately\n\n\u002d\u002dend-of-post\u002d\u002d"} --></p>
+<div class="wp-block-jetpack-markdown">
+<p>We are going to see the installed components of a Kubernetes cluster</p>
+<p>Prerequisites:</p>
+<ul>
+<li>You already have a running cluster</li>
+<li>Basic understandng of Kubernetes objects such as Namespaces, Pods, Deployments, DaemonSets</li>
+<li>Basic 'get' commands of kubectl</li>
+</ul>
+<hr />
+<p>I have a running cluster with a single master and three nodes, launched using kubeadm and calico network plugin</p>
+<pre><code>networkandcode@master:~$ kubectl get no
+NAME     STATUS   ROLES    AGE   VERSION
+master   Ready    master   10h   v1.16.2
+node-0   Ready    &lt;none&gt;   10h   v1.16.2
+node-1   Ready    &lt;none&gt;   10h   v1.16.2
+node-2   Ready    &lt;none&gt;   10h   v1.16.2
+</code></pre>
+<p>There is a namespace called kube-system on which most of the Kubernetes software or system components are installed as Kubernetes objects itself</p>
+<pre><code>networkandcode@master:~$ kubectl get ns kube-system
+NAME          STATUS   AGE
+kube-system   Active   10h
+
+networkandcode@master:~$ kubectl get all -n kube-system
+NAME                                          READY   STATUS    RESTARTS   AGE
+pod/calico-kube-controllers-55754f75c-wq2kn   1/1     Running   1          10h
+pod/calico-node-4xcrk                         1/1     Running   1          10h
+pod/calico-node-8fg7z                         1/1     Running   1          10h
+pod/calico-node-bhz45                         1/1     Running   1          10h
+pod/calico-node-z6zhd                         1/1     Running   1          10h
+pod/coredns-5644d7b6d9-wfgv8                  1/1     Running   1          10h
+pod/coredns-5644d7b6d9-x96d2                  1/1     Running   1          10h
+pod/etcd-master                               1/1     Running   1          10h
+pod/kube-apiserver-master                     1/1     Running   1          10h
+pod/kube-controller-manager-master            1/1     Running   1          10h
+pod/kube-proxy-hprv8                          1/1     Running   1          10h
+pod/kube-proxy-ljfwh                          1/1     Running   1          10h
+pod/kube-proxy-lmh8x                          1/1     Running   1          10h
+pod/kube-proxy-m46d9                          1/1     Running   1          10h
+pod/kube-scheduler-master                     1/1     Running   1          10h
+
+NAME               TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)                  AGE
+service/kube-dns   ClusterIP   10.96.0.10   &lt;none&gt;        53/UDP,53/TCP,9153/TCP   10h
+
+NAME                         DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR                 AGE
+daemonset.apps/calico-node   4         4         4       4            4           beta.kubernetes.io/os=linux   10h
+daemonset.apps/kube-proxy    4         4         4       4            4           beta.kubernetes.io/os=linux   10h
+
+NAME                                      READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/calico-kube-controllers   1/1     1            1           10h
+deployment.apps/coredns                   2/2     2            2           10h
+
+NAME                                                DESIRED   CURRENT   READY   AGE
+replicaset.apps/calico-kube-controllers-55754f75c   1         1         1       10h
+replicaset.apps/coredns-5644d7b6d9                  2         2         2       10h
+</code></pre>
+<p>If we group them, we see there are primarily 8 software components:</p>
+<ul>
+<li>calico-kube-controllers</li>
+<li>calico-node</li>
+<li>coredns</li>
+<li>etcd-master</li>
+<li>kube-apiserver-master</li>
+<li>kube-controller-manager-master</li>
+<li>kube-proxy</li>
+<li>kube-scheduler-master</li>
+</ul>
+<p>Let's look at each of these components now</p>
+<h3>calico-kube-controllers</h3>
+<p>It is the calico network controller which is installed only on the master(s), It is an add on networking component though part of the calico network addon installation, and not a native Kubernetes component. The associated Pod is part of a deployment with replicas equal to the number of masters, as we have a single master here, the no. of Pod replicas is 1</p>
+<pre><code>networkandcode@master:~$ kubectl get po -n kube-system -o wide | grep calico-kube-controllers
+calico-kube-controllers-55754f75c-wq2kn   1/1     Running   1          11h   192.168.219.70   master   &lt;none&gt;           &lt;none&gt;
+</code></pre>
+<h3>calico-node</h3>
+<p>It is launched on all of the instances, i.e. both master(s) and nodes. It's part of a daemonSet, which launches Pods on all the available instances by default. This software piece enables inter Pod communication in the cluster. This is an addon component too which has formed as I have chosen calico network plugin during the launch of the cluster</p>
+<pre><code>networkandcode@master:~$ kubectl get po -n kube-system -o wide | grep calico-node
+calico-node-4xcrk                         1/1     Running   1          11h   10.128.15.226    master   &lt;none&gt;           &lt;none&gt;
+calico-node-8fg7z                         1/1     Running   1          11h   10.128.15.229    node-1   &lt;none&gt;           &lt;none&gt;
+calico-node-bhz45                         1/1     Running   1          11h   10.128.15.228    node-2   &lt;none&gt;           &lt;none&gt;
+calico-node-z6zhd                         1/1     Running   1          11h   10.128.15.227    node-0   &lt;none&gt;           &lt;none&gt;
+</code></pre>
+<h3>coredns</h3>
+<p>It is reponsible for the DNS lookups in the cluster, which do the IP / Domian name resolutions. These Pods are part of a deployment with 2 replicas, both launched on the master</p>
+<pre><code>networkandcode@master:~$ kubectl get po -n kube-system -o wide | grep coredns
+coredns-5644d7b6d9-wfgv8                  1/1     Running   1          11h   192.168.219.68   master   &lt;none&gt;           &lt;none&gt;
+coredns-5644d7b6d9-x96d2                  1/1     Running   1          11h   192.168.219.69   master   &lt;none&gt;           &lt;none&gt;
+</code></pre>
+<h2>etcd-master</h2>
+<p>This a persistent key value style datastore which stores all the configuration of the Kubernetes objects. Hence it's highly important to backup this. As the name suggests it runs only on the master(s). It's a standalone Pod and not controller by higher level objects such as Deployments / DaemonSets</p>
+<pre><code>networkandcode@master:~$ kubectl get po -n kube-system -o wide | grep etcd-master
+etcd-master                               1/1     Running   1          11h   10.128.15.226    master   &lt;none&gt;           &lt;none&gt;
+</code></pre>
+<h3>kube-apiserver-master</h3>
+<p>This is the apiserver which exposes all the objects, and our client tools such as kubectl interact with this to make CRUD operations on the cluster. This is typically launched only on the master(s). This Pod is standalone as well</p>
+<pre><code>networkandcode@master:~$ kubectl get po -n kube-system -o wide | grep kube-apiserver-master
+kube-apiserver-master                     1/1     Running   1          11h   10.128.15.226    master   &lt;none&gt;           &lt;none&gt;
+</code></pre>
+<h3>kube-controller-manager-master</h3>
+<p>This standalone Pod is a combination of multiple controllers such as replication controller, endpoints controller, namespace controller, and serviceaccounts controller. Each responsible for achieving the desired state of the cluster from it's current state for their respective scope. This Pod runs on the master(s)</p>
+<pre><code>networkandcode@master:~$ kubectl get po -n kube-system -o wide | grep kube-controller-manager
+kube-controller-manager-master            1/1     Running   1          11h   10.128.15.226    master   &lt;none&gt;           &lt;none&gt;
+</code></pre>
+<h3>kube-proxy</h3>
+<p>This is responsible for networking concepts such as services, port forwarding etc. and help exposing the Pods/Applications. These Pods are controlled by DaemonSets and are launched on all instances</p>
+<pre><code>networkandcode@master:~$ kubectl get po -n kube-system -o wide | grep kube-proxy
+kube-proxy-hprv8                          1/1     Running   1          11h   10.128.15.228    node-2   &lt;none&gt;           &lt;none&gt;
+kube-proxy-ljfwh                          1/1     Running   1          11h   10.128.15.227    node-0   &lt;none&gt;           &lt;none&gt;
+kube-proxy-lmh8x                          1/1     Running   1          11h   10.128.15.229    node-1   &lt;none&gt;           &lt;none&gt;
+kube-proxy-m46d9                          1/1     Running   1          11h   10.128.15.226    master   &lt;none&gt;           &lt;none&gt;
+</code></pre>
+<h3>kube-scheduler-master</h3>
+<p>Standalone Pod running on the master responsible for scheduling Pods on available Nodes</p>
+<pre><code>networkandcode@master:~$ kubectl get po -n kube-system -o wide | grep kube-scheduler-master
+kube-scheduler-master                     1/1     Running   1          11h   10.128.15.226    master   &lt;none&gt;           &lt;none&gt;
+</code></pre>
+<hr />
+<p>So we have seen important standard components that make the Kubernetes cluster, and we could also add many other addon components like Promethus, Grafana etc. However we haven't seen an very important component yet, which is 'kubelet' that runs on nodes and helps registering the node with the kube-apiserver. 'kubelet' doesn't run like a Pod as other components. rather it runs as a binary. Note that when we launch a cluster using kubeadm, kubelet has to be installed separately</p>
+<p>--end-of-post--</p>
+</div>
+<p><!-- /wp:jetpack/markdown --></p>

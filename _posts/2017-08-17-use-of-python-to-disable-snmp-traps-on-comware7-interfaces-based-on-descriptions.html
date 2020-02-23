@@ -1,0 +1,52 @@
+---
+layout: post
+title: network automation > python > netmiko | comware7 > interface > snmp traps
+date: 2017-08-17 12:17:21.000000000 +05:30
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags:
+- automation
+- python
+- snmp
+meta:
+  _rest_api_published: '1'
+  _rest_api_client_id: "-1"
+  _publicize_job_id: '8471806070'
+  restapi_import_id: 599541a987283
+  original_post_id: '122'
+  _wp_old_slug: '122'
+author:
+  login: shak1r
+  email: shakir@techie.com
+  display_name: shakir
+  first_name: ''
+  last_name: ''
+permalink: "/2017/08/17/use-of-python-to-disable-snmp-traps-on-comware7-interfaces-based-on-descriptions/"
+---
+<p>setup:</p>
+<div class="separator"><a href="https://networkandcode.files.wordpress.com/2017/08/fe1f1-1.png"><img src="{{ site.baseurl }}/assets/fe1f1-1.png?w=656" border="0" /></a><a href="https://networkandcode.files.wordpress.com/2017/08/fe1f1-1.png"> </a></div>
+<p>tested on: oracle virtual box, h3c cloud lab</p>
+<p>the snapshot is taken from the h3c cloud workspace, all 3 devices are connected to the virtual box host only adapter</p>
+<p>the diagram on h3c cloud lab shows 3 hosts, but logically its the same host connecting to 3 devices</p>
+<p>ip address as follows:<br />
+host: 192.168.56.1/24<br />
+device1: 56.11/24<br />
+device2: 56.12/24<br />
+device3: 56.13/24</p>
+<p>comware devices are configured with the same local user and super credentials</p>
+<p>…</p>
+<p>input:<br />
+given on a separate python file named d.py, stored in the same folder</p>
+<p>#code</p>
+<p><img src="{{ site.baseurl }}/assets/d1.png" class="alignnone wp-image-173 size-full" height="607" alt="d" width="937" /></p>
+<div>…</div>
+<p>main script:</p>
+<p>all the import statements would by standard, come at the top of the code, in this code, the import statements are used in various parts, to understand it's significance in that section</p>
+<p><img src="{{ site.baseurl }}/assets/test_script2.png" class="alignnone size-full wp-image-174" height="819" alt="test_script" width="1089" /></p>
+<p>…</p>
+<div>demo:</div>
+<div class="separator"><a href="https://networkandcode.files.wordpress.com/2017/08/9a36b-demo.png"><img src="{{ site.baseurl }}/assets/9a36b-demo.png?w=656" class="alignnone" border="0" /></a>–end-of-document–</div>

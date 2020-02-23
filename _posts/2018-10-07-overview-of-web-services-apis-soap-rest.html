@@ -1,0 +1,62 @@
+---
+layout: post
+title: Overview of Web Services APIs, SOAP / REST
+date: 2018-10-07 23:58:03.000000000 +05:30
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags:
+- http
+- rest
+- soap
+meta:
+  _wpas_skip_18169689: '1'
+  _wpas_skip_18195285: '1'
+  timeline_notification: '1538936886'
+  _rest_api_published: '1'
+  _rest_api_client_id: "-1"
+  _publicize_job_id: '22939751198'
+author:
+  login: shak1r
+  email: shakir@techie.com
+  display_name: shakir
+  first_name: ''
+  last_name: ''
+permalink: "/2018/10/07/overview-of-web-services-apis-soap-rest/"
+---
+<p>This post covers few key terms associated with Web services APIs and gives an overview of those.</p>
+<p><strong><span style="color:#3366ff;">API</span></strong> - <strong>A</strong>pplication <strong>P</strong>rogramming <strong>I</strong>nterface, is like a contact or messenger that's provided by one piece of software to allow some other piece of software to communicate with it</p>
+<p>There are lots of APIs, in computer's operating system, smartphones, websites, devices like refrigerators, washing machines, televisions etc.</p>
+<p><strong><span style="color:#3366ff;">Web services</span></strong> API is one type of an API, Web services API requests and responses are structured/formatted, most commonly used formats are XML(E<strong>x</strong>tensible <strong>M</strong>arkup <strong>L</strong>anguage), JSON(<strong>J</strong>ava<strong>S</strong>cript <strong>O</strong>bject <strong>N</strong>otation)</p>
+<p>A website is meant for human consumption, where as a web service is meant for code / application level consumption</p>
+<p>Two popular types of Web service APIs: SOAP and REST</p>
+<p>Specifications in JAVA: JAX-WS for SOAP, and JAX-RS for REST</p>
+<p><strong><span style="color:#3366ff;">SOAP</span></strong> - <strong>S</strong>imple <strong>O</strong>bject <strong>A</strong>ccess <strong>P</strong>rotocol: XML over HTTP(S), since 1990s, heavy weight, not simple. SOAP is like an XML schema, it is not an application protocol and doesn't come with a port number.</p>
+<p>Web services can be thought of as an implementation of SOA(<strong>S</strong>ervices <strong>O</strong>riented <strong>A</strong>rchitecture)</p>
+<p>In <strong><span style="color:#3366ff;">SOA</span></strong>, two pieces of software(service provider and service consumer) are communicating with each other</p>
+<p><span style="color:#cc99ff;">Provider &lt;-----request/response-----&gt; Consumer</span></p>
+<p>In this 2 way communication, the service consumer sends service requests where as the service provider sends responses</p>
+<p>In a Web services implementation, The service provider software publishes it's service descriptions which are placed in a directory, this is mostly done using WSDL(Web Services Description Language). The communication between the provider and directory happens using SOAP protocol. The consumer queries that directory and gets responses back, also using SOAP, to find out the list of services offered by the provider and the ways to communicate with the provider.</p>
+<p>WSDL is a file written in XML language, a WSDL file tells what a web service does and how it can be consumed.</p>
+<p><img class="alignnone size-full wp-image-715" src="{{ site.baseurl }}/assets/web-services-soa1.jpg" alt="web services soa" width="413" height="159" /></p>
+<p>Based on the lookup of the specifications defined in the service descriptions, the consumer then sends request messages in XML format according to the need, the provider would also send responses accordingly in XML</p>
+<p>The consumer software can be a software such as postman client or a code written in programming such as programming languages such as Python, Java etc. by importing appropriate libraries</p>
+<p>The consumer can either consume data(HTTP GET) from an API, or write data(HTTP POST) into an API, all of the HTTP methods can be called over the API</p>
+<p><strong><span style="color:#3366ff;">HTTP</span></strong> Methods: GET(retrieve), POST(Submit, not secure), PUT(update), DELETE, HEAD(GET with out a body), OPTIONS(retrieve supported HTTP methods), PATCH(partial update)</p>
+<p>The web services API relies on a stateless, client-server protocol, which is mostly HTTP(S) (Hyper Text Transfer Protocol)</p>
+<p>We may need authentication in most of the cases to talk to an API endpoint(URL/URI) which is not public or open, most of the websites use OAuth2 for this purpose</p>
+<p>username(client ID) + password(client secret) =&gt; access token</p>
+<p>this access token will be used for all subsequent API Calls (HTTP requests)</p>
+<p><strong><span style="color:#3366ff;">REST</span></strong> - <strong>Re</strong>presentative <strong>S</strong>tate <strong>T</strong>ransfer</p>
+<p>REST API is also called as RESTful API</p>
+<p>RESTful means that the particular protocol or API conforms to the REST architectural style, the world wide web is considered as the largest implementation that conforms to the REST standard.</p>
+<p>REST is an architectural style, it's not a protocol, it's a set of architectural constraints you would see in a protocol(example: HTTP) built in that style. So, HTTP is a RESTful protocol.</p>
+<p>REST is the architecture of the Web as it works today. A REST implementation can support both XML and JSON over HTTP(S). It provides a simple method of accessing web services.</p>
+<p>70% of all public APIs are REST APIs. Google Maps' API, Twitter's status update API, Facebook's graph API, Instagram's Media Search API, are all REST APIs</p>
+<p><img class="alignnone size-full wp-image-716" src="{{ site.baseurl }}/assets/rest.jpg" alt="rest.JPG" width="358" height="105" /></p>
+<p>The client is also called as the User agent, the Web server is also called as the Origin server.</p>
+<p>There could be lots of HTTP intermediaries(not networking devices) between the user agent and origin server. The intermediaries can help in translation of messaging and can also improve performance using methods such as caching. Intermediaries can contain proxies chosen by the client and Gateways chosen by the server.</p>
+<p>--end-of-post--</p>

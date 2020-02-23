@@ -1,0 +1,123 @@
+---
+layout: post
+title: Multicast Refresher
+date: 2019-02-22 10:26:57.000000000 +05:30
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags:
+- multicast
+meta:
+  _wpas_skip_18195285: '1'
+  _publicize_job_id: '27900724335'
+  _rest_api_published: '1'
+  _rest_api_client_id: "-1"
+  timeline_notification: '1550811422'
+author:
+  login: shak1r
+  email: shakir@techie.com
+  display_name: shakir
+  first_name: ''
+  last_name: ''
+permalink: "/2019/02/22/multicast-refresher/"
+---
+<p><span style="color:#ff00ff;">Multicast overview<br />
+</span>Multicast is mostly UDP based, best effort delivery, RTP (real-time transport protocol) or both UDP and RTP whereas unicast applications mainly use TCP</p>
+<p>multicast provides the ability to communicate with unknown receivers<br />
+COS/QOS is harder to achieve, as multicast is sensitive to jitter and delay, COS tools such as WRED (weighted random early detection) do not work well with UDP. The PGM (pragmatic general multicast) protocol has been developed to add loss detection and retransmission capabilities to multicast</p>
+<p>the use of multicast is a trade-off between the more efficient use of fwplane resources(BW) and the increased use of control plane resources to keep track of the multicast forwarding information</p>
+<p>A multicast source is the root at top of an inverted tree<br />
+receivers are at the leaves - bottom of the tree<br />
+traffic is replicated by the routers at the branching points of the tree</p>
+<p>the tree is often referred to as multicast distribution tree<br />
+the traffic flows down much like water in a river</p>
+<p>the router directly connected to the source is called the first-hop router<br />
+the routers directly connected to the receivers are called the last-hop routers</p>
+<p>DR: router closest to the source, used for forwarding multicast IP packets. if two or more routers are attached to the source, only one ever becomes the DR based on an election algorithm that depends on the multicast routing protocol such as PIM (protocol independent multicast) and DVMRP (distance vector multicast routing protocol) in use.</p>
+<p>The class D range is reserved for the use of multicast addresses. 224/4 - 224.0.0.0 to 239.255.255.255 the base address 224.0.0.0 is reserved and cannot be assigned to any group. Not all these addresses are routable, 224.0.0.1 to 224.0.0.255 are link-local addresses used for local signalling, The traffic in this range should never be forwarded to any other part of the N/W. eg: OSPF packets use destination 224.0.0.5, 6. Typically the TTL is set to 1 to accomplish this. eg. OSPF, RIP, PIM, DVMRP</p>
+<hr />
+<p><span style="color:#ff00ff;">MAC Address</span><br />
+In unicast delivery on ethernet segments, traffic is sent to the unique mac address of each host. The router learns about its mac address by using the ARP. For multicast, the delivery mechanism is different. The IP multicast address must be mapped to a specific MAC address that is programmed into the NIC of each receiver that wants to receive this traffic. Unfortunately fewer mac addresses are available for multicast usage than there are IP multicast addresses. only 23 bits of mac address space is available for mapping 28 bits of unique ip multicast address space, which results in a 32:1 ratio of IP multicast addresses to multicast mac addresses</p>
+<p>For eg: 224.10.8.5, first 4 high-order bits are stripped and then the remaining 5 high-order bits are stripped<br />
+01-00-5e-0a-08-05 -- 01-00-5e is the base address for multicast</p>
+<p>we might want to think about the overlap when assigning multicast addresses to your applications<br />
+for eg. the following groups maps to the exact same mac address as 224.10.8.5: any 22x.10.8.5 MC address (15 duplicates) but also any 22x.138.8.5 MC address (16 duplicates)</p>
+<hr />
+<p><span style="color:#ff00ff;">IGMP<br />
+</span>IGMP is the protocol between last-hop routers and hosts(receivers)<br />
+IGMP (Internet group membership protocol) is used by the receivers to express their desire for group membership to their directly attached gateways (last hop routers)</p>
+<p>a single receiver can be part of a single or multiple multicast groups, and also has an option to specify the source from which it is expecting the traffic to arrive from</p>
+<p>packet types - IGMP query, IGMP report, IGMP leave</p>
+<p>the last-hop routers send periodic IGMP queries to the network segment, and the receiving hosts answer with IGMP reports describing their group membership.</p>
+<p>in case there are several IGMP routers in a segment, one of them is elected as the querier (by default, the lowest ip address wins). simultaneously a receiver can also send IGMP query when it first subscribes to a group, or an IGMP leave packet when it unsubscribes from the group</p>
+<p>as an alternative to learning group membership from the receiving hosts dynamically, JunOS allows for the configuration of static IGMP reports in downstream router interfaces if required or if needed</p>
+<hr />
+<p><span style="color:#ff00ff;">IGMP versions</span><br />
+IGMPv1: legacy, not supported by most applications<br />
+IGMPv2: most commonly used, supports group specific queries, and receiver initiated leaves<br />
+IGMPv3: supports source-specific queries, reports and leaves</p>
+<hr />
+<p><span style="color:#ff00ff;">Service models<br />
+</span>any-source multicast, source-specific multicast</p>
+<p>asm any-source multicast RFC 1112, one-to-many such as IPTV, many-to-many such as white boarding or videoconferencing</p>
+<p>SSM receiver specifies sources from which to receive traffic, and also the sources it does not want to receive traffic from. Less complex, multicast address allocation easier</p>
+<hr />
+<p><span style="color:#ff00ff;">ASM(Any Source Multicast)<br />
+</span>when an IGMPv1 or IGMPv2 receiver host joins a multicast group it sends a (*,G) IGMP report, here * refers to any source</p>
+<p>ASM is quite simple for the receiver hosts, when they just want to subscribe to a group, irrespective of the source</p>
+<p>but the complexity is in the IP network (routers) to convert (*,G) into (S,G) states as the last hop routers need to find a mechanism to join the multicast distribution tree with out knowing the source</p>
+<p>what if there are 2 sources sending the same traffic, the network treats the two flows (s1,g) and(s2,g) independently. It is up to the receiver and the application running in it to consider each flow as independent (for example two different voice streams) or both the flows as same (redundant copies, this scenario is common when (*,G) state is created by the receiver</p>
+<hr />
+<p><span style="color:#ff00ff;">SSM(Source Specific Multicast)</span><br />
+The receiver application has a process to know in advance the source ip address, for example, via a web portal. the receiver then sends a source specific (S,G) report</p>
+<p>this model is simpler for the network (routers) but more complex for the end user application</p>
+<hr />
+<p><span style="color:#ff00ff;">PIM</span><br />
+PIM v2 is the industry de facto standard for IPv4 multicast routing</p>
+<p>protocol independent multicast (PIM), is a multicast protocol, which is responsible for building the multicast distribution tree. PIM needs to be enabled on all the router interfaces involved in multicast routing</p>
+<p>PIM is the protocol between all multicast routers</p>
+<p>all the PIM packets (except the registers) are sent with the destination ip address 224.0.0.13, hence they are processed by all the PIM enabled neighbours</p>
+<p>PIM adjacencies are established with the exchange of hello packets at the interface</p>
+<hr />
+<p><span style="color:#ff00ff;">Anycast<br />
+</span>group of receivers share the same address. traffic to the anycast address is delivered to the nearest member of the group. example: dns anycast. in multicast it is also used in a feature called anycast rp. anycast provides a very fast convergence in case one of the members of the group disappears.</p>
+<hr />
+<p><span style="color:#ff00ff;">Distribution modes<br />
+</span>dense mode, sparse mode</p>
+<p>dense mode: flood and prune. 'prune' signals no interest in receiving multicast traffic, graft overrides previous prune messages</p>
+<p>sparse mode: explicit subscriptions only using join signals. prune sent to unsubscribe from multicast traffic</p>
+<hr />
+<p><span style="color:#ff00ff;">Distribution trees<br />
+</span>source or shortest path tree, shared or rendezvous point(RP) tree</p>
+<p>source is upstream root on top of SPT, RP is upstream root on top of RPT, receiver is downstream - leaf on branch of tree</p>
+<p>SPT: known source, S,G forwarding state, used in both dense and sparse modes<br />
+SPT is the forward path from the source till the router close to the receiver, hence the router next to the receiver must know about the source<br />
+in dense mode, SPT is always used. in sparse mode, SPT is used once the receiver learns about the source<br />
+the routers keep the forwarding state from the receiver to the source in the S,G state</p>
+<p>RPT: unknown source, *,g forwarding state, used only in sparse mode<br />
+the tree is built from the receiver to a rendezvous meeting point. the name shared implies the tree is shared by all sources<br />
+once the source starts sending traffic, the router closest to the source sends the traffic to the RP, from there it can be sent to the receiver. all routers in the network must agree on which router is the RP. RPT generates less state information, because it is not necessary to create a unique source tree for each session in the network. the path between the source and receiver is often not optimal, which is especially important for delay sensitive traffic</p>
+<hr />
+<p><span style="color:#ff00ff;">Internet</span><br />
+If the receiver and source belong to different domains, multicast might be more complicated.</p>
+<p>Not all ISPs offer multicast traffic to their subscribers.</p>
+<p>AMT automatic multicast tunneling could be used to make the deployment of multicast applications easier across the internet. it allows multicast traffic across islands of unicast-only connectivity by automating tunnel setup to transport multicast traffic. such connectivity enables service providers, content providers, and their customers to participate in delivering multicast traffic, even if they lack end-to-end multicast connectivity. AMT allows any host to receive multicast. on the client end is an AMT gateway that is a single host. once the gateway has located an AMT relay, which might be a host but is more typically a router, it periodically sends igmp messages over a dynamically created udp tunnel to the relay. AMT relays and gateways cooperate to tx MC traffic sources within the MC N/W to end-user sites. AMT relays receive the traffic natively and unicast-encapsulate it to the GWs, which allows anyone on the internet to create a dynamic tunnel to download multicast data streams</p>
+<hr />
+<p><span style="color:#ff00ff;">RPF</span><br />
+unicast forwarding is based on next hop, whereas multicast forwarding is based on source ip address - forwards traffic away from the source along the distribution tree, forwards only traffic that passes RPF check</p>
+<p>rpf (reverse path forwarding) prevents looped and duplicated mc packets. rpf compares incoming interface of mc packet with outgoing next-hop interface of unicast route towards the source of the packet, if inerfaces are the same: passes the rpf check - packet is fwdd down the dis tree, if interfaces are different: fails the rpf check - packet is discarded</p>
+<p>mc routing sends only a single packet down each branch of the distribution tree to avoid loops/duplication. the rpf mechanism basically selects packets to fwd down the distribution tree only if the packet was received on the interface that is nearest to the source</p>
+<p>command example<br />
+r1&gt; show multicast rpf 192.168.100.10</p>
+<p>RPF check mechanism is used in both fwding and control plane<br />
+the group of interfaces with the downstream receivers is called the outgoing interface list (oil)<br />
+the result of a successful rpf check is cached in inet.1</p>
+<p>ctrl plane - if a router must rx traffic coz of downstream receivers, it signals only to upstream routers on the interface that would pass the rpf check. therefore join and prune messages are only exchanged with neighboring routers on the interface to the upstream router nearest to the source. the receipt of igmp or pim join messages moves those interfaces to the oil. so packets are fwdd to these interfaces toward the receivers</p>
+<p>inet.0 - default table used for RPF check lookups - same topology for unicast and multicast forwarding<br />
+inet.1 - fwding cache for successful rpf checked traffic<br />
+inet.2 - alt table for RPF check lookups, mc topology indep from uc, use of rib groups reqd - if we have a sep topology for mc forwarding the rpf check can be redirected to look in inet.2. mp-bgp and multi-topology is-is can place routes into inet.2 directly. other protocols muse rib to place routes into inet.2</p>
+<p>--end-of-post--</p>
+<p>&nbsp;</p>

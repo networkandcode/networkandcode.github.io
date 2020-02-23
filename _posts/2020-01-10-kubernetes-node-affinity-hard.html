@@ -1,0 +1,104 @@
+---
+layout: post
+title: kubernetes > node affinity > hard
+date: 2020-01-10 08:15:46.000000000 +05:30
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags: []
+meta:
+  _publicize_job_id: '39369604722'
+  timeline_notification: '1578624349'
+author:
+  login: shak1r
+  email: shakir@techie.com
+  display_name: shakir
+  first_name: ''
+  last_name: ''
+permalink: "/2020/01/10/kubernetes-node-affinity-hard/"
+---
+<p><!-- wp:jetpack/markdown {"source":"We are going to see how to specify hard requirements for Pod(s) to select a Node using ```spec.affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution```. With this the Pods could be only launched on the Node(s) that matches with the configuration\n\nIt's good to have some basic understanding of Deployments and Match expressions to make the best use of this post.\n\nTo check the labels on Nodes\n```\nnetworkandcode@k8s-master-0:~$ kubectl get no \u002d\u002dshow-labels\nNAME           STATUS   ROLES    AGE     VERSION   LABELS\nk8s-master-0   Ready    master   2d23h   v1.16.3   beta.kubernetes.io\/arch=amd64,beta.kubernetes.io\/os=linux,kubernetes.io\/arch=amd64,kubernetes.io\/hostname=k8s-master-0,kubernetes.io\/os=linux,node-role.kubernetes.io\/master=\nk8s-node-0     Ready       2d23h   v1.16.3   beta.kubernetes.io\/arch=amd64,beta.kubernetes.io\/os=linux,kubernetes.io\/arch=amd64,kubernetes.io\/hostname=k8s-node-0,kubernetes.io\/os=linux\nk8s-node-1     Ready       2d23h   v1.16.3   beta.kubernetes.io\/arch=amd64,beta.kubernetes.io\/os=linux,kubernetes.io\/arch=amd64,kubernetes.io\/hostname=k8s-node-1,kubernetes.io\/os=linux\nk8s-node-2     Ready       2d23h   v1.16.3   beta.kubernetes.io\/arch=amd64,beta.kubernetes.io\/os=linux,kubernetes.io\/arch=amd64,kubernetes.io\/hostname=k8s-node-2,kubernetes.io\/os=linux\n```\n\nLet's use the label kubernetes.io\/hostname for the purpose of this exercise. We are going to define a Deployment manifest as follows\n```\nnetworkandcode@k8s-master-0:~$ cat ex36-deploy-node-affinity-hard.yaml \n\u002d\u002d-\napiVersion: apps\/v1\nkind: Deployment\nmetadata:\n  name: deploy36\nspec:\n  selector:\n    matchLabels:\n      tag: label36\n  replicas: 20\n  template:\n    metadata:\n      labels:\n        tag: label36\n    spec:\n      affinity:\n        # nodeAffinity configuration starts here\n        nodeAffinity:\n          requiredDuringSchedulingIgnoredDuringExecution:\n            nodeSelectorTerms:\n              - matchExpressions:\n                - key: kubernetes.io\/hostname\n                  operator: In\n                  values: \n                  - k8s-node-0\n        # nodeAffinity configuration ends here\n      containers:\n      - name: ctr35\n        image: nginx\n...\n```\n\nIn the Node Affinity configuration above, we are mapping the Pod on to a Node that has the label kubernetes.io\/hostname=k8s-node-0.\n\nLet's create the Deployment\n```\nnetworkandcode@k8s-master-0:~$ kubectl create -f ex36-deploy-node-affinity-hard.yaml \ndeployment.apps\/deploy36 created\n```\n\nLet's see where the Pods are launched\n```\nnetworkandcode@k8s-master-0:~$ kubectl get po -o wide\nNAME                        READY   STATUS    RESTARTS   AGE   IP               NODE         NOMINATED NODE   READINESS GATES\ndeploy36-5585565d99-27vg7   1\/1     Running   0          73s   192.168.11.218   k8s-node-0              \ndeploy36-5585565d99-2nmnw   1\/1     Running   0          73s   192.168.11.215   k8s-node-0              \ndeploy36-5585565d99-4tpvj   1\/1     Running   0          73s   192.168.11.219   k8s-node-0              \ndeploy36-5585565d99-8msj8   1\/1     Running   0          73s   192.168.11.217   k8s-node-0              \ndeploy36-5585565d99-9892n   1\/1     Running   0          73s   192.168.11.210   k8s-node-0              \ndeploy36-5585565d99-b2krd   1\/1     Running   0          73s   192.168.11.221   k8s-node-0              \ndeploy36-5585565d99-c7wwl   1\/1     Running   0          73s   192.168.11.223   k8s-node-0              \ndeploy36-5585565d99-cpgl4   1\/1     Running   0          73s   192.168.11.207   k8s-node-0              \ndeploy36-5585565d99-dd78m   1\/1     Running   0          73s   192.168.11.222   k8s-node-0              \ndeploy36-5585565d99-fczkc   1\/1     Running   0          73s   192.168.11.212   k8s-node-0              \ndeploy36-5585565d99-g9g5s   1\/1     Running   0          73s   192.168.11.216   k8s-node-0              \ndeploy36-5585565d99-js828   1\/1     Running   0          73s   192.168.11.213   k8s-node-0              \ndeploy36-5585565d99-lh6tl   1\/1     Running   0          73s   192.168.11.208   k8s-node-0              \ndeploy36-5585565d99-m45qd   1\/1     Running   0          73s   192.168.11.214   k8s-node-0              \ndeploy36-5585565d99-pgkz5   1\/1     Running   0          73s   192.168.11.209   k8s-node-0              \ndeploy36-5585565d99-rl4c2   1\/1     Running   0          73s   192.168.11.225   k8s-node-0              \ndeploy36-5585565d99-rxmlw   1\/1     Running   0          73s   192.168.11.224   k8s-node-0              \ndeploy36-5585565d99-sf2dc   1\/1     Running   0          73s   192.168.11.211   k8s-node-0              \ndeploy36-5585565d99-trt5d   1\/1     Running   0          73s   192.168.11.220   k8s-node-0              \ndeploy36-5585565d99-wcbjd   1\/1     Running   0          73s   192.168.11.206   k8s-node-0              \n```\n\nSince we have specified hard i.e., mandatory requirement, all the Pods would have to be launched on k8s-node-0\n\nCleanup \n```networkandcode@k8s-master-0:~$ kubectl delete deploy deploy36\ndeployment.apps \u0022deploy36\u0022 deleted\n```\n\nReference: https:\/\/kubernetes.io\/docs\/reference\/generated\/kubernetes-api\/v1.15\/#nodeselectorterm-v1-core\n\n\u002d\u002dend-of-post\u002d\u002d"} --></p>
+<div class="wp-block-jetpack-markdown">
+<p>We are going to see how to specify hard requirements for Pod(s) to select a Node using <code>spec.affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution</code>. With this the Pods could be only launched on the Node(s) that matches with the configuration</p>
+<p>It's good to have some basic understanding of Deployments and Match expressions to make the best use of this post.</p>
+<p>To check the labels on Nodes</p>
+<pre><code>networkandcode@k8s-master-0:~$ kubectl get no --show-labels
+NAME           STATUS   ROLES    AGE     VERSION   LABELS
+k8s-master-0   Ready    master   2d23h   v1.16.3   beta.kubernetes.io/arch=amd64,beta.kubernetes.io/os=linux,kubernetes.io/arch=amd64,kubernetes.io/hostname=k8s-master-0,kubernetes.io/os=linux,node-role.kubernetes.io/master=
+k8s-node-0     Ready    &lt;none&gt;   2d23h   v1.16.3   beta.kubernetes.io/arch=amd64,beta.kubernetes.io/os=linux,kubernetes.io/arch=amd64,kubernetes.io/hostname=k8s-node-0,kubernetes.io/os=linux
+k8s-node-1     Ready    &lt;none&gt;   2d23h   v1.16.3   beta.kubernetes.io/arch=amd64,beta.kubernetes.io/os=linux,kubernetes.io/arch=amd64,kubernetes.io/hostname=k8s-node-1,kubernetes.io/os=linux
+k8s-node-2     Ready    &lt;none&gt;   2d23h   v1.16.3   beta.kubernetes.io/arch=amd64,beta.kubernetes.io/os=linux,kubernetes.io/arch=amd64,kubernetes.io/hostname=k8s-node-2,kubernetes.io/os=linux
+</code></pre>
+<p>Let's use the label kubernetes.io/hostname for the purpose of this exercise. We are going to define a Deployment manifest as follows</p>
+<pre><code>networkandcode@k8s-master-0:~$ cat ex36-deploy-node-affinity-hard.yaml 
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deploy36
+spec:
+  selector:
+    matchLabels:
+      tag: label36
+  replicas: 20
+  template:
+    metadata:
+      labels:
+        tag: label36
+    spec:
+      affinity:
+        # nodeAffinity configuration starts here
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                - key: kubernetes.io/hostname
+                  operator: In
+                  values: 
+                  - k8s-node-0
+        # nodeAffinity configuration ends here
+      containers:
+      - name: ctr35
+        image: nginx
+...
+</code></pre>
+<p>In the Node Affinity configuration above, we are mapping the Pod on to a Node that has the label kubernetes.io/hostname=k8s-node-0.</p>
+<p>Let's create the Deployment</p>
+<pre><code>networkandcode@k8s-master-0:~$ kubectl create -f ex36-deploy-node-affinity-hard.yaml 
+deployment.apps/deploy36 created
+</code></pre>
+<p>Let's see where the Pods are launched</p>
+<pre><code>networkandcode@k8s-master-0:~$ kubectl get po -o wide
+NAME                        READY   STATUS    RESTARTS   AGE   IP               NODE         NOMINATED NODE   READINESS GATES
+deploy36-5585565d99-27vg7   1/1     Running   0          73s   192.168.11.218   k8s-node-0   &lt;none&gt;           &lt;none&gt;
+deploy36-5585565d99-2nmnw   1/1     Running   0          73s   192.168.11.215   k8s-node-0   &lt;none&gt;           &lt;none&gt;
+deploy36-5585565d99-4tpvj   1/1     Running   0          73s   192.168.11.219   k8s-node-0   &lt;none&gt;           &lt;none&gt;
+deploy36-5585565d99-8msj8   1/1     Running   0          73s   192.168.11.217   k8s-node-0   &lt;none&gt;           &lt;none&gt;
+deploy36-5585565d99-9892n   1/1     Running   0          73s   192.168.11.210   k8s-node-0   &lt;none&gt;           &lt;none&gt;
+deploy36-5585565d99-b2krd   1/1     Running   0          73s   192.168.11.221   k8s-node-0   &lt;none&gt;           &lt;none&gt;
+deploy36-5585565d99-c7wwl   1/1     Running   0          73s   192.168.11.223   k8s-node-0   &lt;none&gt;           &lt;none&gt;
+deploy36-5585565d99-cpgl4   1/1     Running   0          73s   192.168.11.207   k8s-node-0   &lt;none&gt;           &lt;none&gt;
+deploy36-5585565d99-dd78m   1/1     Running   0          73s   192.168.11.222   k8s-node-0   &lt;none&gt;           &lt;none&gt;
+deploy36-5585565d99-fczkc   1/1     Running   0          73s   192.168.11.212   k8s-node-0   &lt;none&gt;           &lt;none&gt;
+deploy36-5585565d99-g9g5s   1/1     Running   0          73s   192.168.11.216   k8s-node-0   &lt;none&gt;           &lt;none&gt;
+deploy36-5585565d99-js828   1/1     Running   0          73s   192.168.11.213   k8s-node-0   &lt;none&gt;           &lt;none&gt;
+deploy36-5585565d99-lh6tl   1/1     Running   0          73s   192.168.11.208   k8s-node-0   &lt;none&gt;           &lt;none&gt;
+deploy36-5585565d99-m45qd   1/1     Running   0          73s   192.168.11.214   k8s-node-0   &lt;none&gt;           &lt;none&gt;
+deploy36-5585565d99-pgkz5   1/1     Running   0          73s   192.168.11.209   k8s-node-0   &lt;none&gt;           &lt;none&gt;
+deploy36-5585565d99-rl4c2   1/1     Running   0          73s   192.168.11.225   k8s-node-0   &lt;none&gt;           &lt;none&gt;
+deploy36-5585565d99-rxmlw   1/1     Running   0          73s   192.168.11.224   k8s-node-0   &lt;none&gt;           &lt;none&gt;
+deploy36-5585565d99-sf2dc   1/1     Running   0          73s   192.168.11.211   k8s-node-0   &lt;none&gt;           &lt;none&gt;
+deploy36-5585565d99-trt5d   1/1     Running   0          73s   192.168.11.220   k8s-node-0   &lt;none&gt;           &lt;none&gt;
+deploy36-5585565d99-wcbjd   1/1     Running   0          73s   192.168.11.206   k8s-node-0   &lt;none&gt;           &lt;none&gt;
+</code></pre>
+<p>Since we have specified hard i.e., mandatory requirement, all the Pods would have to be launched on k8s-node-0</p>
+<p>Cleanup</p>
+<pre><code class="language-networkandcode@k8s-master-0:~$">deployment.apps &quot;deploy36&quot; deleted
+</code></pre>
+<p>Reference: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.15/#nodeselectorterm-v1-core</p>
+<p>--end-of-post--</p>
+</div>
+<p><!-- /wp:jetpack/markdown --></p>

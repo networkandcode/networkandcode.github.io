@@ -1,0 +1,32 @@
+---
+layout: post
+title: share point list validation example – timesheet / team management
+date: 2017-09-05 19:07:50.000000000 +05:30
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags:
+- sharepoint
+meta:
+  _publicize_job_id: '8978121630'
+  publicize_linkedin_url: https://www.linkedin.com/updates?discuss=&scope=72550999&stype=M&topic=6310828123252416514&type=U&a=eqr6
+  _publicize_done_18395822: '1'
+  _wpas_done_18169689: '1'
+author:
+  login: shak1r
+  email: shakir@techie.com
+  display_name: shakir
+  first_name: ''
+  last_name: ''
+permalink: "/2017/09/05/share-point-list-validation-example-timesheet-team-management/"
+---
+<p>considerations:</p>
+<p>columns/fields on the list -&gt; work load reference no., hours, availability, date, allowance</p>
+<p>work load reference no. such an incident ticket, change no. etc. is mandatory for allowances</p>
+<p>comp-offs to be considered only if the date matches a holiday, or if the day matches saturday/sunday</p>
+<p>formula:<img src="{{ site.baseurl }}/assets/formula.png" class="alignnone size-full wp-image-263" height="327" alt="formula" width="912" /></p>
+<p>note -&gt; WEEKDAY(date,2)=6, 7 refers to saturday, sunday respectively; 2 refers to the date format</p>
+<p>demo:<img src="{{ site.baseurl }}/assets/demo.png" class="alignnone size-full wp-image-262" height="757" alt="demo" width="660" /></p>

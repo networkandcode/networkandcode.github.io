@@ -1,0 +1,162 @@
+---
+layout: post
+title: OpenStack | Snapshots
+date: 2018-07-09 22:44:25.000000000 +05:30
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags:
+- openstack
+meta:
+  timeline_notification: '1531156468'
+  _rest_api_published: '1'
+  _rest_api_client_id: "-1"
+  _wpas_skip_18195285: '1'
+  _wpas_skip_18169689: '1'
+  _publicize_job_id: '19833219297'
+author:
+  login: shak1r
+  email: shakir@techie.com
+  display_name: shakir
+  first_name: ''
+  last_name: ''
+permalink: "/2018/07/09/openstack-snapshots/"
+---
+<p>command syntax: <em>openstack server image &lt;action/operation&gt; &lt;--flags values&gt; &lt;server-name&gt;</em></p>
+<p>we can create image snapshots from the existing servers(VM instances), this image could later be used for building a new server</p>
+<p>cumulus@server01:~$ <span style="color:#3366ff;">openstack server image create --name </span><span style="color:#3366ff;">firstServerSnapshot firstServer</span><br />
++------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+<br />
+| Field | Value</p>
+<p>|<br />
++------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+<br />
+| checksum | None</p>
+<p>|<br />
+| container_format | None</p>
+<p>|<br />
+| created_at | 2018-07-09T17:05:41Z</p>
+<p>|<br />
+| disk_format | None</p>
+<p>|<br />
+| file | /v2/images/b44a67e6-c115-4705-a56d-<br />
+7914dbdd3114/file</p>
+<p>|<br />
+| id | b44a67e6-c115-4705-a56d-7914dbdd311<br />
+4</p>
+<p>|<br />
+| min_disk | 1</p>
+<p>|<br />
+| min_ram | 0</p>
+<p>|<br />
+| name | firstServerSnapshot</p>
+<p>|<br />
+| owner | 6d9cb60806744bbc9618963e77bda3cd</p>
+<p>|<br />
+| properties | base_image_ref='0b16d59f-71f4-48a6-<br />
+9aef-add8f535bc7d', boot_roles='admin', image_type='snap<br />
+shot', instance_uuid='51b75145-defd-45cd-9e05-97280d6e66<br />
+8c', owner_project_name='admin', owner_user_name='admin'<br />
+, user_id='d85316e4978a4454836d21cbde99322d' |<br />
+| protected | False</p>
+<p>|<br />
+| schema | /v2/schemas/image</p>
+<p>|<br />
+| size | None</p>
+<p>|<br />
+| status | queued</p>
+<p>|<br />
+| tags |</p>
+<p>|<br />
+| updated_at | 2018-07-09T17:05:41Z</p>
+<p>|<br />
+| virtual_size | None</p>
+<p>|<br />
+| visibility | private</p>
+<p>|<br />
++------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+<br />
+cumulus@server01:~$</p>
+<p>#the newly created snapshot should show up on the image list</p>
+<p>cumulus@server01:~$ <span style="color:#3366ff;">openstack image list</span><br />
++--------------------------------------+---------------------+--------+<br />
+| ID | Name<br />
+| Status |<br />
++--------------------------------------+---------------------+--------+<br />
+| 0b16d59f-71f4-48a6-9aef-add8f535bc7d | cirros<br />
+| active |<br />
+| b44a67e6-c115-4705-a56d-7914dbdd3114 | firstServerSnap<br />
+shot | active |<br />
++--------------------------------------+---------------------+--------+</p>
+<p>#we can use this snapshot as an image for creating new servers / VM instances</p>
+<p>cumulus@server01:~$ <span style="color:#3366ff;">openstack server create --image firstServerSnapshot --flavor m1.nano --key-name firstKeypair firstSnapshotServer</span><br />
++-------------------------------------+-----------------<br />
+-------------------------------------------+<br />
+| Field | Value<br />
+|<br />
++-------------------------------------+-----------------<br />
+-------------------------------------------+<br />
+| OS-DCF:diskConfig | MANUAL<br />
+|<br />
+| OS-EXT-AZ:availability_zone |<br />
+|<br />
+| OS-EXT-SRV-ATTR:host | None<br />
+|<br />
+| OS-EXT-SRV-ATTR:hypervisor_hostname | None<br />
+|<br />
+| OS-EXT-SRV-ATTR:instance_name |<br />
+|<br />
+| OS-EXT-STS:power_state | NOSTATE<br />
+|<br />
+| OS-EXT-STS:task_state | scheduling<br />
+|<br />
+| OS-EXT-STS:vm_state | building<br />
+|<br />
+| OS-SRV-USG:launched_at | None<br />
+|<br />
+| OS-SRV-USG:terminated_at | None<br />
+|<br />
+| accessIPv4 |<br />
+|<br />
+| accessIPv6 |<br />
+|<br />
+| addresses |<br />
+|<br />
+| adminPass | baimmBPT7RYj<br />
+|<br />
+| config_drive |<br />
+|<br />
+| created | 2018-07-09T17:12<br />
+:42Z |<br />
+| flavor | m1.nano (0)<br />
+|<br />
+| hostId |<br />
+|<br />
+| id | 3ddb72dd-2f30-42<br />
+b2-9683-b3d7d7ee41f3 |<br />
+| image | firstServerSnaps<br />
+hot (b44a67e6-c115-4705-a56d-7914dbdd3114) |<br />
+| key_name | firstKeypair<br />
+|<br />
+| name | firstSnapshotSer<br />
+ver |<br />
+| progress | 0<br />
+|<br />
+| project_id | 6d9cb60806744bbc<br />
+9618963e77bda3cd |<br />
+| properties |<br />
+|<br />
+| security_groups | name='default'<br />
+|<br />
+| status | BUILD<br />
+|<br />
+| updated | 2018-07-09T17:12<br />
+:42Z |<br />
+| user_id | d85316e4978a4454<br />
+836d21cbde99322d |<br />
+| volumes_attached |<br />
+|<br />
++-------------------------------------+-----------------<br />
+-------------------------------------------+<br />
+cumulus@server01:~$</p>
+<p>--end-of-post--</p>

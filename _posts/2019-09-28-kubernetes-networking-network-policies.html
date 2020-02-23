@@ -1,0 +1,226 @@
+---
+layout: post
+title: Kubernetes > Networking > Apply an ingress network policy
+date: 2019-09-28 18:15:47.000000000 +05:30
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags: []
+meta:
+  _publicize_job_id: '35771308952'
+  timeline_notification: '1569674751'
+author:
+  login: shak1r
+  email: shakir@techie.com
+  display_name: shakir
+  first_name: ''
+  last_name: ''
+permalink: "/2019/09/28/kubernetes-networking-network-policies/"
+---
+<p><!-- wp:paragraph --></p>
+<p>Prerequisites: <a rel="noreferrer noopener" aria-label="Services (opens in a new tab)" href="https://networkandcode.wordpress.com/2019/09/04/kubernetes-expose-pods-using-services/" target="_blank">Services</a></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Network Policies are defined as Kubernetes objects and are used to control inbound/outbound network traffic, however they would work as desired only if supported by the networking plugin used in the Cluster. If you are using GKE, you need to enable network-policy addon while creating the cluster as follows<br /><code>networkandcode@cloudshell:~$ gcloud container clusters create cluster1 --enable-network-policy --zone us-central1-a</code><br />Here cluster1 is the name of the cluster</p>
+<p>To generate kubeconfig for the cluster<br /><code>networkandcode@cloudshell:~$ gcloud container clusters get-credentials cluster1 --zone us-central1-a</code></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p><code>Fetching cluster endpoint and auth data.kubeconfig entry generated for cluster1.</code></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Let's define a deployment manifest and create it</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:code --></p>
+<pre class="wp-block-code"><code>networkandcode@k8s-master:~$ cat ex25-deploy.yaml
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: deploy25
+spec:
+  template:
+    metadata:
+      labels:
+        tag: label25
+    spec:
+      containers:
+      - name: ctr25
+        image: nginx
+  replicas: 4
+  selector:
+    matchLabels:
+      tag: label25
+...
+
+networkandcode@k8s-master:~$ kubectl create -f ex25-deploy.yaml
+deployment.extensions/deploy25 created
+
+networkandcode@k8s-master:~$ kubectl get deploy deploy25
+NAME       READY   UP-TO-DATE   AVAILABLE   AGE
+deploy25   4/4     4            4           12s</code></pre>
+<p><!-- /wp:code --></p>
+<p><!-- wp:paragraph --></p>
+<p>Let's expose this deployment using a Cluster IP service</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:code --></p>
+<pre class="wp-block-code"><code>networkandcode@k8s-master:~$ cat ex25-svc-ci.yaml
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: svc25-ci
+spec:
+  type: ClusterIP  # ClusterIP is the default service type even if not specified
+  selector:
+    tag: label25
+  ports:
+  - name: port25
+    protocol: TCP
+    port: 8080  # this is the service port
+    targetPort: 80 # this is the container port
+...
+
+networkandcode@k8s-master:~$ kubectl create -f ex25-svc-ci.yaml
+service/svc25-ci created
+
+networkandcode@cloudshell:~$ kubectl get svc svc25-ci
+NAME       TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
+svc25-ci   ClusterIP   10.35.245.194   &lt;none&gt;        8080/TCP   21s</code></pre>
+<p><!-- /wp:code --></p>
+<p><!-- wp:paragraph --></p>
+<p>Let's create a separate Pod from which we would try accessing the service created above</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:code --></p>
+<pre class="wp-block-code"><code>networkandcode@cloudshell:~$ cat ex25-po-apache.yaml
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: po25-apache
+spec:
+  containers:
+  - name: ctr25-apache
+    image: httpd
+...
+
+networkandcode@cloudshell:~$ kubectl create -f ex25-po-apache.yaml
+pod/po25-apache created
+
+networkandcode@cloudshell:~$ kubectl get po po25-apache
+NAME          READY   STATUS    RESTARTS   AGE
+po25-apache   1/1     Running   0          39s</code></pre>
+<p><!-- /wp:code --></p>
+<p><!-- wp:paragraph --></p>
+<p>Login to this Pod and try to CURL the service IP on the service port defined (8080)</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:code --></p>
+<pre class="wp-block-code"><code>networkandcode@cloudshell:~$ kubectl exec -it po25-apache bash
+root@po25-apache:/usr/local/apache2# curl 10.35.245.194:8080
+bash: curl: command not found
+
+# we need to install curl
+root@po25-apache:/usr/local/apache2# apt update -y
+
+root@po25-apache:/usr/local/apache2# apt install curl -y
+
+root@po25-apache:/usr/local/apache2# curl 10.35.245.194:8080
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;Welcome to nginx!&lt;/title&gt;
+--TRUNCATED--</code></pre>
+<p><!-- /wp:code --></p>
+<p><!-- wp:paragraph --></p>
+<p>So access is allowed from the standalone apache pod to the nginx service, as network traffic is not blocked by default within the Cluster. We can now try to block this traffic using a Network policy</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Let's check the short-form and apiVersion for NetworkPolicy </p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:code --></p>
+<pre class="wp-block-code"><code>networkandcode@cloudshell:~$ kubectl api-resources | grep NetworkPolicy
+networkpolicies                   netpol       extensions                     true         NetworkPolicy
+networkpolicies                   netpol       networking.k8s.io              true         NetworkPolicy
+
+networkandcode@cloudshell:~$ kubectl explain netpol
+KIND:     NetworkPolicy
+VERSION:  extensions/v1beta1
+--TRUNCATED--</code></pre>
+<p><!-- /wp:code --></p>
+<p><!-- wp:paragraph --></p>
+<p>We may now define and create the Network policy</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:code --></p>
+<pre class="wp-block-code"><code>networkandcode@cloudshell:~$ cat ex25-netpol.yaml
+---
+apiVersion: extensions/v1beta1
+kind: NetworkPolicy
+metadata:
+  name: netpol25
+spec:
+  podSelector:  # netpol gets applied to Pod(s) with these matching labels
+    matchLabels:
+      tag: label25
+  ingress:  # allow inbound traffic
+  - from:  # only from Pod(s) with these matching labels
+    - podSelector:
+        matchLabels:
+          tag: label25-apache
+...
+
+networkandcode@cloudshell:~$ kubectl create -f ex25-netpol.yaml
+networkpolicy.extensions/netpol25 created
+
+networkandcode@cloudshell:~$ kubectl get netpol
+NAME       POD-SELECTOR   AGE
+netpol25   tag=label25    5s</code></pre>
+<p><!-- /wp:code --></p>
+<p><!-- wp:paragraph --></p>
+<p>The Network policy is now applied to the nginx service as it covers Pods with the label 'tag: label25', and these Pods or the service can only receive packets from Pod(s) that have the label 'tag: label25-apache'</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>We may now try to CURL the service again from the apache Pod, however it shouldn't work as there is a network policy now, and there isn't a label on the apache Pod</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:code --></p>
+<pre class="wp-block-code"><code>networkandcode@cloudshell:~$ kubectl create -f ex25-netpol.yaml
+networkpolicy.extensions/netpol25 created
+
+networkandcode@cloudshell:~$ kubectl exec -it po25-apache -- curl 10.35.245.194:8080
+^Ccommand terminated with exit code 130</code></pre>
+<p><!-- /wp:code --></p>
+<p><!-- wp:paragraph --></p>
+<p>Let's now add a label to the Pod and try to CURL again, it should work this time because of the label</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:code --></p>
+<pre class="wp-block-code"><code>networkandcode@cloudshell:~$ kubectl label po po25-apache tag=label25-apache
+pod/po25-apache labeled
+
+# The label should show up in metadata &gt; labels
+# we could also add this by modifying the pod manifest file and then apply it using 'kubectl apply -f ex25-po-apache.yaml
+networkandcode@cloudshell:~$ kubectl get po po25-apache -o yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  --TRUNCATED--
+  labels:
+    tag: label25-apache
+--TRUNCATED--
+
+networkandcode@cloudshell:~$ kubectl exec -it po25-apache -- curl 10.35.245.194:8080
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;Welcome to nginx!&lt;/title&gt;
+--TRUNCATED--</code></pre>
+<p><!-- /wp:code --></p>
+<p><!-- wp:paragraph --></p>
+<p>In this post, we have seen how to filter incoming traffic AKA ingress, in a similar way we could also use it for policing outbound or egress traffic, and use NetworkPolicy objects for various scenarios</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Reference:  <a href="https://kubernetes.io/docs/tasks/administer-cluster/declare-network-policy/">https://kubernetes.io/docs/tasks/administer-cluster/declare-network-policy/</a> </p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>--end-of-post--</p>
+<p><!-- /wp:paragraph --></p>

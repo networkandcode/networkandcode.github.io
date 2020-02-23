@@ -1,0 +1,58 @@
+---
+layout: post
+title: Kubernetes > Create a cluster on Google cloud platform
+date: 2019-02-19 13:44:07.000000000 +05:30
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags:
+- kubernetes
+meta:
+  _rest_api_client_id: "-1"
+  _rest_api_published: '1'
+  _wpas_skip_18195285: '1'
+  _publicize_job_id: '27793052004'
+  timeline_notification: '1550564054'
+author:
+  login: shak1r
+  email: shakir@techie.com
+  display_name: shakir
+  first_name: ''
+  last_name: ''
+permalink: "/2019/02/19/kubernetes-cka-preparation-create-a-cluster-on-google-cloud-platform/"
+---
+<p>Launch the Google Cloud Platform Dashboard,</p>
+<p>On the navigation panel, click on <span style="color:#ff00ff;">Kubernetes Engine<br />
+</span>Then, click on <span style="color:#ff00ff;">Create Cluster</span></p>
+<p><img class="alignnone  wp-image-839" src="{{ site.baseurl }}/assets/screenshot-2019-02-19-at-1.21.07-pm.png" alt="Screenshot 2019-02-19 at 1.21.07 PM" width="280" height="636" /><img class="alignnone  wp-image-838" src="{{ site.baseurl }}/assets/screenshot-2019-02-19-at-1.21.27-pm.png" alt="Screenshot 2019-02-19 at 1.21.27 PM" width="284" height="228" /></p>
+<p>Leave everything default, and click on <span style="color:#ff00ff;">create</span>, this will create a 3 node cluster<img class="alignnone  wp-image-836" src="{{ site.baseurl }}/assets/screenshot-2019-02-19-at-1.22.23-pm.png" alt="Screenshot 2019-02-19 at 1.22.23 PM" width="313" height="309" /></p>
+<p>You can see the cluster being created, click on <span style="color:#ff00ff;">connect</span></p>
+<p><img class="alignnone size-full wp-image-840" src="{{ site.baseurl }}/assets/screenshot-2019-02-19-at-1.30.14-pm.png" alt="Screenshot 2019-02-19 at 1.30.14 PM" width="1738" height="420" /></p>
+<p>Click on <span style="color:#ff00ff;">Run in Cloud Shell</span></p>
+<p><img class="alignnone size-full wp-image-841" src="{{ site.baseurl }}/assets/screenshot-2019-02-19-at-1.32.00-pm.png" alt="Screenshot 2019-02-19 at 1.32.00 PM.png" width="1478" height="474" /></p>
+<p>Press <span style="color:#ff00ff;">Enter</span> on the Cloud Shell</p>
+<p><span style="color:#999999;">Welcome to Cloud Shell! Type "help" to get started.</span><br />
+<span style="color:#999999;">Your Cloud Platform project in this session is set to cobalt-vector-220612.</span><br />
+<span style="color:#999999;">Use “gcloud config set project [PROJECT_ID]” to change to a different project.</span><br />
+<span style="color:#999999;">networkandcode@cloudshell:~ (cobalt-vector-220612)$ gcloud container clusters get-credentials standard-cluster-1 --zone us-central1-a --project cobalt-vector-220612</span><br />
+<span style="color:#999999;">Fetching cluster endpoint and auth data.</span><br />
+<span style="color:#999999;">kubeconfig entry generated for standard-cluster-1.</span><br />
+<span style="color:#999999;">networkandcode@cloudshell:~ (cobalt-vector-220612)$</span></p>
+<p>if you want to see the cloud shell on a separate window, click on the <span style="color:#ff00ff;">open in a new window</span> icon</p>
+<p><img class="alignnone size-full wp-image-842" src="{{ site.baseurl }}/assets/screenshot-2019-02-19-at-1.38.24-pm.png" alt="Screenshot 2019-02-19 at 1.38.24 PM.png" width="92" height="72" /></p>
+<p>Let's verify the kubectl version and the number of nodes (we know it should be 3). Note that kubectl is the cli tool to interact with the kubernetes cluster</p>
+<p><span style="color:#999999;">networkandcode@cloudshell:~ (cobalt-vector-220612)$ kubectl version</span><br />
+<span style="color:#999999;">Client Version: version.Info{Major:"1", Minor:"10", GitVersion:"v1.10.7", GitCommit:"0c38c362511b20a098d7cd855f1314dad92c2780", GitTreeState:"clean", BuildDate:"2018-08-20T10:09:03Z", GoVersion:"go1.9.3", Compiler</span><br />
+<span style="color:#999999;">:"gc", Platform:"linux/amd64"}</span><br />
+<span style="color:#999999;">Server Version: version.Info{Major:"1", Minor:"11+", GitVersion:"v1.11.6-gke.2", GitCommit:"04ad69a117f331df6272a343b5d8f9e2aee5ab0c", GitTreeState:"clean", BuildDate:"2019-01-04T16:19:46Z", GoVersion:"go1.10.3b4"</span><br />
+<span style="color:#999999;">, Compiler:"gc", Platform:"linux/amd64"}</span><br />
+<span style="color:#999999;">networkandcode@cloudshell:~ (cobalt-vector-220612)$ kubectl get nodes</span><br />
+<span style="color:#999999;">NAME STATUS ROLES AGE VERSION</span><br />
+<span style="color:#999999;">gke-standard-cluster-1-default-pool-86972d60-0bwm Ready &lt;none&gt; 11m v1.11.6-gke.2</span><br />
+<span style="color:#999999;">gke-standard-cluster-1-default-pool-86972d60-bf44 Ready &lt;none&gt; 11m v1.11.6-gke.2</span><br />
+<span style="color:#999999;">gke-standard-cluster-1-default-pool-86972d60-gncq Ready &lt;none&gt; 11m v1.11.6-gke.2</span><br />
+<span style="color:#999999;">networkandcode@cloudshell:~ (cobalt-vector-220612)$</span></p>
+<p>--end-of-post--</p>

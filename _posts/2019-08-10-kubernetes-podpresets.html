@@ -1,0 +1,88 @@
+---
+layout: post
+title: Kubernetes > PodPresets
+date: 2019-08-10 00:45:56.000000000 +05:30
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags: []
+meta:
+  _publicize_job_id: '33867956556'
+  timeline_notification: '1565378159'
+  _rest_api_published: '1'
+  _rest_api_client_id: "-1"
+author:
+  login: shak1r
+  email: shakir@techie.com
+  display_name: shakir
+  first_name: ''
+  last_name: ''
+permalink: "/2019/08/10/kubernetes-podpresets/"
+---
+<p>PodPresets are Admission controller objects in Kubernetes, i.e., if PodPresets are enabled and configured, then, before each Pod creation, the Pod will be validated across the available PodPresets to see if the Pod matches with the label selectors on any of the PodPresets, and if it matches, the information contained in that PodPreset will be injected in to the Pod before its get created. Likewise, the Pod would be validated by all the available PodPresets available in the same namespace. So a single PodPreset could be applied to multiple Pods and vice versa. However, if none of the PodPresets are applied to a Pod if labels are not matched, then, the Pod will be created as usual without any PodPreset</p></p>
+<p>The information that a PodPreset can inject into a Pod could be Pod specific information such as secrets, volumes and Container specific information such as volume mounts, environment variables. Note that environmental variables could be configured directly in a container using ‘env’ section or could be imported from other objects such as ConfigMaps via the ‘envFrom’ section </p></p>
+<p>When a PodPreset is applied to a Pod based on label selection, an annotation will be added to the Pod with the PodPreset’s name</p></p>
+<p>Let’s try checking if there are any PodPresets in our cluster</p>
+<table>
+<tbody>
+<tr>
+<td>
+<p>shakir@k8s-master:~ kubectl get podpresets<br />
+error: the server doesn't have a resource type "podpresets"</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>We need to enable Pod presets by adding --runtime-config=<b>settings.k8s.io/v1alpha1=true</b> after kube-apiserver as shown in the pic.</p>
+<p>This is in the file /etc/kubernetes/manifests/kube-apiserver.yaml</p>
+<p>We also need to ensure the --enable-admission-plugins has PodPreset</p>
+<p>shakir@k8s-master:~ sudo nano /etc/kubernetes/manifests/kube-apiserver.yaml<img src="{{ site.baseurl }}/assets/null-7.png" width="601" height="361" alt="" title="" /></p></p>
+<p>It should now enabled, however no podpreset objects are created yet</p>
+<table>
+<tbody>
+<tr>
+<td>
+<p>shakir@k8s-master:~ kubectl get podpresets<br />
+No resources found.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Let’s define a manifest for a PodPreset to inject Environment variables into the container residing inside selected Pods</p>
+<p><img src="{{ site.baseurl }}/assets/null-8.png" width="601" height="196" alt="" title="" /></p></p>
+<p>To create the PodPreset and to check it’s detail</p>
+<table>
+<tbody>
+<tr>
+<td>
+<p>shakir@k8s-master:~ kubectl create -f ex28-podpreset.yaml<br />
+podpreset.settings.k8s.io/podpreset28 created<br />
+shakir@k8s-master:~ kubectl get podpresets<br />
+NAME          CREATED AT<br />
+podpreset28   2019-08-09T18:48:54Z</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>We are going to define a Pod configuration as follows, and give it a matching label that the PodPreset can select. Note that we have not defined any environment variables in the container spec, and we are going to inject it from the PodPreset</p>
+<p><img src="{{ site.baseurl }}/assets/null-9.png" width="450" height="285" alt="" title="" /></p></p>
+<p>Create the Pod</p>
+<table>
+<tbody>
+<tr>
+<td>
+<p>shakir@k8s-master:~ kubectl create -f ex28-po.yaml<br />
+pod/po28 created</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>To check the Pod’s status</p>
+<p><img src="{{ site.baseurl }}/assets/null-10.png" width="470" height="65" alt="" title="" /></p></p>
+<p>Let’s check if the environment variables are present in the container, we see both the variables ‘color’ and ‘fruit’ and their corresponding values. Note that printenv is the command to print all the environment variables, and grep is used to filter a string pattern</p>
+<p><img src="{{ site.baseurl }}/assets/null-11.png" width="601" height="72" alt="" title="" /></p></p>
+<p>We had seen the example of injecting environment variables, however we can use PodPresets to inject other information as mentioned in the beginning of this post.</p></p>
+<p>--end-of-post--</p></p>

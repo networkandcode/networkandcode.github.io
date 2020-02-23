@@ -1,0 +1,95 @@
+---
+layout: post
+title: Kubernetes > Sample tasks > Mediawiki deployment on a separate namepsace
+date: 2019-08-11 12:28:04.000000000 +05:30
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags: []
+meta:
+  _publicize_job_id: '33929705458'
+  timeline_notification: '1565506687'
+author:
+  login: shak1r
+  email: shakir@techie.com
+  display_name: shakir
+  first_name: ''
+  last_name: ''
+permalink: "/2019/08/11/kubernetes-sample-tasks-mediawiki-deployment-on-a-separate-namepsace/"
+---
+<p><!-- wp:heading {"level":3} --></p>
+<h3>Create a namespace</h3>
+<p><!-- /wp:heading --></p>
+<p><!-- wp:code --></p>
+<pre class="wp-block-code"><code>shakir@k8s-master:~ cat ex30-ns-mediawiki.yaml
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ns30-mediawiki
+...
+
+shakir@k8s-master:~ kubectl create -f ex30-ns-mediawiki.yaml
+namespace/ns30-mediawiki created
+
+shakir@k8s-master:~ kubectl get ns | grep mediawiki
+ns30-mediawiki    Active   15s</code></pre>
+<p><!-- /wp:code --></p>
+<p><!-- wp:heading {"level":3} --></p>
+<h3>Create a deployment in the namespace</h3>
+<p><!-- /wp:heading --></p>
+<p><!-- wp:code --></p>
+<pre class="wp-block-code"><code>shakir@k8s-master:~ cat ex30-deploy-mediawiki.yaml
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: deploy30-mediawiki
+  namespace: ns30-mediawiki
+spec:
+  selector:
+    matchLabels:
+      tag: label30
+  template:
+    metadata:
+      labels:
+        tag: label30
+    spec:
+      containers:
+      - name: ctr30-mediawiki
+        image: mediawiki:stable
+...
+
+shakir@k8s-master:~ kubectl create -f ex30-deploy-mediawiki.yaml
+deployment.extensions/deploy30-mediawiki created
+
+shakir@k8s-master:~ kubectl get deploy -n ns30-mediawiki
+NAME                 READY   UP-TO-DATE   AVAILABLE   AGE
+deploy30-mediawiki   1/1     1            1           16s</code></pre>
+<p><!-- /wp:code --></p>
+<p><!-- wp:heading {"level":3} --></p>
+<h3>Verify Pods and CURL</h3>
+<p><!-- /wp:heading --></p>
+<p><!-- wp:code --></p>
+<pre class="wp-block-code"><code>shakir@k8s-master:~ kubectl get pods -n ns30-mediawiki
+NAME                                 READY   STATUS    RESTARTS   AGE
+deploy30-mediawiki-775dc7df7-9j8bx   1/1     Running   0          4m15s
+
+shakir@k8s-master:~ kubectl exec -it deploy30-mediawiki-775dc7df7-9j8bx -n ns30-mediawiki curl localhost | head
+&lt;!DOCTYPE html&gt;
+&lt;html lang="en" dir="ltr"&gt;
+        &lt;head&gt;
+                &lt;meta charset="UTF-8" /&gt;
+                &lt;title&gt;MediaWiki 1.33.0&lt;/title&gt;
+                &lt;style media="screen"&gt;
+                        body {
+                                color: #000;
+                                background-color: #fff;
+                                font-family: sans-serif;</code></pre>
+<p><!-- /wp:code --></p>
+<p><!-- wp:paragraph --></p>
+<p>--end-of-post--</p>
+<p><!-- /wp:paragraph --></p>

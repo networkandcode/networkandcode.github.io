@@ -1,0 +1,103 @@
+---
+layout: post
+title: OpenStack | Projects
+date: 2018-06-22 22:57:09.000000000 +05:30
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags:
+- openstack
+meta:
+  timeline_notification: '1529688432'
+  _rest_api_published: '1'
+  _rest_api_client_id: "-1"
+  _wpas_skip_18169689: '1'
+  _wpas_skip_18195285: '1'
+  _publicize_job_id: '19244526208'
+  switch_like_status: '1'
+author:
+  login: shak1r
+  email: shakir@techie.com
+  display_name: shakir
+  first_name: ''
+  last_name: ''
+permalink: "/2018/06/22/openstack-on-citc-projects/"
+---
+<div>Command syntax for reference: openstack project &lt;action&gt; &lt;--parameters values&gt; &lt;project-name&gt;</div>
+<div>&lt;action&gt;: list, create...</div>
+<div>&lt;--parameters&gt;: --domain, --help...</div>
+<div></div>
+<div>Terminology: Projects are also sometimes referred to as Tenants or Accounts</div>
+<div></div>
+<div>To view all the projects, based on the user privileges, since we are now the admin, we can see the projects belonging to all the domains, note that one project can belong to only one domain</div>
+<div></div>
+<div>cumulus@server01:~$ openstack project list</div>
+<div>+----------------------------------+---------+</div>
+<div>| ID                               | Name    |</div>
+<div>+----------------------------------+---------+</div>
+<div>| 3c119483a4704451bd24ccaa98121901 | admin   |</div>
+<div>| 5b2668bd4dfe4bdf9ff98ce794462140 | service |</div>
+<div>| 768939cc621f43728ff90332dee58e95 | demo    |</div>
+<div>+----------------------------------+---------+</div>
+<div></div>
+<div>to view all the projects in a particular domain</div>
+<div></div>
+<div>cumulus@server01:~$ openstack project list --domain default</div>
+<div>+----------------------------------+---------+</div>
+<div>| ID                               | Name    |</div>
+<div>+----------------------------------+---------+</div>
+<div>| 3c119483a4704451bd24ccaa98121901 | admin   |</div>
+<div>| 5b2668bd4dfe4bdf9ff98ce794462140 | service |</div>
+<div>| 768939cc621f43728ff90332dee58e95 | demo    |</div>
+<div>+----------------------------------+---------+</div>
+<div></div>
+<div>cumulus@server01:~$ openstack project list --domain firstDomain</div>
+<div></div>
+<div>The above commands show that all the projects belong to the 'default' domain, and there are no projects currently in the 'firstDomain' domian</div>
+<div></div>
+<div>Let's add a new project in firstDomain</div>
+<div>cumulus@server01:~$ openstack project create --domain firstDomain firstProject</div>
+<div>+-------------+----------------------------------+</div>
+<div>| Field       | Value                            |</div>
+<div>+-------------+----------------------------------+</div>
+<div>| description |                                  |</div>
+<div>| domain_id   | f0bb69245afe41eb9aba9873421c3595 |</div>
+<div>| enabled     | True                             |</div>
+<div>| id          | 8847adbe8a63428ab8f568e169194cba |</div>
+<div>| is_domain   | False                            |</div>
+<div>| name        | firstProject                     |</div>
+<div>| parent_id   | f0bb69245afe41eb9aba9873421c3595 |</div>
+<div>+-------------+----------------------------------+</div>
+<div></div>
+<div>The newly created project should now show up on the project list</div>
+<div>cumulus@server01:~$ openstack project list</div>
+<div>+----------------------------------+--------------+</div>
+<div>| ID                               | Name         |</div>
+<div>+----------------------------------+--------------+</div>
+<div>| 3c119483a4704451bd24ccaa98121901 | admin        |</div>
+<div>| 5b2668bd4dfe4bdf9ff98ce794462140 | service      |</div>
+<div>| 768939cc621f43728ff90332dee58e95 | demo         |</div>
+<div>| 8847adbe8a63428ab8f568e169194cba | firstProject |</div>
+<div>+----------------------------------+--------------+</div>
+<div>cumulus@server01:~$ openstack project list --domain firstDomain</div>
+<div>+----------------------------------+--------------+</div>
+<div>| ID                               | Name         |</div>
+<div>+----------------------------------+--------------+</div>
+<div>| 8847adbe8a63428ab8f568e169194cba | firstProject |</div>
+<div>+----------------------------------+--------------+</div>
+<div></div>
+<div>To delete the project</div>
+<div>cumulus@server01:~$ openstack project delete firstProject</div>
+<div>cumulus@server01:~$ openstack project list</div>
+<div>+----------------------------------+---------+</div>
+<div>| ID                               | Name    |</div>
+<div>+----------------------------------+---------+</div>
+<div>| 3c119483a4704451bd24ccaa98121901 | admin   |</div>
+<div>| 5b2668bd4dfe4bdf9ff98ce794462140 | service |</div>
+<div>| 768939cc621f43728ff90332dee58e95 | demo    |</div>
+<div>+----------------------------------+---------+</div>
+<div></div>
+<div>--end-of-post--</div>

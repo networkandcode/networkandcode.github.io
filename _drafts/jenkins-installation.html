@@ -1,0 +1,62 @@
+---
+layout: post
+title: Jenkins > Installation
+date: 
+type: post
+parent_id: '0'
+published: false
+password: ''
+status: draft
+categories: []
+tags: []
+meta: {}
+author:
+  login: shak1r
+  email: shakir@techie.com
+  display_name: shakir
+  first_name: ''
+  last_name: ''
+permalink: "/"
+---
+<div id="post-body-7648735824150755733" class="post-body entry-content">
+<div dir="ltr">```</div>
+<div dir="ltr">---<br />
+- OS we are using: Ubuntu 19.04<br />
+- Prerequisites:<br />
+- H/W:<br />
+- 256 MB RAM, 512 MB recommended<br />
+- 10 GB Hard Disk<br />
+- S/W:<br />
+- Java8:<br />
+- sudo apt-get update<br />
+- sudo apt-get install openjdk-8-jre<br />
+- Docker CE:<br />
+- Add the GPG key:<br />
+- curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -<br />
+- Add repository:<br />
+- sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable edge test"<br />
+- Note that the stable version of docker ce for Ubuntu 19.04 doesn't exist as of this writing<br />
+- Hence, we had to use edge/test version<br />
+- Ensure installing docker from the repository added above, and not from the ubuntu default repo:<br />
+- apt-cache policy docker-ce<br />
+- Install Docker:<br />
+- sudo apt-get install docker -y<br />
+- verify installation: docker version<br />
+- Install Jenkins:<br />
+- Download Jenkins: wget http://mirrors.jenkins.io/war-stable/latest/jenkins.war<br />
+- Compile with Java and assign a web port: java -jar jenkins.war --httpPort=8080<br />
+- Jenkins should be running now on port 8080<br />
+- To access Jenkins, use the IP and port on the browser or curl it<br />
+- It can be accessed via http://localhost:8080 or http://&lt;ipaddress&gt;:8080<br />
+- Following the instructions on the screen to complete the installation<br />
+- In my case the Administrator password was found in /home/networkandcode/.jenkins/secrets/initialAdminPassword<br />
+- That had to be entered to proceed with the installation<br />
+- I have chosen to Install Jenkins with suggested Plugins (recommended by the community)<br />
+- Examples of Plugins are Git, Gradle, LDAP<br />
+- Set up admin credentials, name and email<br />
+- you can change the URL if required<br />
+- The setup is now complete<br />
+- It shows the complete Jenkins dashboard, and new jobs could now be created<br />
+...</div>
+<div dir="ltr">```</div>
+</div>

@@ -1,0 +1,55 @@
+---
+layout: post
+title: Kubernets > Sample tasks > Install Ingress controller
+date: 2019-08-24 19:33:24.000000000 +05:30
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags: []
+meta:
+  _publicize_job_id: '34498425595'
+  timeline_notification: '1566655408'
+  _rest_api_published: '1'
+  _rest_api_client_id: "-1"
+author:
+  login: shak1r
+  email: shakir@techie.com
+  display_name: shakir
+  first_name: ''
+  last_name: ''
+permalink: "/2019/08/24/kubernets-sample-tasks-install-ingress-controller/"
+---
+<p>A bash file was created with two kubectl commands</p>
+<pre><code>
+networkandcode@k8s-master:~ ls
+README.md  script2.sh
+</code></pre>
+<pre><code>
+networkandcode@k8s-master:~ cat script2.sh
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/static/mandatory.yaml
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/static/provider/cloud-generic.yaml
+</code></pre>
+<p>Provide execute permission to the file</p>
+<pre><code>
+networkandcode@k8s-master:~ chmod +x script2.sh
+</code></pre>
+<p>Execute the file</p>
+<pre><code>
+networkandcode@k8s-master:~ ./script2.sh
+</code></pre>
+<p>Verify</p>
+<pre><code>
+networkandcode@k8s-master:~ kubectl get all -n ingress-nginx
+NAME                                            READY   STATUS    RESTARTS   AGE
+pod/nginx-ingress-controller-79f6884cf6-xk66q   1/1     Running   0          5h48m
+NAME                    TYPE           CLUSTER-IP       EXTERNAL-IP   PORT(S)                      AGE
+service/ingress-nginx   LoadBalancer   10.110.235.104        80:30348/TCP,443:31192/TCP   5h48m
+NAME                                       READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/nginx-ingress-controller   1/1     1            1           5h48m
+NAME                                                  DESIRED   CURRENT   READY   AGE
+replicaset.apps/nginx-ingress-controller-79f6884cf6   1         1         1       5h48m
+</code></pre>
+<p>--end-of-post--</p>

@@ -1,0 +1,88 @@
+---
+layout: post
+title: OpenStack | Domains
+date: 2018-06-22 20:20:52.000000000 +05:30
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags:
+- openstack
+meta:
+  timeline_notification: '1529679055'
+  _rest_api_published: '1'
+  _rest_api_client_id: "-1"
+  _wpas_skip_18169689: '1'
+  _wpas_skip_18195285: '1'
+  _publicize_job_id: '19240068398'
+author:
+  login: shak1r
+  email: shakir@techie.com
+  display_name: shakir
+  first_name: ''
+  last_name: ''
+permalink: "/2018/06/22/openstack-on-citc-domains/"
+---
+<p><i>Command syntax for reference: openstack domain &lt;action&gt; &lt;--flags&gt; &lt;domain-name&gt;</i></p>
+<p><i>&lt;action&gt;: list, create, set, delete…</i></p>
+<p><i>&lt;--flags&gt;: --enable, --disable, --help…</i></p>
+<p>&nbsp;</p>
+<p>For the first time, when you launch OpenStack after installing it, you may see just one domain, with the name 'default'</p>
+<p>&nbsp;</p>
+<p>cumulus@server01:~$ openstack domain list</p>
+<p>+----------------------------------+---------+---------+----------------+</p>
+<p>| ID                               | Name    | Enabled | Description    |</p>
+<p>+----------------------------------+---------+---------+----------------+</p>
+<p>| 742e97e33e9641ec8d3aac9420085f60 | default | True    | Default Domain |</p>
+<p>+----------------------------------+---------+---------+----------------+</p>
+<p>&nbsp;</p>
+<p>Let's try adding a new domain with the name firstDomain</p>
+<p>cumulus@server01:~$ openstack domain create firstDomain</p>
+<p>+-------------+----------------------------------+</p>
+<p>| Field       | Value                            |</p>
+<p>+-------------+----------------------------------+</p>
+<p>| description |                                  |</p>
+<p>| enabled     | True                             |</p>
+<p>| id          | 996affed40fb4ce38f6e468246306316 |</p>
+<p>| name        | firstDomain                      |</p>
+<p>+-------------+----------------------------------+</p>
+<p>&nbsp;</p>
+<p>Check the domain list again, it would now contain the newly added domain 'firstDomain'</p>
+<p>cumulus@server01:~$ openstack domain list</p>
+<p>+----------------------------------+-------------+---------+----------------+</p>
+<p>| ID                               | Name        | Enabled | Description    |</p>
+<p>+----------------------------------+-------------+---------+----------------+</p>
+<p>| 742e97e33e9641ec8d3aac9420085f60 | default     | True    | Default Domain |</p>
+<p>| 996affed40fb4ce38f6e468246306316 | firstDomain | True    |                |</p>
+<p>+----------------------------------+-------------+---------+----------------+</p>
+<p>&nbsp;</p>
+<p>Note that, the Enabled flag above, in column 3, is set to True for both the domains, this means that any newly added domain will be enabled by default, unless explicitly specified, also note that we may not be able to delete a domain with out disabling it, the following commands would explain this behavior</p>
+<p>&nbsp;</p>
+<p>cumulus@server01:~$ openstack domain delete firstDomain</p>
+<p>Failed to delete domain with name or ID 'firstDomain': Cannot delete a domain that is enabled, please d</p>
+<p>isable it first. (HTTP 403) (Request-ID: req-c852249b-8bb5-4e14-8889-721d6c95dbe2)</p>
+<p>1 of 1 domains failed to delete.</p>
+<p>&nbsp;</p>
+<p>cumulus@server01:~$ openstack domain set --disable firstDOmain</p>
+<p>cumulus@server01:~$ openstack domain list</p>
+<p>+----------------------------------+-------------+---------+----------------+</p>
+<p>| ID                               | Name        | Enabled | Description    |</p>
+<p>+----------------------------------+-------------+---------+----------------+</p>
+<p>| 742e97e33e9641ec8d3aac9420085f60 | default     | True    | Default Domain |</p>
+<p>| 996affed40fb4ce38f6e468246306316 | firstDomain | False   |                |</p>
+<p>+----------------------------------+-------------+---------+----------------+</p>
+<p>&nbsp;</p>
+<p>Please note above that the domain name is not case sensitive while performing the action, however the domain list output shows the name in the exact case, how it was created initially. To enable the domain back used the flag --enable instead of --disable.</p>
+<p>&nbsp;</p>
+<p>Since the domain is disabled, it can now be deleted</p>
+<p>cumulus@server01:~$ openstack domain delete firstDOMAIN</p>
+<p>cumulus@server01:~$ openstack domain list</p>
+<p>+----------------------------------+---------+---------+----------------+</p>
+<p>| ID                               | Name    | Enabled | Description    |</p>
+<p>+----------------------------------+---------+---------+----------------+</p>
+<p>| 742e97e33e9641ec8d3aac9420085f60 | default | True    | Default Domain |</p>
+<p>+----------------------------------+---------+---------+----------------+</p>
+<p>&nbsp;</p>
+<p>--end-of-post--</p>

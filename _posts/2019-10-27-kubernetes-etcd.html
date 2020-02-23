@@ -1,0 +1,94 @@
+---
+layout: post
+title: kubernetes > etcd
+date: 2019-10-27 10:28:50.000000000 +05:30
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags:
+- kubernetes
+meta:
+  _publicize_job_id: '36777841958'
+  timeline_notification: '1572152334'
+author:
+  login: shak1r
+  email: shakir@techie.com
+  display_name: shakir
+  first_name: ''
+  last_name: ''
+permalink: "/2019/10/27/kubernetes-etcd/"
+---
+<p><!-- wp:jetpack/markdown {"source":"etcd is a consistent key value datastore that Kubernetes leverages to store the cluster configuration. However etcd is not a native Kubernetes component. ectd could be installed on separate dedicated instances or on master instances. In production, etcd is installed in HA (High Availability) mode i.e. etcd server is installed on more than one instance. In HA, an etcd cluster is comprised of odd number of instances - 1, 3, 5 etc. however 5 is the recommended number of etcd instances for production environments\n\nPrerequisites:\n- Should have some understanding of Pod manifests\n- Some familiarity with the kube-system namespace\n\nEnvironment: \n- Kubernetes cluster launched using kubeadm\n- We are doing this exercise on a cluster with single control plane (1 master) and 3 nodes\n\nLet's check the details about the etcd pod running on the master\n```\nnetworkandcode@master:~$ kubectl get po -n kube-system -o wide | grep etcd\netcd-master                               1\/1     Running   2          32h   10.128.15.226    master              \n```\n\nThe kube-apiserver is the central software block in the Kubernetes system and it acts like a server for most of the components, however it acts as a client when talking to the etcd server. So the kube-apiserver and ectd form an HTTPS client-server combination. The kube-apiserver is also running as a Pod, and there should be a way for it know the details of the etcd server such as it's IP address, it's ca certificate and so on, so that it can communicate with it. This is done with flags such as \u002d\u002detcd-servers of the kube-apiserver command, and this command is part of the Pod manifest\n\nLet's check the running kube-apiserver Pod's manifest in yaml\n```\nnetworkandcode@master:~$ kubectl get po kube-apiserver-master -n kube-system -o yaml\napiVersion: v1\nkind: Pod\nspec:\n  containers:\n  - command:\n    - kube-apiserver\n    \u002d\u002dTRUNCATED\u002d\u002d\n    - \u002d\u002detcd-cafile=\/etc\/kubernetes\/pki\/etcd\/ca.crt\n    - \u002d\u002detcd-certfile=\/etc\/kubernetes\/pki\/apiserver-etcd-client.crt\n    - \u002d\u002detcd-keyfile=\/etc\/kubernetes\/pki\/apiserver-etcd-client.key\n    - \u002d\u002detcd-servers=https:\/\/127.0.0.1:2379\n\u002d\u002dTRUNCATED\u002d\u002d\n```\n\nAs the cluster was already launched using kubeadm, the kube-apiserver has the details about the etcd in it's Pod manifest, if at all we want to make changes to the Pod manifest, we could modify the configuration of the Pod saved in the path `\/etc\/kubernetes\/manifests\/`\n```\nnetworkandcode@master:~$ ls \/etc\/kubernetes\/manifests\netcd.yaml  kube-apiserver.yaml  kube-controller-manager.yaml  kube-scheduler.yaml\n```\nHere ```kube-apiserver.yaml``` refers to the saved Pod manifest of the kube-apiserver, and ```etcd.yaml``` is that of the ectd server\n\nThe section ```\u002d\u002detcd-servers=https:\/\/127.0.0.1:2379``` says the etcd server is on the same host, note that the IP ```127.0.0.1``` refers to the local host itself. And, the default port on which etcd server is functioning is TCP 2379\n\nThe kube-apiserver which the etcd client now knows how to connect with the etcd server, however the etcd server should already be existing and functioning on the same IP and port. The etcd server should have started specifying the same IP and port as that given in the kube-apiserver's configuration. This is done using the flags ```\u002d\u002dlisten-client-urls``` and ```\u002d\u002dadvertise-client-urls``` of the etcd command, and this command is part of the etcd Pod's manifest. Let's check the running manifest of the etcd server\n```\nnetworkandcode@master:~$ kubectl get po etcd-master -n kube-system -o yaml\napiVersion: v1\nkind: Pod\n\u002d\u002dTRUNCATED\u002d\u002d\nspec:\n  containers:\n  - command:\n    - etcd\n    - \u002d\u002dadvertise-client-urls=https:\/\/10.128.15.226:2379\n    - \u002d\u002dcert-file=\/etc\/kubernetes\/pki\/etcd\/server.crt\n    - \u002d\u002dclient-cert-auth=true\n    - \u002d\u002ddata-dir=\/var\/lib\/etcd\n    - \u002d\u002dinitial-advertise-peer-urls=https:\/\/10.128.15.226:2380\n    - \u002d\u002dinitial-cluster=master=https:\/\/10.128.15.226:2380\n    - \u002d\u002dkey-file=\/etc\/kubernetes\/pki\/etcd\/server.key\n    - \u002d\u002dlisten-client-urls=https:\/\/127.0.0.1:2379,https:\/\/10.128.15.226:2379\n    - \u002d\u002dlisten-metrics-urls=http:\/\/127.0.0.1:2381\n    - \u002d\u002dlisten-peer-urls=https:\/\/10.128.15.226:2380\n    - \u002d\u002dname=master\n    - \u002d\u002dpeer-cert-file=\/etc\/kubernetes\/pki\/etcd\/peer.crt\n    - \u002d\u002dpeer-client-cert-auth=true\n    - \u002d\u002dpeer-key-file=\/etc\/kubernetes\/pki\/etcd\/peer.key\n    - \u002d\u002dpeer-trusted-ca-file=\/etc\/kubernetes\/pki\/etcd\/ca.crt\n    - \u002d\u002dsnapshot-count=10000\n    - \u002d\u002dtrusted-ca-file=\/etc\/kubernetes\/pki\/etcd\/ca.crt\n\u002d\u002dTRUNCATED\u002d\u002d\n```\nThe ```\u002d\u002dlisten-client-urls``` flag also has an extra entry ```https:\/\/10.128.15.226:2379``` which refers to the local IP address of the master instance where etcd is installed, and 2379 is the standard etcd server port on which the clients connect\n\n\u002d\u002dend-of-post\u002d\u002d-"} --></p>
+<div class="wp-block-jetpack-markdown">
+<p>etcd is a consistent key value datastore that Kubernetes leverages to store the cluster configuration. However etcd is not a native Kubernetes component. ectd could be installed on separate dedicated instances or on master instances. In production, etcd is installed in HA (High Availability) mode i.e. etcd server is installed on more than one instance. In HA, an etcd cluster is comprised of odd number of instances - 1, 3, 5 etc. however 5 is the recommended number of etcd instances for production environments</p>
+<p>Prerequisites:</p>
+<ul>
+<li>Should have some understanding of Pod manifests</li>
+<li>Some familiarity with the kube-system namespace</li>
+</ul>
+<p>Environment:</p>
+<ul>
+<li>Kubernetes cluster launched using kubeadm</li>
+<li>We are doing this exercise on a cluster with single control plane (1 master) and 3 nodes</li>
+</ul>
+<p>Let's check the details about the etcd pod running on the master</p>
+<pre><code>networkandcode@master:~$ kubectl get po -n kube-system -o wide | grep etcd
+etcd-master                               1/1     Running   2          32h   10.128.15.226    master   &lt;none&gt;           &lt;none&gt;
+</code></pre>
+<p>The kube-apiserver is the central software block in the Kubernetes system and it acts like a server for most of the components, however it acts as a client when talking to the etcd server. So the kube-apiserver and ectd form an HTTPS client-server combination. The kube-apiserver is also running as a Pod, and there should be a way for it know the details of the etcd server such as it's IP address, it's ca certificate and so on, so that it can communicate with it. This is done with flags such as --etcd-servers of the kube-apiserver command, and this command is part of the Pod manifest</p>
+<p>Let's check the running kube-apiserver Pod's manifest in yaml</p>
+<pre><code>networkandcode@master:~$ kubectl get po kube-apiserver-master -n kube-system -o yaml
+apiVersion: v1
+kind: Pod
+spec:
+  containers:
+  - command:
+    - kube-apiserver
+    --TRUNCATED--
+    - --etcd-cafile=/etc/kubernetes/pki/etcd/ca.crt
+    - --etcd-certfile=/etc/kubernetes/pki/apiserver-etcd-client.crt
+    - --etcd-keyfile=/etc/kubernetes/pki/apiserver-etcd-client.key
+    - --etcd-servers=https://127.0.0.1:2379
+--TRUNCATED--
+</code></pre>
+<p>As the cluster was already launched using kubeadm, the kube-apiserver has the details about the etcd in it's Pod manifest, if at all we want to make changes to the Pod manifest, we could modify the configuration of the Pod saved in the path <code>/etc/kubernetes/manifests/</code></p>
+<pre><code>networkandcode@master:~$ ls /etc/kubernetes/manifests
+etcd.yaml  kube-apiserver.yaml  kube-controller-manager.yaml  kube-scheduler.yaml
+</code></pre>
+<p>Here <code>kube-apiserver.yaml</code> refers to the saved Pod manifest of the kube-apiserver, and <code>etcd.yaml</code> is that of the ectd server</p>
+<p>The section <code>--etcd-servers=https://127.0.0.1:2379</code> says the etcd server is on the same host, note that the IP <code>127.0.0.1</code> refers to the local host itself. And, the default port on which etcd server is functioning is TCP 2379</p>
+<p>The kube-apiserver which the etcd client now knows how to connect with the etcd server, however the etcd server should already be existing and functioning on the same IP and port. The etcd server should have started specifying the same IP and port as that given in the kube-apiserver's configuration. This is done using the flags <code>--listen-client-urls</code> and <code>--advertise-client-urls</code> of the etcd command, and this command is part of the etcd Pod's manifest. Let's check the running manifest of the etcd server</p>
+<pre><code>networkandcode@master:~$ kubectl get po etcd-master -n kube-system -o yaml
+apiVersion: v1
+kind: Pod
+--TRUNCATED--
+spec:
+  containers:
+  - command:
+    - etcd
+    - --advertise-client-urls=https://10.128.15.226:2379
+    - --cert-file=/etc/kubernetes/pki/etcd/server.crt
+    - --client-cert-auth=true
+    - --data-dir=/var/lib/etcd
+    - --initial-advertise-peer-urls=https://10.128.15.226:2380
+    - --initial-cluster=master=https://10.128.15.226:2380
+    - --key-file=/etc/kubernetes/pki/etcd/server.key
+    - --listen-client-urls=https://127.0.0.1:2379,https://10.128.15.226:2379
+    - --listen-metrics-urls=http://127.0.0.1:2381
+    - --listen-peer-urls=https://10.128.15.226:2380
+    - --name=master
+    - --peer-cert-file=/etc/kubernetes/pki/etcd/peer.crt
+    - --peer-client-cert-auth=true
+    - --peer-key-file=/etc/kubernetes/pki/etcd/peer.key
+    - --peer-trusted-ca-file=/etc/kubernetes/pki/etcd/ca.crt
+    - --snapshot-count=10000
+    - --trusted-ca-file=/etc/kubernetes/pki/etcd/ca.crt
+--TRUNCATED--
+</code></pre>
+<p>The <code>--listen-client-urls</code> flag also has an extra entry <code>https://10.128.15.226:2379</code> which refers to the local IP address of the master instance where etcd is installed, and 2379 is the standard etcd server port on which the clients connect</p>
+<p>--end-of-post---</p>
+</div>
+<p><!-- /wp:jetpack/markdown --></p>

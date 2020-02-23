@@ -1,0 +1,290 @@
+---
+layout: post
+title: Kubernetes > Expose Pod(s) using Services
+date: 2019-09-04 14:39:52.000000000 +05:30
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags: []
+meta:
+  _publicize_job_id: '34916488080'
+  timeline_notification: '1567588196'
+author:
+  login: shak1r
+  email: shakir@techie.com
+  display_name: shakir
+  first_name: ''
+  last_name: ''
+permalink: "/2019/09/04/kubernetes-expose-pods-using-services/"
+---
+<p><!-- wp:paragraph --></p>
+<p>Prerequisite: Should have some understanding on Pods, Deployments</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>The standard way of deploying an application is using a deployment object and then launch the required number of Pod replicas as desired. As this would help with advantages such as restarting a Pod when it fails</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>When we launch a Deployment it would launch Pod replicas, and these replicas could be higher in number in production, So when all of these Pods are serving the same content on a specific container port, it is not worthy to note the IPs of each of the Pods and access these Pods individually on the specific container port, rather we would group them all together with a single IP which we call as a service IP, and an associated service port. So when we send request for example, using CURL or an Internet Browser (if the Pod is serving an http application a.k.a web server) to the Service IP and Service Port, it would be diverted to one of the available Pods in the group (a.k.a service) on the Pod's IP and the container Port. We call the individual Pod IP / Port combination as an endpoint. So if a service exposes four Pods, it would have four endpoints</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>The service flow could be shown as:<br />
+Client sends request -&gt; Service IP : Service Port -&gt; One of the Pods' IP : Container Port</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Now that we know what a service is, let's know the typical service types offered by Kubernetes - the three main service types are ClusterIP, NodePort, and LoadBalancer. ClusterIP service is accessible on an Internal IP and the service port. NodePort service is accessible through an Internal / External Node IP and a Node port, the standard range for node port is 30000 - 32767. LoadBalancer service is accessible through an External IP and the service port. The port used by both ClusterIP and LoadBalancer is the same, the difference is that ClusterIP has an Internal IP, and LoadBalancer has an external IP. External IP helps enabling access from outside the cluster, for example, from the Internet.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Let's begin the illustration<br /> We are defining a Deployment manifest to launch 4 nginx Pods</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:syntaxhighlighter/code --></p>
+<pre class="wp-block-syntaxhighlighter-code">networkandcode@cloudshell:~ cat ex25-deploy.yaml
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: deploy25
+spec:
+  template:
+    metadata:
+      labels:
+        tag: label25
+    spec:
+      containers:
+      - name: ctr25
+        image: nginx
+  replicas: 4
+  selector:
+    matchLabels:
+      tag: label25
+...</pre>
+<p><!-- /wp:syntaxhighlighter/code --></p>
+<p><!-- wp:paragraph --></p>
+<p>Let's create the deployment and check the Pods</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:code --></p>
+<pre class="wp-block-code"><code>networkandcode@cloudshell:~ kubectl create -f ex25-deploy.yaml
+deployment.extensions/deploy25 created
+
+networkandcode@cloudshell:~ kubectl get po -o wide
+NAME                        READY   STATUS    RESTARTS   AGE     IP          NODE                                                NOMINATED NODE
+deploy25-7b489f6476-5gz2s   1/1     Running   0          5m14s   10.8.2.6    gke-standard-cluster-1-default-pool-6db9ad03-6jvw   &lt;none&gt;
+deploy25-7b489f6476-7q54s   1/1     Running   0          5m14s   10.8.0.12   gke-standard-cluster-1-default-pool-6db9ad03-m7xm   &lt;none&gt;
+deploy25-7b489f6476-98dlp   1/1     Running   0          5m14s   10.8.0.13   gke-standard-cluster-1-default-pool-6db9ad03-m7xm   &lt;none&gt;
+deploy25-7b489f6476-n6jcw   1/1     Running   0          5m14s   10.8.1.10   gke-standard-cluster-1-default-pool-6db9ad03-gfx0   &lt;none&gt;</code></pre>
+<p><!-- /wp:code --></p>
+<p><!-- wp:paragraph --></p>
+<p>Since nginx is a web server, we should be able to CURL the web application i.e. one of the Pods' IP on the default HTTP port 80. </p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Let's try to CURL from one of the nodes, note when we CURL just the IP, it would assume the default http port which is 80</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:code --></p>
+<pre class="wp-block-code"><code>networkandcode@k8s-node1: curl 10.8.2.6
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;Welcome to nginx!&lt;/title&gt;
+--TRUNCATED--</code></pre>
+<p><!-- /wp:code --></p>
+<p><!-- wp:paragraph --></p>
+<p>However we could also CURL the IP:Port combination</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:code --></p>
+<pre class="wp-block-code"><code>networkandcode@k8s-node1: curl 10.8.2.6:80
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;Welcome to nginx!&lt;/title&gt;
+--TRUNCATED--</code></pre>
+<p><!-- /wp:code --></p>
+<p><!-- wp:group --></p>
+<div class="wp-block-group">
+<div class="wp-block-group__inner-container"><!-- wp:paragraph --></p>
+<p>Let's create a ClusterIP service to expose these Pods, it should now get an Internal IP</p>
+<p><!-- /wp:paragraph --></div>
+</div>
+<p><!-- /wp:group --></p>
+<p><!-- wp:code --></p>
+<pre class="wp-block-code"><code>networkandcode@cloudshell:~ cat ex25-svc-ci.yaml
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: svc25-ci
+spec:
+  type: ClusterIP  # ClusterIP is the default service type even if not specified
+  selector:
+    tag: label25
+  ports:
+  - name: port25
+    protocol: TCP
+    port: 8080  # this is the service port
+    targetPort: 80 # this is the container port
+...
+
+networkandcode@cloudshell:~ kubectl create -f ex25-svc-ci.yaml
+service/svc25-ci created
+
+networkandcode@cloudshell:~ kubectl get svc svc25-ci
+NAME       TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)    AGE
+svc25-ci   ClusterIP   10.12.10.208   &lt;none&gt;        8080/TCP   12s</code></pre>
+<p><!-- /wp:code --></p>
+<p><!-- wp:paragraph --></p>
+<p>An endpoint object would be created with the same name like the service, that shows the Pod endpoints with their respective container ports that is specified as targetPort in the service manifest.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:code --></p>
+<pre class="wp-block-code"><code>networkandcode@cloudshell:~ kubectl get ep svc25-ci
+NAME       ENDPOINTS                                            AGE
+svc25-ci   10.8.0.12:80,10.8.0.13:80,10.8.1.10:80 + 1 more...   59s</code></pre>
+<p><!-- /wp:code --></p>
+<p><!-- wp:paragraph --></p>
+<p>We should be able to CURL the ClusterIP on the service port 8080, from one of the nodes, this request is actually forwarded to the container port 80</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:code --></p>
+<pre class="wp-block-code"><code>networkandcode@k8s-node1: curl 10.12.10.208:8080
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;Welcome to nginx!&lt;/title&gt;
+--TRUNCATED--</code></pre>
+<p><!-- /wp:code --></p>
+<p><!-- wp:paragraph --></p>
+<p>Let's delete the ClusterIP service and create a NodePort service which would create automatically create a ClusterIP as well</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:code --></p>
+<pre class="wp-block-code"><code>networkandcode@cloudshell:~ kubectl delete svc svc25-ci
+service "svc25-ci" deleted
+
+networkandcode@cloudshell:~ cat ex25-svc-np.yaml
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: svc25-np
+spec:
+  type: NodePort
+  selector:
+    tag: label25
+  ports:
+  - name: port25
+    protocol: TCP
+    port: 8080  # this is the service port
+    targetPort: 80 # this is the container port
+...
+
+networkandcode@cloudshell:~ kubectl create -f ex25-svc-np.yaml
+service/svc25-np created
+
+networkandcode@cloudshell:~ kubectl get svc svc25-np
+NAME       TYPE       CLUSTER-IP    EXTERNAL-IP   PORT(S)          AGE
+svc25-np   NodePort   10.12.7.115   &lt;none&gt;        8080:32108/TCP   8s
+
+networkandcode@cloudshell:~ kubectl get ep svc25-np
+NAME       ENDPOINTS                                            AGE
+svc25-np   10.8.0.12:80,10.8.0.13:80,10.8.1.10:80 + 1 more...   59s</code></pre>
+<p><!-- /wp:code --></p>
+<p><!-- wp:paragraph --></p>
+<p>So creating a NodePort service has created a ClusterIP too, and it has it's set of Pod endpoints. However there is an additional port assigned by the service, and in this case it's 32108, this is the node port through which the nginx Pod could be accessed when we CURL NodeIP:NodePort, we could curl it either using the internal or the external IP. Let's check the Node's IPs - the External IPs are purposefully  hidden with *s</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:code --></p>
+<pre class="wp-block-code"><code>networkandcode@cloudshell:~ kubectl get nodes -o wide
+NAME                                                STATUS   ROLES    AGE     VERSION          INTERNAL-IP   EXTERNAL-IP      OS-IMAGE                            
+ KERNEL-VERSION   CONTAINER-RUNTIME
+gke-standard-cluster-1-default-pool-6db9ad03-6jvw   Ready    &lt;none&gt;   5h40m   v1.12.8-gke.10   10.128.0.32   *.*.*.*    Container-Optimized OS from Google  
+ 4.14.127+        docker://17.3.2
+gke-standard-cluster-1-default-pool-6db9ad03-gfx0   Ready    &lt;none&gt;   5h40m   v1.12.8-gke.10   10.128.0.31   *.*.*.*     Container-Optimized OS from Google  
+ 4.14.127+        docker://17.3.2
+gke-standard-cluster-1-default-pool-6db9ad03-m7xm   Ready    &lt;none&gt;   5h40m   v1.12.8-gke.10   10.128.0.30   *.*.*.*   Container-Optimized OS from Google  
+ 4.14.127+        docker://17.3.2</code></pre>
+<p><!-- /wp:code --></p>
+<p><!-- wp:paragraph --></p>
+<p>We can now curl the node IP with it's node port to access nginx, from one of the nodes, here we are using Internal IP however we could also use External IP, we could also access the External IP with the node port to view the graphical content (home page) of the nginx webserver</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:code --></p>
+<pre class="wp-block-code"><code>networkandcode@k8s-node1: curl 10.128.0.32:32108
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;Welcome to nginx!&lt;/title&gt;</code></pre>
+<p><!-- /wp:code --></p>
+<p><!-- wp:paragraph --></p>
+<p>Note that in cloud environments, node ports may not be accessible directly, so it's necessary to add a firewallrule to allow TCP:30000-32767 which is the node port range on the network where the cluster is launched, it could be done in Google cloud as follows</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:code --></p>
+<pre class="wp-block-code"><code>networkandcode@cloudshell:~ gcloud config set project &lt;put your complete project id here&gt;
+Updated property &#091;core/project].
+networkandcode@cloudshell:~ gcloud compute firewall-rules create fwrule25 --allow TCP:30000-32767 --network default
+Creating firewall...⠏Created &#091;https://www.googleapis.com/compute/v1/projects/excellent-ship-248017/global/firewalls/fwrule25].
+Creating firewall...done.
+NAME      NETWORK  DIRECTION  PRIORITY  ALLOW            DENY  DISABLED
+fwrule25  default  INGRESS    1000      tcp:30000-32767        False</code></pre>
+<p><!-- /wp:code --></p>
+<p><!-- wp:paragraph --></p>
+<p>Let's move on to the LoadBalancer service type. We shall delete the existing NodePort and create a LoadBalancer service. LoadBalancer is purely external, so it could be accessible from a browser over internet. And it uses the same port as the ClusterIP. Creating a LoadBalancer service would automatically create respective NodePort and ClusterIP services. LoadBalancer service when launched in Kubernetes engine of cloud environments, it automatically launches a load balancer service in the cloud in the backend</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:code --></p>
+<pre class="wp-block-code"><code>networkandcode@cloudshell:~ kubectl delete svc svc25-np
+service "svc25-np" deleted
+
+networkandcode@cloudshell:~ cat ex25-svc-lb.yaml
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: svc25-lb
+spec:
+  type: LoadBalancer
+  selector:
+    tag: label25
+  ports:
+  - name: port25
+    protocol: TCP
+    port: 8080  # this is the service port
+    targetPort: 80 # this is the container port
+...
+
+networkandcode@cloudshell:~ kubectl create -f ex25-svc-lb.yaml
+service/svc25-lb created
+
+networkandcode@cloudshell:~ kubectl get svc svc25-lb
+NAME       TYPE           CLUSTER-IP    EXTERNAL-IP     PORT(S)          AGE
+svc25-lb   LoadBalancer   10.12.8.237   *.*.*.*   8080:31256/TCP   69s
+
+networkandcode@cloudshell:~ kubectl get ep svc25-lb
+NAME       ENDPOINTS                                            AGE
+svc25-lb   10.8.0.12:80,10.8.0.13:80,10.8.1.10:80 + 1 more...   8m54s</code></pre>
+<p><!-- /wp:code --></p>
+<p><!-- wp:paragraph --></p>
+<p>It takes some time to assign a LoadBalancer external IP, now we can try accessing nginx application using the external IP a.k.a LoadBalancer IP and the service port, you may try this on the browser too</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:code --></p>
+<pre class="wp-block-code"><code>networkandcode@k8s-node1: curl &lt;putYourExternalIP&gt;:8080
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;Welcome to nginx!&lt;/title&gt;
+--TRUNCATED--</code></pre>
+<p><!-- /wp:code --></p>
+<p><!-- wp:paragraph --></p>
+<p>A loadbalancer service gets created in Google cloud when a loadbalancer service is created in Kubernetes, this can be checked as follows</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:code --></p>
+<pre class="wp-block-code"><code>networkandcode@cloudshell:~ gcloud compute forwarding-rules list
+ NAME                                            REGION       IP_ADDRESS     IP_PROTOCOL  TARGET
+ a808e334bcef111e9a85442010a8001f                us-central1  35.224.20.254  TCP          us-central1/targetPools/a808e334bcef111e9a85442010a8001f</code></pre>
+<p><!-- /wp:code --></p>
+<p><!-- wp:paragraph --></p>
+<p>CleanUp</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:code --></p>
+<pre class="wp-block-code"><code>networkandcode@cloudshell:~ kubectl delete svc svc25-lb
+service "svc25-lb" deleted
+networkandcode@cloudshell:~ kubectl delete deploy deploy25
+deployment.extensions "deploy25" deleted</code></pre>
+<p><!-- /wp:code --></p>
+<p><!-- wp:paragraph --></p>
+<p>--end-of-post--</p>
+<p><!-- /wp:paragraph --></p>

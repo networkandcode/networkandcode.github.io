@@ -1,0 +1,72 @@
+---
+layout: post
+title: Kubernetes > Sample tasks > Autoscaling deployment
+date: 2019-08-26 10:00:28.000000000 +05:30
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags: []
+meta:
+  _rest_api_client_id: "-1"
+  _publicize_job_id: '34562004645'
+  timeline_notification: '1566793831'
+  _rest_api_published: '1'
+author:
+  login: shak1r
+  email: shakir@techie.com
+  display_name: shakir
+  first_name: ''
+  last_name: ''
+permalink: "/2019/08/26/kubernetes-sample-tasks-autoscaling-deployment/"
+---
+<p>This is in continuation to the previous post<br />
+<br />
+The front end deployments have 3 Pod replicas</p>
+<pre><code>
+networkandcode@k8s-master:~ kubectl get deployment deploy4-frontend -n staging
+NAME               READY   UP-TO-DATE   AVAILABLE   AGE
+deploy4-frontend   3/3     3            3           34h
+networkandcode@k8s-master:~ kubectl get deployment deploy4-frontend -n production
+NAME               READY   UP-TO-DATE   AVAILABLE   AGE
+deploy4-frontend   3/3     3            3           34h
+</code></pre>
+<p>Let's define an hpa manifest with minimum replicas 4, maximum replicas 4, and target CPU utilization as 75%</p>
+<pre><code>
+networkandcode@k8s-master:~ cat hpa7-frontend.yaml
+---
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: hpa7-frontend
+  namespace: NameSpaceName
+spec:
+  minReplicas: 2
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 75
+  scaleTargetRef:
+    apiVersion: extensions/v1beta1
+    kind: Deployment
+    name: deploy4-frontend
+...
+</code></pre>
+<p>To create the hpa in both namespaces</p>
+<pre><code>
+networkandcode@k8s-master:~ sed -i 's/NameSpaceName/staging/g' hpa7-frontend.yaml
+networkandcode@k8s-master:~ kubectl create -f hpa7-frontend.yaml
+horizontalpodautoscaler.autoscaling/hpa7-frontend created
+networkandcode@k8s-master:~ sed -i 's/staging/production/g' hpa7-frontend.yaml
+networkandcode@k8s-master:~ kubectl create -f hpa7-frontend.yaml
+horizontalpodautoscaler.autoscaling/hpa7-frontend created
+networkandcode@k8s-master:~ sed -i 's/production/NamespaceName/g' hpa7-frontend.yaml
+</code></pre>
+<p>Verify</p>
+<pre><code>
+networkandcode@k8s-master:~ kubectl get hpa --all-namespaces
+NAMESPACE    NAME            REFERENCE                     TARGETS         MINPODS   MAXPODS   REPLICAS   AGE
+production   hpa7-frontend   Deployment/deploy4-frontend   /75%   2         5         3          2m8s
+staging      hpa7-frontend   Deployment/deploy4-frontend   /75%   2         5         3          2m25s
+</code></pre>
+<p>--end-of-post--</p>

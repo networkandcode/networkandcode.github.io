@@ -1,0 +1,69 @@
+---
+layout: post
+title: OpenStack | Groups
+date: 2018-07-06 10:08:15.000000000 +05:30
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags:
+- openstack
+meta:
+  _wpas_skip_18195285: '1'
+  switch_like_status: '1'
+  _wpas_skip_18169689: '1'
+  _rest_api_client_id: "-1"
+  _rest_api_published: '1'
+  _publicize_job_id: '19716962286'
+  timeline_notification: '1530851900'
+author:
+  login: shak1r
+  email: shakir@techie.com
+  display_name: shakir
+  first_name: ''
+  last_name: ''
+permalink: "/2018/07/06/openstack-groups/"
+---
+<div> To check the list of user roles that are already created / defined</div>
+<div>cumulus@server01:~$ openstack role list</div>
+<p>In OpenStack we can create groups of users with a common role or privilege across projects.</p>
+<p>#Let's try to create a new user group by the name firstGroup in the domain 'firstDomain'</p>
+<p>cumulus@server01:~$ openstack group create --domain firstDomain firstGroup<br />
++-------------+----------------------------------+<br />
+| Field | Value |<br />
++-------------+----------------------------------+<br />
+| description | |<br />
+| domain_id | 3126fcd5e04149bbb4a367bbbe278c6e |<br />
+| id | 3a61bc2a12c545faa0e5e1bfcd5e9772 |<br />
+| name | firstGroup |<br />
++-------------+----------------------------------+</p>
+<p>to check the list of groups</p>
+<p>cumulus@server01:~$ openstack group list<br />
++----------------------------------+------------+<br />
+| ID | Name |<br />
++----------------------------------+------------+<br />
+| 3a61bc2a12c545faa0e5e1bfcd5e9772 | firstGroup |<br />
++----------------------------------+------------+</p>
+<p>#now let's add the user 'firstUser' in the group 'firstGroup' belonging to the domain 'firstDomain'<br />
+cumulus@server01:~$ openstack group add user --group-domain firstDomain firstGroup firstUser</p>
+<p>&nbsp;</p>
+<p>#to verify if the user was added to the group properly</p>
+<p>cumulus@server01:~$ openstack group contains user --group-domain firstDomain firstGroup firstUser</p>
+<p><span style="color:#0000ff;"><em> firstUser in group firstGroup</em></span></p>
+<p>the text in blue refers to the output</p>
+<p>let's assign a role, example <span style="color:#0000ff;">user,</span> to this newly created group</p>
+<p>cumulus@server01:~$ openstack role add --project-domain firstDomain --project firstProject --group firstGroup user</p>
+<p>cumulus@server01:~$ openstack role assignment list --group firstGroup --names<br />
++------+------+------------------------+--------------------------+--------+-----------+<br />
+| Role | User | Group | Project| Domain | Inherited |<br />
++------+------+------------------------+--------------------------+--------+-----------+<br />
+| user | | firstGroup@firstDomain | firstProject@firstDomain | | False |<br />
++------+------+------------------------+--------------------------+--------+-----------+<br />
+cumulus@server01:~$</p>
+<p>--end-of-post--</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>

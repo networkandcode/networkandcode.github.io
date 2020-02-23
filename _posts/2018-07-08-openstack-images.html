@@ -1,0 +1,185 @@
+---
+layout: post
+title: OpenStack | Images
+date: 2018-07-08 14:44:11.000000000 +05:30
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags:
+- openstack
+meta:
+  _wpas_skip_18195285: '1'
+  _wpas_skip_18169689: '1'
+  timeline_notification: '1531041254'
+  _rest_api_published: '1'
+  _rest_api_client_id: "-1"
+  _publicize_job_id: '19787209666'
+author:
+  login: shak1r
+  email: shakir@techie.com
+  display_name: shakir
+  first_name: ''
+  last_name: ''
+permalink: "/2018/07/08/openstack-images/"
+---
+<p><em>command syntax1:</em> <em>openstack image &lt;action/operation&gt; &lt;--flags values&gt; &lt;image-name/UUID&gt;</em></p>
+<p><em>command syntax2: openstack image add project &lt;image-name/UUID&gt; &lt;project-name&gt;</em></p>
+<p>#to view the list of images</p>
+<p>cumulus@server01:~$ <span style="color:#3366ff;">openstack image list</span><br />
++--------------------------------------+--------+--------+<br />
+| ID | Name | Status |<br />
++--------------------------------------+--------+--------+<br />
+| 8a700aea-4f30-4798-b6f7-037b11dc9494 | <span style="color:#3366ff;">cirros</span> | active |<br />
++--------------------------------------+--------+--------+</p>
+<p>#to check more details about the image with name 'cirros'</p>
+<p>cumulus@server01:~$ <span style="color:#3366ff;">openstack image show cirros</span><br />
++------------------+------------------------------------------------------+<br />
+| Field | Value |<br />
++------------------+------------------------------------------------------+<br />
+| checksum | 133eae9fb1c98f45894a4e60d8736619 |<br />
+| container_format | bare |<br />
+| created_at | 2018-07-05T07:42:54Z |<br />
+| disk_format | qcow2 |<br />
+| file | /v2/images/8a700aea-4f30-4798-b6f7-037b11dc9494/file |<br />
+| id | 8a700aea-4f30-4798-b6f7-037b11dc9494 |<br />
+| min_disk | 0 |<br />
+| min_ram | 0 |<br />
+| name | cirros |<br />
+| owner | 9a4ce13914f0444789153f632722a42a |<br />
+| protected | False |<br />
+| schema | /v2/schemas/image |<br />
+| size | 13200896 |<br />
+| status | active |<br />
+| tags | |<br />
+| updated_at | 2018-07-05T07:42:55Z |<br />
+| virtual_size | None |<br />
+| visibility | public |<br />
++------------------+------------------------------------------------------+</p>
+<p>#the image that we checked above, is already there in the system, what if we want to install a new image, for that we  need to first to download the image from it's URL, let's try to download the light weight cirros image, which is used for learning purposes</p>
+<p>cumulus@server01:~$ <span style="color:#3366ff;">wget https://download.cirros-cloud.net/0.3.5/cirros-0.3.5-x86_64-disk.img</span><br />
+--2018-07-08 08:23:33-- https://download.cirros-cloud.net/0.3.5/cirros-0.3.5-x86_64-disk.img<br />
+Resolving download.cirros-cloud.net (download.cirros-cloud.net)... 64.90.42.85, 2607:f298:6:a036::bd6:a<br />
+72a<br />
+Connecting to download.cirros-cloud.net (download.cirros-cloud.net)|64.90.42.85|:443... connected.<br />
+HTTP request sent, awaiting response... 200 OK<br />
+Length: 13267968 (13M) [text/plain]<br />
+Saving to: ‘cirros-0.3.5-x86_64-disk.img’</p>
+<p>cirros-0.3.5-x86_64-disk. 100%[====================================&gt;] 12.65M 19.8MB/s in 0.6s</p>
+<p>2018-07-08 08:23:34 (19.8 MB/s) - ‘cirros-0.3.5-x86_64-disk.img’ saved [13267968/13267968]</p>
+<p>#now, we can create an openstack image using this downloaded image file</p>
+<p>cumulus@server01:~$ <span style="color:#3366ff;">openstack image create --file cirros-0.3.5-x86_64-disk.img --disk-format qcow2 --mi</span><span style="color:#3366ff;">n-disk 1 --min-ram 512 --property description='Cirros_Cloud_Image' --property architecture='x64' firstImage</span><br />
++------------------+------------------------------------------------------+<br />
+| Field | Value |<br />
++------------------+------------------------------------------------------+<br />
+| checksum | f8ab98ff5e73ebab884d80c9dc9c7290 |<br />
+| container_format | bare |<br />
+| created_at | 2018-07-08T08:48:28Z |<br />
+| disk_format | qcow2 |<br />
+| file | /v2/images/faa6f7a0-f772-4fa1-bf07-6e0414488eac/file |<br />
+| id | faa6f7a0-f772-4fa1-bf07-6e0414488eac |<br />
+| min_disk | 1 |<br />
+| min_ram | 512 |<br />
+| name | firstImage |<br />
+| owner | 9a4ce13914f0444789153f632722a42a |<br />
+| properties | architecture='x64', description='Cirros_Cloud_Image' |<br />
+| protected | False |<br />
+| schema | /v2/schemas/image |<br />
+| size | 13267968 |<br />
+| status | active |<br />
+| tags | |<br />
+| updated_at | 2018-07-08T08:48:29Z |<br />
+| virtual_size | None |<br />
+| visibility | shared |<br />
++------------------+------------------------------------------------------+cumulus@server01:~$</p>
+<p>#the newly create Image should now appear in the Image list</p>
+<p>cumulus@server01:~$ <span style="color:#3366ff;">openstack image list</span><br />
++--------------------------------------+------------+--------+<br />
+| ID | Name | Status |<br />
++--------------------------------------+------------+--------+<br />
+| 8a700aea-4f30-4798-b6f7-037b11dc9494 | cirros | active |<br />
+| faa6f7a0-f772-4fa1-bf07-6e0414488eac | firstImage | active |<br />
++--------------------------------------+------------+--------+</p>
+<p>#we can also download the image in OpenStack to a local directory on the controller node</p>
+<p>cumulus@server01:~$ <span style="color:#3366ff;">openstack image save --file /tmp/downloaded_cirros_image.img firstImage</span></p>
+<p>Note: when you have more than one image with the same name, we can use the image UUID instead of the name</p>
+<p>cumulus@server01:~$ <span style="color:#3366ff;">openstack image save --file /tmp/firstDownloadeImage.img faa6f7a0-f772-4fa1-bf07-6e</span><span style="color:#3366ff;">0414488eac</span></p>
+<p>#we can verify the directory to verify the file exists<br />
+cumulus@server01:~$ <span style="color:#3366ff;">ls /tmp/ | grep first</span><br />
+firstDownloadeImage.img<br />
+cumulus@server01:~$</p>
+<p>#to check more information about the file</p>
+<p>cumulus@server01:~$ <span style="color:#3366ff;">ls -l /tmp/ | grep cirros</span><br />
+-rw-rw-r-- 1 cumulus cumulus 13267968 Jul 8 08:36 downloaded_cirros_image.img</p>
+<p>#Let's try modifying the values of certain fields of the image</p>
+<p>cumulus@server01:~$ <span style="color:#3366ff;">openstack image show faa6f7a0-f772-4fa1-bf07-6e0414488eac | grep min_disk</span><br />
+| min_disk | 1</p>
+<p>let's change the min_disk capacity from 1GB to 2GB</p>
+<p>cumulus@server01:~$ <span style="color:#3366ff;">openstack image set --min-disk 2 faa6f7a0-f772-4fa1-bf07-6e0414488eac</span></p>
+<p>cumulus@server01:~$</p>
+<p>#let's set the os_distro property</p>
+<p>cumulus@server01:~$ <span style="color:#3366ff;">openstack image set --property os_distro='firstCirrosImage' faa6f7a0-f772-4fa1-bf07</span><span style="color:#3366ff;">-6e0414488eac</span></p>
+<p>#to verify</p>
+<p>cumulus@server01:~$ <span style="color:#3366ff;">openstack image show faa6f7a0-f772-4fa1-bf07-6e0414488eac</span><br />
++------------------+-----------------------------------------------------------------------------------<br />
+-+<br />
+| Field | Value<br />
+|<br />
++------------------+-----------------------------------------------------------------------------------<br />
+-+<br />
+| checksum | f8ab98ff5e73ebab884d80c9dc9c7290<br />
+|<br />
+| container_format | bare<br />
+|<br />
+| created_at | 2018-07-08T08:48:28Z<br />
+|<br />
+| disk_format | qcow2<br />
+|<br />
+| file | /v2/images/faa6f7a0-f772-4fa1-bf07-6e0414488eac/file<br />
+|<br />
+| id | faa6f7a0-f772-4fa1-bf07-6e0414488eac<br />
+|<br />
+| min_disk | <span style="color:#3366ff;">2</span><br />
+|<br />
+| min_ram | 512<br />
+|<br />
+| name | firstImage<br />
+|<br />
+| owner | 9a4ce13914f0444789153f632722a42a<br />
+|<br />
+| properties | architecture='x64', description='Cirros_Cloud_Image', os_distro='<span style="color:#3366ff;">firstCirrosImage</span>'<br />
+|<br />
+| protected | False<br />
+|<br />
+| schema | /v2/schemas/image<br />
+|<br />
+| size | 13267968<br />
+|<br />
+| status | active<br />
+|<br />
+| tags |<br />
+|<br />
+| updated_at | 2018-07-08T09:02:25Z<br />
+|<br />
+| virtual_size | None<br />
+|<br />
+| visibility | shared<br />
+|<br />
++------------------+-----------------------------------------------------------------------------------<br />
+-+</p>
+<p>#to add the image firstImage to the project firstProject</p>
+<p>cumulus@server01:~$ <span style="color:#3366ff;">openstack image add project faa6f7a0-f772-4fa1-bf07-6e0414488eac firstProject</span><br />
++------------+--------------------------------------+<br />
+| Field | Value |<br />
++------------+--------------------------------------+<br />
+| created_at | 2018-07-08T09:10:47Z |<br />
+| image_id | faa6f7a0-f772-4fa1-bf07-6e0414488eac |<br />
+| member_id | 23595ea6e5ed4201914e3831c12820ae |<br />
+| schema | /v2/schemas/member |<br />
+| status | pending |<br />
+| updated_at | 2018-07-08T09:10:47Z |<br />
++------------+--------------------------------------+</p>
+<p>--end-of-post--</p>
+<p>&nbsp;</p>

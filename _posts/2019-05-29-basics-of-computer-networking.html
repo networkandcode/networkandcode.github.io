@@ -1,0 +1,43 @@
+---
+layout: post
+title: Basics of Computer Networking
+date: 2019-05-29 19:32:07.000000000 +05:30
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags: []
+meta:
+  _rest_api_published: '1'
+  _rest_api_client_id: "-1"
+  timeline_notification: '1559138530'
+  _publicize_job_id: '31299780907'
+author:
+  login: shak1r
+  email: shakir@techie.com
+  display_name: shakir
+  first_name: ''
+  last_name: ''
+permalink: "/2019/05/29/basics-of-computer-networking/"
+---
+<p><span style="color:#3366ff;">What is Networking:</span><br />
+Networking in the world of Computing refers to the Interconnection of more than one node. These nodes can be physical or virtual (VMs) computers, smart phones, IOT(Internet of Things) enabled devices such as gadgets, smart watches, and so on. The prerequisite for a node to participate in networking is that it needs to have a network interface card (NIC) on it that helps it connect to the network either wirelessly(WiFi) or in wired(RJ45 cable) mode. The second prerequisite for the node is that it needs to have an IP(Internet Protocol) address assigned to it either statically or dynamically. Note that one node can have multiple wired or wireless NICs and hence multiple IP addresses.</p>
+<p><span style="color:#3366ff;">OSI Model:</span><br />
+The Open Systems Interconnect model lays a foundation to understand the concepts of networking. It helps the understanding of communication between two nodes in a layered fashion. An alternative to OSI is the TCP/IP model which uses only 5 layers.<br />
+OSI Model Layers: Application | Presentation | Session | Transport | Network | Data Link | Physical.</p>
+<p><span style="color:#3366ff;">TCP/IP Stack:</span><br />
+The TCP/IP protocol suite defines a set of protocols for each of the seven layers of the model OSI. For example, it has Ethernet for Layer-2, IP for Layer-3. TCP and UDP for Layer-4. The name of the protocol suite may tend to be confusing at times as it only uses TCP and IP which are the two most important protocols of the stack, however it's not just two protocols but a lot of them, and the list is growing.</p>
+<p><span style="color:#3366ff;">Ethernet:</span><br />
+Ethernet is the widely used Layer-2 standard and the addressing used with Ethernet is termed as a MAC(Media Access Control) address. Each Ethernet NIC will have a unique MAC.</p>
+<p><span style="color:#3366ff;">IP:</span><br />
+IP is the defacto standard for assigning logical (layer 3) addresses to a node, IP comes in two flavors - version 4 and 6. IPv4 is used widely however IPv6 is also used extensively in big hyperscale networks. A key point to note is that IPv6 has a big network address space as it's 128 bits long and can help massive scaling where as IPv4 with 32 bits has a comparatively very less address space.</p>
+<p><span style="color:#3366ff;">Internet:</span><br />
+Internet is the biggest and public IP network available today and BGP (Border Gateway Protocol) is the defacto protocol running the internet or exchanging IP routes among nodes in the Internet.</p>
+<p><span style="color:#3366ff;">Types of networks:</span><br />
+LAN(Local Area Network): A term used to refer to a private network which can either be small such as home networks, or could span across multiple locations such as enterprise networks.<br />
+WAN(Wide Area Network): A term used to refer mostly a public network such as Internet that helps interconnecting various LANs. Note that a private network such as MPLS(Multi Protocol Labeling Service) can also be termed as WAN.</p>
+<p><span style="color:#3366ff;">Security:</span><br />
+The security of the network relies on the protocols used at each of the layers, and on how well they are implemented. Most of the security is offered by Layer-3 and Layer-4. For example IPSEC is a popular VPN technique which uses TCP and IP, it provides a choice of various encryption and authentication algorithms to enhance security of data exchange.</p>
+<p>--end-of-post--</p>

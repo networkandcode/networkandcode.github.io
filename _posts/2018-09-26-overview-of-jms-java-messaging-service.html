@@ -1,0 +1,55 @@
+---
+layout: post
+title: Overview of JMS (Java Messaging Service)
+date: 2018-09-26 15:31:27.000000000 +05:30
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags:
+- jms
+meta:
+  timeline_notification: '1537956090'
+  _rest_api_published: '1'
+  _rest_api_client_id: "-1"
+  _wpas_skip_18169689: '1'
+  _wpas_skip_18195285: '1'
+  _publicize_job_id: '22548938525'
+author:
+  login: shak1r
+  email: shakir@techie.com
+  display_name: shakir
+  first_name: ''
+  last_name: ''
+permalink: "/2018/09/26/overview-of-jms-java-messaging-service/"
+---
+<p>JMS is like a JDBC(Java Database connectivity) API, JDBC API can be used to access different relational databases, similarly JMS API can be used to access different enterprise messaging systems (3rd party JMS providers) like JBoss Messaging, WebSphereMQ, BEA Weblogic, Active MQ, Rabbit MQ, HornetQ, Sonic Q, TIBCO EMS, Open MQ etc...<br />
+These messaging systems would handle routing and delivery of messages(objects).</p>
+<p>The JMS API will be implemented by the JMS providers</p>
+<p>other names for the JMS provider: MOM(Message oriented Middleware), Message Broker, JMS server, Messaging server.</p>
+<p>The JMS code is not gonna change if we change the JMS provider, i.e. the same JMS code fits  a JBoss messaging system or a WebSphere MQ system or a BEA Weblogic system</p>
+<p>Connection Factory and Destinations are two types of JMS administered objects which are preconfigured by the administartor. Connection factory objects are used for connecting the JMS client with the JMS provider, Destinations(Queues and Topics) are used by a JMS client to specify the source / destination of the messages it receives / sends respectively.</p>
+<p>Different actors in a JMS application</p>
+<p><img class="alignnone size-full wp-image-707" src="{{ site.baseurl }}/assets/11.jpg" alt="1.jpg" width="636" height="161" /></p>
+<p>producer or consumer is a java application or a component in a java application</p>
+<p>producer sends messages through the JMS provider<br />
+consumer receives messages through the JMS provider</p>
+<p>a java application using jms(jms client) can also act as both producer/consumer<br />
+it could subscribe to topics to receive messages from those topics, it can also publish to some other topics</p>
+<p>all these components together(3 clients and one provider as in the example above) comprise of a single JMS application. a JMS application is a business system composed of many jms clients and typically one jms provider</p>
+<p>2 JMS models are available - point to point (one-to-many) queues model and publish/subscribe(one-to-one) topics model</p>
+<p><strong><span style="color:#3366ff;">Publish/Subscriber</span></strong> model: one publisher, many subscribers, the publisher publishes messages to a topic and many subscribers can receive messages that are published by the publisher to the subscribed topic</p>
+<p><img class="alignnone size-full wp-image-708" src="{{ site.baseurl }}/assets/2.jpg" alt="2.jpg" width="377" height="104" /></p>
+<p>Publishers are Subscribers are generally anonymous</p>
+<p>Topics are like bulletin boards and are responsible to hold and deliver messages. Topics are defined in the JMS provider system by administering it through the UI. Topics would retain the messages until they are distributed to the present clients.</p>
+<p>The subscribers would both consume the message and subsequently acknowledge it.</p>
+<p>There is timing dependency, the subscriber must continue to be active in order for it to consume messages.</p>
+<p><strong><span style="color:#3366ff;">Point-to-Point</span></strong> model:</p>
+<p>sender sends message to a queue, that message is gonna be picked by only one of the many possible receivers, once its picked by one receiver, other receivers are not gonna get that message</p>
+<p><img class="alignnone size-full wp-image-709" src="{{ site.baseurl }}/assets/3.jpg" alt="3.jpg" width="458" height="112" /></p>
+<p>Queue would retain messages until its consumed or expired</p>
+<p>In the above example, only receiver 2 receives the message from the sender. The receiver would both consume the message and subsequently acknowledge it.</p>
+<p>There is no timing dependency, the receiver can fetch a message either it's active or not when the sender sends the message</p>
+<p>--end-of-post--</p>

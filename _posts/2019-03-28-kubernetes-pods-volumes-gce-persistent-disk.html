@@ -1,0 +1,133 @@
+---
+layout: post
+title: Kubernetes  > Pods > Volumes > GCE Persistent Disk
+date: 2019-03-28 19:48:12.000000000 +05:30
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags:
+- kubernetes
+meta:
+  _wpas_skip_18195285: '1'
+  timeline_notification: '1553782695'
+  _rest_api_published: '1'
+  _rest_api_client_id: "-1"
+  _publicize_job_id: '29137511005'
+author:
+  login: shak1r
+  email: shakir@techie.com
+  display_name: shakir
+  first_name: ''
+  last_name: ''
+permalink: "/2019/03/28/kubernetes-pods-volumes-gce-persistent-disk/"
+---
+<p><span style="font-weight:400;">We can attach persistent volumes to Pods, these volumes remain unchanged even when there is a Pod failure, Google compute engine standard persistent disk is an example of persistent volume on the Cloud.</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight:400;">Let’s create a blank disk in the same zone as the Kubernetes cluster</span></p>
+<p><img class="alignnone size-full wp-image-945" src="{{ site.baseurl }}/assets/screenshot-2019-03-28-at-7.47.33-pm.png" alt="Screenshot 2019-03-28 at 7.47.33 PM.png" width="1084" height="934" /></p>
+<p><span style="font-weight:400;">To view the list of compute engine disks</span></p>
+<p><span style="font-weight:400;">networkandcode@cloudshell:~ (kubernetes-cka-224606)$ </span><span style="font-weight:400;">gcloud compute disks list</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">NAME                                               ZONE SIZE_GB TYPE STATUS</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">disk-1</span><span style="font-weight:400;">                                             us-east1-b 10 </span><span style="font-weight:400;">pd-standard</span><span style="font-weight:400;">  READY</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">gke-standard-cluster-1-default-pool-a97a9634-019h  us-central1-a 100 pd-standard READY</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">gke-standard-cluster-1-default-pool-a97a9634-glnz  us-central1-a 100 pd-standard READY</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">gke-standard-cluster-1-default-pool-a97a9634-rxrw  us-central1-a 100 pd-standard READY</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">networkandcode@cloudshell:~ (kubernetes-cka-224606)$</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight:400;">We need to refer the name of this disk, in our Pod definition</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight:400;">Let’s view the Pod definition</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight:400;">networkandcode@cloudshell:~ (kubernetes-cka-224606)$ cat </span><span style="font-weight:400;">podWithPersistentVolume.yaml</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">---</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">apiVersion: v1</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">kind: Pod</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">metadata:</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">  name: apache-pod</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">spec:</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">  containers:</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">  - name: apache-container</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">    image: httpd</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">    </span><span style="font-weight:400;">volumeMounts:</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">    - name: apache-volume</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">      </span><span style="font-weight:400;">mountPath: /tmp/apache</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">  </span><span style="font-weight:400;">volumes:</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">  - name: apache-volume</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">    </span><span style="font-weight:400;">gcePersistentDisk:</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">      </span><span style="font-weight:400;">pdName: disk-1</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">...</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight:400;">Let’s create the Pod</span></p>
+<p><span style="font-weight:400;">networkandcode@cloudshell:~ (kubernetes-cka-224606)$ kubectl create -f podWithPersistentVolume.yaml</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">pod "apache-pod" created</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight:400;">The Pod is successfully running</span></p>
+<p><span style="font-weight:400;">networkandcode@cloudshell:~ (kubernetes-cka-224606)$ kubectl get pods</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">NAME         READY STATUS    RESTARTS AGE</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">apache-pod   1/1 Running   0 20s</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight:400;">Let’s view more details about the Pod</span></p>
+<p><span style="font-weight:400;">networkandcode@cloudshell:~ (kubernetes-cka-224606)$ kubectl describe po/apache-pod</span></p>
+<p><span style="font-weight:400;">…TRUNCATED</span></p>
+<p><span style="font-weight:400;">Volumes:</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">  apache-volume:</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">    Type:       GCEPersistentDisk (a Persistent Disk resource in Google Compute Engine)</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">    PDName:     disk-1</span></p>
+<p><span style="font-weight:400;">…TRUNCATED</span></p>
+<p><span style="font-weight:400;">Events:</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">  Type    Reason                Age From                                          Message</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">  ----    ------                ---- ----                                          -------</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">  Normal  Scheduled               50s default-scheduler                                          Successfully assigned default/apache-pod to gke-standard-cluster-1-defaul</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">t-pool-a97a9634-glnz</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">  Normal  SuccessfulAttachVolume  42s attachdetach-controller                                     AttachVolume.Attach succeeded for volume "apache-volume"</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">  Normal  Pulling                40s kubelet, gke-standard-cluster-1-default-pool-a97a9634-glnz  pulling image "httpd"</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">  Normal  Pulled                40s kubelet, gke-standard-cluster-1-default-pool-a97a9634-glnz  Successfully pulled image "httpd"</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">  Normal  Created                40s kubelet, gke-standard-cluster-1-default-pool-a97a9634-glnz  Created container</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">  Normal  Started                40s kubelet, gke-standard-cluster-1-default-pool-a97a9634-glnz  Started container</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight:400;">Let’s login to the Pod and launch bash</span></p>
+<p><span style="font-weight:400;">networkandcode@cloudshell:~ (kubernetes-cka-224606)$ kubectl exec -it apache-pod -- /bin/bash</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">root@apache-pod:/usr/local/apache2# </span><span style="font-weight:400;"></p>
+<p></span></p>
+<p><span style="font-weight:400;">To change the directory to the volume mount path, as specified in the Pod definition </span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">root@apache-pod:/usr/local/apache2# cd /tmp/apache</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight:400;">Let’s create a text file and add some text to it</span></p>
+<p><span style="font-weight:400;">root@apache-pod:/tmp/apache# echo "Sample Text" &gt; test.txt</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">root@apache-pod:/tmp/apache# ls</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">lost+found  test.txt</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">root@apache-pod:/tmp/apache# cat test.txt</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">Sample Text</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight:400;">To exit out of the Pod</span></p>
+<p><span style="font-weight:400;">root@apache-pod:/tmp/apache# exit</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">exit</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight:400;">To delete the Pod</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">networkandcode@cloudshell:~ (kubernetes-cka-224606)$ kubectl delete pod apache-pod</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">pod "apache-pod" deleted</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight:400;">networkandcode@cloudshell:~ (kubernetes-cka-224606)$ kubectl get pods</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">No resources found.</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight:400;">To create the Pod again</span></p>
+<p><span style="font-weight:400;">networkandcode@cloudshell:~ (kubernetes-cka-224606)$ kubectl apply -f podWithPersistentVolume.yaml</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">pod "apache-pod" created</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight:400;">To getinto the bash prompt of the Pod</span></p>
+<p><span style="font-weight:400;">networkandcode@cloudshell:~ (kubernetes-cka-224606)$ kubectl exec -it apache-pod -- /bin/bash</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight:400;">To check the contents of the volume mount path</span></p>
+<p><span style="font-weight:400;">root@apache-pod:/usr/local/apache2# ls /tmp/apache/</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">lost+found  test.txt</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight:400;">The file is still there as the volume is persistent</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">root@apache-pod:/usr/local/apache2# cat /tmp/apache/test.txt</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">Sample Text</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight:400;">--end-of-post--</span><span style="font-weight:400;"></p>
+<p></span></p>
+<p>&nbsp;</p>

@@ -1,0 +1,149 @@
+---
+layout: post
+title: Kubernetes > Attach Persistent Volume to Pod through Claim
+date: 2019-09-13 12:24:40.000000000 +05:30
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags: []
+meta:
+  _publicize_job_id: '35236850998'
+  timeline_notification: '1568357684'
+author:
+  login: shak1r
+  email: shakir@techie.com
+  display_name: shakir
+  first_name: ''
+  last_name: ''
+permalink: "/2019/09/13/kubernetes-attach-persistent-volume-to-pod-through-claim/"
+---
+<p><!-- wp:paragraph --></p>
+<p>Prerequisites: Deployments, Volumes</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Instead of attaching a Persistent Volume directly to a Pod, we could attach a Persistent volume claim to a Pod, which in turn would search and bind with one of the available Persistent volumes that matches the requirements of the Claim.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Let's illustrate this with the Google Kubernetes Engine(GKE). Let's define a Deployment manifest that should create one Pod with a PVC defined in it, and this PVC should be attached to the container running in the Pod.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:code --></p>
+<pre class="wp-block-code"><code>networkandcode@cloudshell:~ cat ex16-deploy.yaml
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: deploy16
+spec:
+  selector:
+    matchLabels:
+      tag: label16
+  template:
+    metadata:
+      labels:
+        tag: label16
+    spec:
+      volumes:
+      - name: vol16
+        persistentVolumeClaim:
+          claimName: pvc16
+      containers:
+      - name: ctr16
+        image: nginx
+        volumeMounts:
+        - name: vol16
+          mountPath: "/usr/share/nginx/html"
+...
+networkandcode@cloudshell:~ kubectl create -f ex16-deploy.yaml
+deployment.extensions/deploy16 created</code></pre>
+<p><!-- /wp:code --></p>
+<p><!-- wp:paragraph --></p>
+<p>The deployment is created however the Pod should be in the Pending state as the PVC defined in the Pod doesn't exist, we can find this reason by describing the Pod</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:code --></p>
+<pre class="wp-block-code"><code>networkandcode@cloudshell:~ kubectl get po
+NAME                       READY   STATUS    RESTARTS   AGE
+deploy16-55bfb4b98-prwq9   0/1     Pending   0          5s
+networkandcode@cloudshell:~ kubectl describe po deploy16-55bfb4b98-prwq9 | tail -5
+                 node.kubernetes.io/unreachable:NoExecute for 300s
+Events:
+  Type     Reason            Age                From               Message
+  ----     ------            ----               ----               -------
+  Warning  FailedScheduling  50s (x2 over 50s)  default-scheduler  persistentvolumeclaim "pvc16" not found</code></pre>
+<p><!-- /wp:code --></p>
+<p><!-- wp:paragraph --></p>
+<p>Let's define a PVC manifest and subsequently create it, GKE should automatically create a GCP Persistent Disk as a Persistent Volume (PV) and that should get bound to the PVC. Here the PVC needs a PV which can provide at least 3Gi storage, and should have the access mode as ReadWriteOnce, there are other access modes such as ReadWriteMany (not available with standard storage classes) and ReadOnlyMany</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:code --></p>
+<pre class="wp-block-code"><code>networkandcode@cloudshell:~ cat ex16-pvc.yaml
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: pvc16
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 3Gi
+...
+networkandcode@cloudshell:~ kubectl get pvc
+NAME    STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   AGE
+pvc16   Bound    pvc-18360f56-d5f0-11e9-8dab-42010a8000f0   3Gi        RWO            standard       6s</code></pre>
+<p><!-- /wp:code --></p>
+<p><!-- wp:paragraph --></p>
+<p>The above output shows the pvc is bound to a persistent volume whose storage class type is standard. Note that we haven't mentioned the storage class explicitly on the PVC manifest, as 'standard' is the default storage class. Let's see more info about the persistent volume which was created automatically by GKE</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:code --></p>
+<pre class="wp-block-code"><code>networkandcode@cloudshell:~ kubectl get pv
+NAME                                       CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS   CLAIM           STORAGECLASS   REASON   AGE
+pvc-18360f56-d5f0-11e9-8dab-42010a8000f0   3Gi        RWO            Delete           Bound    default/pvc16   standard                36s
+networkandcode@cloudshell:~ kubectl describe pv pvc-18360f56-d5f0-11e9-8dab-42010a8000f0 | tail
+    Term 0:        failure-domain.beta.kubernetes.io/zone in [us-central1-a]
+                   failure-domain.beta.kubernetes.io/region in [us-central1]
+Message:
+Source:
+    Type:       GCEPersistentDisk (a Persistent Disk resource in Google Compute Engine)
+    PDName:     gke-standard-cluster-1-pvc-18360f56-d5f0-11e9-8dab-42010a8000f0
+    FSType:     ext4
+    Partition:  0
+    ReadOnly:   false
+Events:         &lt;none&gt;</code></pre>
+<p><!-- /wp:code --></p>
+<p><!-- wp:paragraph --></p>
+<p>It shows some info of the GCE Persistent Disk that is being used as the persistent volume. We could find this disk in gcloud, it was created with the exact storage capacity i.e. 3Gi as required by the PVC</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:code --></p>
+<pre class="wp-block-code"><code>networkandcode@cloudshell:~ gcloud compute disks list | grep pvc-18360f56-d5f0-11e9-8dab-42010a8000f0
+gke-standard-cluster-1-pvc-18360f56-d5f0-11e9-8dab-42010a8000f0  us-central1-a  zone            3        pd-standard  READY</code></pre>
+<p><!-- /wp:code --></p>
+<p><!-- wp:paragraph --></p>
+<p>The Pod should be running now (it should start runnng as soon as the PVC was created few steps back)</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:code --></p>
+<pre class="wp-block-code"><code>networkandcode@cloudshell:~ kubectl get po
+NAME                       READY   STATUS    RESTARTS   AGE
+deploy16-55bfb4b98-prwq9   1/1     Running   0          4m24s</code></pre>
+<p><!-- /wp:code --></p>
+<p><!-- wp:paragraph --></p>
+<p>Let's do the housekeeping, the persistent volume and the GCE PD associated with the pvc would also get deleted in sometime, once the pvc was deleted</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:code --></p>
+<pre class="wp-block-code"><code>networkandcode@cloudshell:~ kubectl delete deploy deploy16
+deployment.extensions "deploy16" deleted
+networkandcode@cloudshell:~ kubectl delete pvc pvc16
+persistentvolumeclaim "pvc16" deleted
+networkandcode@cloudshell:~ kubectl get pv
+NAME                                       CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS     CLAIM           STORAGECLASS   REASON   AGE
+pvc-18360f56-d5f0-11e9-8dab-42010a8000f0   3Gi        RWO            Delete           Released   default/pvc16   standard                5m16s
+networkandcode@cloudshell:~ kubectl get pv
+No resources found.
+networkandcode@cloudshell:~ gcloud compute disks list | grep pvc-18360f56-d5f0-11e9-8dab-42010a8000f0
+networkandcode@cloudshell:~</code></pre>
+<p><!-- /wp:code --></p>
+<p><!-- wp:paragraph --></p>
+<p>--end-of-post--</p>
+<p><!-- /wp:paragraph --></p>

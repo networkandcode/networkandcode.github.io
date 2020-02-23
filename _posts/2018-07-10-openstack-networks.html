@@ -1,0 +1,143 @@
+---
+layout: post
+title: OpenStack | Networks
+date: 2018-07-10 12:08:38.000000000 +05:30
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags:
+- openstack
+meta:
+  _wpas_skip_18195285: '1'
+  timeline_notification: '1531204722'
+  _rest_api_published: '1'
+  _rest_api_client_id: "-1"
+  _wpas_skip_18169689: '1'
+  _publicize_job_id: '19852461952'
+author:
+  login: shak1r
+  email: shakir@techie.com
+  display_name: shakir
+  first_name: ''
+  last_name: ''
+permalink: "/2018/07/10/openstack-networks/"
+---
+<p>command syntax: <em>openstack network &lt;action/operation&gt; &lt;--flags values&gt; &lt;network-name&gt;</em></p>
+<p>action/operation: list, create, set, delete...</p>
+<p>flags: help, long, project, provider-physical-network, provider-network-type, external...</p>
+<p>#to view the list of the available networks</p>
+<p>cumulus@server01:~$ <span style="color:#3366ff;">openstack network list</span><br />
++--------------------------------------+----------+--------------------------------------<br />
++<br />
+| ID | Name | Subnets<br />
+|<br />
++--------------------------------------+----------+--------------------------------------<br />
++<br />
+| dc005f68-35c6-4151-ad18-ac21523ed4e5 | provider | c679c440-8286-4eeb-8025-19e0c0895aef<br />
+|<br />
++--------------------------------------+----------+--------------------------------------<br />
++</p>
+<p>#for a detailed list, and to see which project owns this network</p>
+<p>cumulus@server01:~$ <span style="color:#3366ff;">openstack network list --long</span><br />
++--------------------------------------+----------+--------+----------------------------------+-------+--------+--------------------------------------+--------------+-------------+--------------------+------+<br />
+| ID | Name | Status | Project<br />
+| State | Shared | Subnets | Network Type | Router Type<br />
+| Availability Zones | Tags |<br />
++--------------------------------------+----------+--------+----------------------------------+-------+--------+--------------------------------------+--------------+-------------+--------------------+------+<br />
+| dc005f68-35c6-4151-ad18-ac21523ed4e5 | provider | ACTIVE | <span style="color:#3366ff;">6d9cb60806744bbc9618963e77bd</span><br />
+a3cd | UP | True | c679c440-8286-4eeb-8025-19e0c0895aef | flat | External<br />
+| nova | |<br />
++--------------------------------------+----------+--------+----------------------------------+-------+--------+--------------------------------------+--------------+-------------+--------------------+------+</p>
+<p>cumulus@server01:~$ <span style="color:#3366ff;">openstack project list | grep 6d9cb60806744bbc9618963e77bd</span><br />
+| 6d9cb60806744bbc9618963e77bda3cd | admin |<br />
+cumulus@server01:~$</p>
+<p>#let's create a new network</p>
+<p>cumulus@server01:~$ <span style="color:#3366ff;">openstack network create --project firstProject firstNetwork</span></p>
+<p>+---------------------------+--------------------------------------+<br />
+| Field | Value |<br />
++---------------------------+--------------------------------------+<br />
+| admin_state_up | UP |<br />
+| availability_zone_hints | |<br />
+| availability_zones | |<br />
+| created_at | 2018-07-10T04:55:47Z |<br />
+| description | |<br />
+| dns_domain | None |<br />
+| id | dfb787e9-25e6-4e0d-996f-4619ba3b360d |<br />
+| ipv4_address_scope | None |<br />
+| ipv6_address_scope | None |<br />
+| is_default | False |<br />
+| is_vlan_transparent | None |<br />
+| mtu | 1450 |<br />
+| name | firstNetwork |<br />
+| port_security_enabled | True |<br />
+| project_id | e79e5fbcf2be47aa9c1d3600ddfd7a81 |<br />
+| provider:network_type | vxlan |<br />
+| provider:physical_network | None |<br />
+| provider:segmentation_id | 36 |<br />
+| qos_policy_id | None |<br />
+| revision_number | 2 |<br />
+| router:external | Internal |<br />
+| segments | None |<br />
+| shared | False |<br />
+| status | ACTIVE |<br />
+| subnets | |<br />
+| tags | |<br />
+| updated_at | 2018-07-10T04:55:47Z |<br />
++---------------------------+--------------------------------------+<br />
+cumulus@server01:~$</p>
+<p>#to verify</p>
+<p>cumulus@server01:~$ <span style="color:#3366ff;">openstack network list</span><br />
++--------------------------------------+--------------+--------------------------------------+<br />
+| ID | Name | Subnets<br />
+|<br />
++--------------------------------------+--------------+--------------------------------------+<br />
+| dc005f68-35c6-4151-ad18-ac21523ed4e5 | provider | c679c440-8286-4eeb-8025-19e0c0895<br />
+aef |<br />
+| dfb787e9-25e6-4e0d-996f-4619ba3b360d | firstNetwork |<br />
+|<br />
++--------------------------------------+--------------+--------------------------------------+</p>
+<p>#let's create another network, for connecting to the external networks</p>
+<p>cumulus@server01:~$ <span style="color:#3366ff;">openstack network create firstProviderNetwork</span><br />
++---------------------------+--------------------------------------+<br />
+| Field | Value |<br />
++---------------------------+--------------------------------------+<br />
+| admin_state_up | UP |<br />
+| availability_zone_hints | |<br />
+| availability_zones | |<br />
+| created_at | 2018-07-10T05:45:40Z |<br />
+| description | |<br />
+| dns_domain | None |<br />
+| id | 1a135cc1-f5c6-489d-9378-353424bbb4fc |<br />
+| ipv4_address_scope | None |<br />
+| ipv6_address_scope | None |<br />
+| is_default | False |<br />
+| is_vlan_transparent | None |<br />
+| mtu | 1450 |<br />
+| name | firstProviderNetwork |<br />
+| port_security_enabled | True |<br />
+| project_id | 6d9cb60806744bbc9618963e77bda3cd |<br />
+| provider:network_type | vxlan |<br />
+| provider:physical_network | None |<br />
+| provider:segmentation_id | 61 |<br />
+| qos_policy_id | None |<br />
+| revision_number | 2 |<br />
+<span style="color:#3366ff;">| router:external | Internal |</span><br />
+| segments | None |<br />
+| shared | False |<br />
+| status | ACTIVE |<br />
+| subnets | |<br />
+| tags | |<br />
+| updated_at | 2018-07-10T05:45:40Z |<br />
++---------------------------+--------------------------------------+<br />
+#let's set this subnet to external type</p>
+<p>cumulus@server01:~$ <span style="color:#3366ff;">openstack network set --external firstProviderNetwork</span><br />
+cumulus@server01:~$ <span style="color:#3366ff;">openstack network show firstProviderNetwork | grep external</span><br />
+<span style="color:#3366ff;">| router:external | External |</span><br />
+cumulus@server01:~$</p>
+<p>#to associate the instance 'firstServer' with the network 'firstNetwork'</p>
+<p>cumulus@server01:~$ <span style="color:#3366ff;">openstack server create --image firstImage --flavor firstFlavor --nic netid=firstNetwork firstServer</span></p>
+<p>cumulus@server01:~$</p>
+<p>--end-of-post--</p>

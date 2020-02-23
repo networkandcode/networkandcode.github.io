@@ -1,0 +1,239 @@
+---
+layout: post
+title: OpenStack | Services
+date: 2018-06-23 10:14:41.000000000 +05:30
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags:
+- openstack
+meta:
+  _wpas_skip_18169689: '1'
+  _wpas_skip_18195285: '1'
+  timeline_notification: '1529729084'
+  _rest_api_published: '1'
+  _rest_api_client_id: "-1"
+  _publicize_job_id: '19259675835'
+author:
+  login: shak1r
+  email: shakir@techie.com
+  display_name: shakir
+  first_name: ''
+  last_name: ''
+permalink: "/2018/06/23/openstack-services/"
+---
+<div>OpenStack is a collection of services, with each service running on at least one server(node)</div>
+<div></div>
+<div>cumulus@server01:~$ openstack service list</div>
+<div>+----------------------------------+-----------+--------</div>
+<div>---+</div>
+<div>| ID                               | Name      | Type</div>
+<div>   |</div>
+<div>+----------------------------------+-----------+--------</div>
+<div>---+</div>
+<div>| 0e4cbb5c4c1046a7a89e2578cb011a6e | neutron   | network   |</div>
+<div>| 37b351b5be1842758fc98f65aba11a29 | nova      | compute   |</div>
+<div>| 3e0b056517334fbc8794ef7ec6a7a4c7 | glance    | image   |</div>
+<div>| 86849f24e69143d8aa41007ea81e3a8c | keystone  | identity  |</div>
+<div>| ae795f1be3bb48bc865e219f4f2ecc35 | placement | placement |</div>
+<div>+----------------------------------+-----------+--------</div>
+<div>---+</div>
+<div>This OpenStack deployment only has few services, but depending on the need, it can be installed with various other optional services such as Cinder, Heat, Swift, etc.</div>
+<div></div>
+<div>Keystone is the identity service used to authenticate any communication or requests among services or between users and services</div>
+<div></div>
+<div>By default, there will be a 'service' project, in the 'default' domain, that contains user accounts for each OpenStack service <i><b>except keystone</b></i>, since we have 4 services excluding keystone, we also should have 4 respective users in the 'service' project</div>
+<div></div>
+<div>cumulus@server01:~$ openstack project list --domain default</div>
+<div>+----------------------------------+---------+</div>
+<div>| ID                               | Name    |</div>
+<div>+----------------------------------+---------+</div>
+<div>| 3c119483a4704451bd24ccaa98121901 | admin   |</div>
+<div>| 5b2668bd4dfe4bdf9ff98ce794462140 | service |</div>
+<div>| 768939cc621f43728ff90332dee58e95 | demo    |</div>
+<div>+----------------------------------+---------+</div>
+<div></div>
+<div>cumulus@server01:~$ openstack user list --project service</div>
+<div>+----------------------------------+-----------+</div>
+<div>| ID                               | Name      |</div>
+<div>+----------------------------------+-----------+</div>
+<div>| fe656dc2c15541c1ab96f6fdc1df39f4 | nova      |</div>
+<div>| e9ec70ddc0114ed1a1fa97bdf007c200 | glance    |</div>
+<div>| c30b5df613ae4e818c8f7b38afdc2dae | neutron   |</div>
+<div>| bf8e72b9dab54fce9582d0eb6acee95a | placement |</div>
+<div>+----------------------------------+-----------+</div>
+<div></div>
+<div>Each service would have 3 endpoint URLs - admin, public, and private associated with specific ports on the controller node</div>
+<div></div>
+<div>cumulus@server01:~$ openstack endpoint list</div>
+<div></div>
+<div>+----------------------------------+-----------+--------</div>
+<div>------+--------------+---------+-----------+------------</div>
+<div>-----------------+</div>
+<div>| ID                               | Region    | Service</div>
+<div>Name | Service Type | Enabled | Interface | URL</div>
+<div>                 |</div>
+<div>+----------------------------------+-----------+--------</div>
+<div>------+--------------+---------+-----------+------------</div>
+<div>-----------------+</div>
+<div>| 10c2d133795445f2b47b21e50e6c2660 | RegionOne | placeme</div>
+<div>nt    | placement    | True    | admin     | <a href="http://cont/">http://cont</a></div>
+<div>roller:8778      |</div>
+<div>| 1d46eb4d520b403eb3cd109887a541af | RegionOne | keyston</div>
+<div>e     | identity     | True    | public    | <a href="http://cont/">http://cont</a></div>
+<div>roller:5000/v3   |</div>
+<div>| 2e029d3a71e84e12a10c1da8321f3ad0 | RegionOne | placeme</div>
+<div>nt    | placement    | True    | public    | <a href="http://cont/">http://cont</a></div>
+<div>roller:8778      |</div>
+<div>| 50e2205ffba8488d9514a3d509e796e2 | RegionOne | keyston</div>
+<div>e     | identity     | True    | internal  | <a href="http://cont/">http://cont</a></div>
+<div>roller:5000/v3   |</div>
+<div>| 539c26f035d744208bdaa07f566f9d1c | RegionOne | glance</div>
+<div>      | image        | True    | public    | <a href="http://cont/">http://cont</a></div>
+<div>roller:9292      |</div>
+<div>| 6cdd49a594e1481d968332c38e1a96b3 | RegionOne | nova</div>
+<div>      | compute      | True    | admin     | <a href="http://cont/">http://cont</a></div>
+<div>roller:8774/v2.1 |</div>
+<div>| 73df359bd6414703869bcb7e6a48bac5 | RegionOne | neutron</div>
+<div>      | network      | True    | internal  | <a href="http://cont/">http://cont</a></div>
+<div>roller:9696      |</div>
+<div>| 7c1345979e434c4fbe8c8d0dd5ef4b73 | RegionOne | nova</div>
+<div>      | compute      | True    | internal  | <a href="http://cont/">http://cont</a></div>
+<div>roller:8774/v2.1 |</div>
+<div>| 7fc148d9e6054e26a0a3b8e4a2b83858 | RegionOne | glance</div>
+<div>      | image        | True    | admin     | <a href="http://cont/">http://cont</a></div>
+<div>roller:9292      |</div>
+<div>| 8b269c78f6394ce795a5206159735e54 | RegionOne | neutron</div>
+<div>| 7fc148d9e6054e26a0a3b8e4a2b83858 | RegionOne | glance</div>
+<div>      | image        | True    | admin     | <a href="http://cont/">http://cont</a></div>
+<div>roller:9292      |</div>
+<div>| 8b269c78f6394ce795a5206159735e54 | RegionOne | neutron</div>
+<div>      | network      | True    | public    | <a href="http://cont/">http://cont</a></div>
+<div>roller:9696      |</div>
+<div>| ac68952f118047449136cdc60c64bdf5 | RegionOne | glance</div>
+<div>      | image        | True    | internal  | <a href="http://cont/">http://cont</a></div>
+<div>roller:9292      |</div>
+<div>| bc58782a043c40aeae8b89efbb17f2d4 | RegionOne | keyston</div>
+<div>e     | identity     | True    | admin     | <a href="http://cont/">http://cont</a></div>
+<div>roller:35357/v3  |</div>
+<div>| d713f751883d42199c5619281c759a83 | RegionOne | neutron</div>
+<div>      | network      | True    | admin     | <a href="http://cont/">http://cont</a></div>
+<div>roller:9696      |</div>
+<div>| e693a9c0cea74ff69e2e4544353f9e48 | RegionOne | placeme</div>
+<div>nt    | placement    | True    | internal  | <a href="http://cont/">http://cont</a></div>
+<div>roller:8778      |</div>
+<div>| e6ce0a72d6a643c3a321921b811504ff | RegionOne | nova</div>
+<div>      | compute      | True    | public    | <a href="http://cont/">http://cont</a></div>
+<div>roller:8774/v2.1 |</div>
+<div>+----------------------------------+-----------+--------</div>
+<div>------+--------------+---------+-----------+------------</div>
+<div>-----------------+</div>
+<div></div>
+<div>Few service types, also provide an option check their APIs status.</div>
+<div></div>
+<div>To view the APIs/components status of the compute service (nova).</div>
+<div>cumulus@server01:~$ openstack compute service list</div>
+<div>+----+------------------+----------+----------+---------</div>
+<div>+-------+----------------------------+</div>
+<div>| ID | Binary           | Host     | Zone     | Status</div>
+<div>| State | Updated At                 |</div>
+<div>+----+------------------+----------+----------+---------</div>
+<div>+-------+----------------------------+</div>
+<div>|  1 | nova-scheduler   | server01 | internal | enabled</div>
+<div>| up    | 2018-06-23T03:32:59.000000 |</div>
+<div>|  2 | nova-consoleauth | server01 | internal | enabled</div>
+<div>| up    | 2018-06-23T03:33:01.000000 |</div>
+<div>|  3 | nova-conductor   | server01 | internal | enabled</div>
+<div>| up    | 2018-06-23T03:33:01.000000 |</div>
+<div>|  8 | nova-compute     | server04 | nova     | enabled</div>
+<div>| up    | 2018-06-23T03:32:55.000000 |</div>
+<div>|  9 | nova-compute     | server03 | nova     | enabled</div>
+<div>| up    | 2018-06-23T03:32:59.000000 |</div>
+<div>| 10 | nova-compute     | server02 | nova     | enabled</div>
+<div>| up    | 2018-06-23T03:33:00.000000 |</div>
+<div>+----+------------------+----------+----------+---------</div>
+<div>+-------+----------------------------+</div>
+<div></div>
+<div>To view the APIs/components status of the network service (neutron)</div>
+<div>cumulus@server01:~$ openstack network agent list</div>
+<div>+--------------------------------------+----------------</div>
+<div>----+----------+-------------------+-------+-------+----</div>
+<div>-----------------------+</div>
+<div>| ID                                   | Agent Type</div>
+<div>    | Host     | Availability Zone | Alive | State | Bin</div>
+<div>ary                    |</div>
+<div>+--------------------------------------+----------------</div>
+<div>----+----------+-------------------+-------+-------+----</div>
+<div>-----------------------+</div>
+<div>| 089aae65-05ee-4961-8f51-ed57ce025488 | L3 agent</div>
+<div>    | server01 | nova              | XXX   | UP    | neu</div>
+<div>tron-l3-agent          |</div>
+<div>| 1f1a00a3-8ac3-4684-9b37-0b20966ed024 | Metadata agent</div>
+<div>    | server01 | None              | XXX   | UP    | neu</div>
+<div>tron-metadata-agent    |</div>
+<div>| 2df25daa-b968-42d7-907f-39c26137798c | Metadata agent</div>
+<div>    | server03 | None              | :-)   | UP    | neu</div>
+<div>tron-metadata-agent    |</div>
+<div>| 3a371a7d-d48a-4940-af94-8d84235bba04 | Metadata agent</div>
+<div>    | server04 | None              | :-)   | UP    | neu</div>
+<div>tron-metadata-agent    |</div>
+<div>| 7e2cf6e2-d15b-429d-9503-17c0d5f8764a | DHCP agent</div>
+<div>    | server01 | nova              | XXX   | UP    | neu</div>
+<div>tron-dhcp-agent        |</div>
+<div>| b0e89fee-488a-4c9c-9d2f-624b657f5a72 | Linux bridge ag</div>
+<div>ent | server02 | None              | :-)   | UP    | neu</div>
+<div>tron-linuxbridge-agent |</div>
+<div>| b2947866-f55f-4a63-a9d5-94d18d8753f5 | Linux bridge ag</div>
+<div>ent | server03 | None              | :-)   | UP    | neu</div>
+<div>tron-linuxbridge-agent |</div>
+<div>| c8648f2f-dd7b-47b3-8e56-193e411a40a7 | Linux bridge ag</div>
+<div>ent | server04 | None              | :-)   | UP    | neu</div>
+<div>tron-linuxbridge-agent |</div>
+<div>| e7f6c113-0b01-4561-96ec-c05dc25381a1 | Linux bridge ag</div>
+<div>ent | server01 | None              | :-)   | UP    | neu</div>
+<div>tron-linuxbridge-agent |</div>
+<div>| f93ae7f4-ebdd-499d-84fa-2edc1e194820 | Metadata agent</div>
+<div>    | server02 | None              | :-)   | UP    | neu</div>
+<div>tron-metadata-agent    |</div>
+<div>+--------------------------------------+----------------</div>
+<div>----+----------+-------------------+-------+-------+----</div>
+<div>-----------------------+</div>
+<div></div>
+<div>There would be databases in mysql, for all the OpenStack services</div>
+<div>cumulus@server01:~$ sudo mysql -h localhost</div>
+<div>Welcome to the MySQL monitor.  Commands end with ; or \g.</div>
+<div>Your MySQL connection id is 31</div>
+<div>Server version: 5.7.22-0ubuntu0.16.04.1 (Ubuntu)</div>
+<div></div>
+<div>Copyright (c) 2000, 2018, Oracle and/or its affiliates. All rights reserved.</div>
+<div></div>
+<div>Oracle is a registered trademark of Oracle Corporation and/or its</div>
+<div>affiliates. Other names may be trademarks of their respective</div>
+<div>owners.</div>
+<div></div>
+<div>Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.</div>
+<div></div>
+<div>mysql&gt; show databases;</div>
+<div>+--------------------+</div>
+<div>| Database           |</div>
+<div>+--------------------+</div>
+<div>| information_schema |</div>
+<div>| glance             |</div>
+<div>| keystone           |</div>
+<div>| mysql              |</div>
+<div>| neutron            |</div>
+<div>| nova               |</div>
+<div>| nova_api           |</div>
+<div>| nova_cell0         |</div>
+<div>| performance_schema |</div>
+<div>| sys                |</div>
+<div>+--------------------+</div>
+<div>10 rows in set (0.01 sec)</div>
+<div></div>
+<div>mysql&gt; exit</div>
+<div>Bye</div>
+<div></div>
+<div>--end-of-post--</div>

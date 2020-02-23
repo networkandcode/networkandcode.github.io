@@ -1,0 +1,61 @@
+---
+layout: post
+title: Kubernetes > HorizontalPodAutoscaler
+date: 2019-04-02 18:31:28.000000000 +05:30
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags:
+- kubernetes
+meta:
+  _publicize_job_id: '29312685331'
+  _rest_api_client_id: "-1"
+  _rest_api_published: '1'
+  timeline_notification: '1554210091'
+  _wpas_skip_18195285: '1'
+author:
+  login: shak1r
+  email: shakir@techie.com
+  display_name: shakir
+  first_name: ''
+  last_name: ''
+permalink: "/2019/04/02/kubernetes-horizontalpodautoscaler/"
+---
+<p>This object can be used to scale the number of Pods horizontally, let's say by giving a minimum and maximum number based on certain conditions such as CPU utilization</p>
+<p>This can be used in conjunction with the ReplicaSet object</p>
+<p>Let's say we have a replica set with 3 Pod replicas<br />
+networkandcode@cloudshell:~ (kubernetes-cka-224606)$ kubectl get rs<br />
+NAME DESIRED CURRENT READY AGE<br />
+rs6 3 3 3 8m</p>
+<p>Let's say we have a ReplicaSet object by the name 'rs6' which has 3 Pod replicas. We can call this ReplicaSet in our HPA definition or using the autoscale command</p>
+<p>Using autoscale command:<br />
+This would create an hpa with the same name as replicaset rs6, sets minimum replicas to 5 and maximum 10<br />
+networkandcode@cloudshell:~ (kubernetes-cka-224606)$ kubectl autoscale rs rs6 --max=10 --min=5<br />
+horizontalpodautoscaler.autoscaling/rs6 autoscaled</p>
+<p>networkandcode@cloudshell:~ (kubernetes-cka-224606)$ kubectl get hpa rs6<br />
+NAME REFERENCE TARGETS MINPODS MAXPODS REPLICAS AGE<br />
+rs6 ReplicaSet/rs6 /80% 5 10 0 26s</p>
+<p>The replica set would now have a minimum of 5 replicas instead of the 3 it had earlier<br />
+networkandcode@cloudshell:~ (kubernetes-cka-224606)$ kubectl get rs<br />
+NAME DESIRED CURRENT READY AGE<br />
+rs6 5 5 4 3m</p>
+<p>Let's delete the HPA that was created earlier<br />
+networkandcode@cloudshell:~ (kubernetes-cka-224606)$ kubectl delete hpa --all<br />
+horizontalpodautoscaler.autoscaling "rs6" deleted<br />
+networkandcode@cloudshell:~ (kubernetes-cka-224606)$ kubectl get hpa<br />
+No resources found.</p>
+<p>However the replica set still has 5 replicas<br />
+networkandcode@cloudshell:~ (kubernetes-cka-224606)$ kubectl get rs<br />
+NAME DESIRED CURRENT READY AGE<br />
+rs6 5 5 5 8m</p>
+<p>Let apply the replica set definition again<br />
+networkandcode@cloudshell:~ (kubernetes-cka-224606)$ kubectl apply -f ex6.yml<br />
+replicaset.apps/rs6 configured</p>
+<p>It should now show 3 replicas as defined in the yaml fine<br />
+networkandcode@cloudshell:~ (kubernetes-cka-224606)$ kubectl get rs<br />
+NAME DESIRED CURRENT READY AGE<br />
+rs6 3 3 3 9m</p>
+<p>--end-of-post--</p>

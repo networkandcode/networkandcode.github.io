@@ -1,0 +1,103 @@
+---
+layout: post
+title: Kubernetes > Deployment
+date: 2019-04-02 20:09:14.000000000 +05:30
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags:
+- kubernetes
+meta:
+  timeline_notification: '1554215958'
+  _publicize_job_id: '29315761051'
+  _publicize_done_external: a:1:{s:7:"twitter";a:1:{i:18195285;s:60:"https://twitter.com/Mh84ibrShakir/status/1113088532640231425";}}
+  _publicize_done_18419479: '1'
+  _wpas_done_18195285: '1'
+  publicize_twitter_user: Mh84ibrShakir
+author:
+  login: shak1r
+  email: shakir@techie.com
+  display_name: shakir
+  first_name: ''
+  last_name: ''
+permalink: "/2019/04/02/kubernetes-deployment/"
+---
+<p>A Deployment controller object controls a ReplicaSet where as a ReplicaSet controls Pods</p>
+<p>When we create a deployment controller it creates a ReplicaSet as well<br />
+When we create a ReplicaSet, it creates Pods according to the no. of Pod replicas specified</p>
+<p>Let’s start with a clean environment with zero Pods</p>
+<p>[root@master cka]# kubectl get deployment<br />
+No resources found.<br />
+[root@master cka]# kubectl get rs<br />
+No resources found.<br />
+[root@master cka]# kubectl get pods<br />
+No resources found.</p>
+<p>Let’s define a deployment configuration</p>
+<p><img title="NewImage.png" src="{{ site.baseurl }}/assets/newimage.png" alt="NewImage" width="599" height="356" border="0" /></p>
+<p>Let’s create the deployment<br />
+[root@master cka]# kubectl create -f ex7.yml<br />
+deployment.apps/deployment7 created</p>
+<p>To check the status of creation<br />
+[root@master cka]# kubectl rollout status deployment.v1.apps/deployment7<br />
+deployment "deployment7" successfully rolled out</p>
+<p>To see the list of Deployments<br />
+[root@master cka]# kubectl get deployment<br />
+NAME READY UP-TO-DATE AVAILABLE AGE<br />
+deployment7 3/3 3 3 17s</p>
+<p>This is the ReplicaSet that the Deployment has created<br />
+[root@master cka]# kubectl get rs<br />
+NAME DESIRED CURRENT READY AGE<br />
+deployment7-5f4f9cf99d 3 3 3 75s</p>
+<p>These are the Pods that the ReplicaSet has created<br />
+[root@master cka]# kubectl get pods<br />
+NAME READY STATUS RESTARTS AGE<br />
+deployment7-5f4f9cf99d-2s4wn 1/1 Running 0 113s<br />
+deployment7-5f4f9cf99d-69xfl 1/1 Running 0 113s<br />
+deployment7-5f4f9cf99d-d5wbl 1/1 Running 0 113s</p>
+<p>If we delete the Pods, new replacement Pods will be automatically recreated by the ReplicaSet<br />
+[root@master cka]# kubectl delete pods --all<br />
+pod "deployment7-5f4f9cf99d-2s4wn" deleted<br />
+pod "deployment7-5f4f9cf99d-69xfl" deleted<br />
+pod "deployment7-5f4f9cf99d-d5wbl" deleted</p>
+<p>[root@master cka]# kubectl get pods<br />
+NAME READY STATUS RESTARTS AGE<br />
+deployment7-5f4f9cf99d-9dlwn 1/1 Running 0 21s<br />
+deployment7-5f4f9cf99d-xtn7z 1/1 Running 0 21s<br />
+deployment7-5f4f9cf99d-xvvdz 1/1 Running 0 21s</p>
+<p>Similarly if we delete the ReplicaSet, a new replacement will be automatically created by the deployment controller<br />
+[root@master cka]# kubectl delete rs --all<br />
+replicaset.extensions "deployment7-5f4f9cf99d" deleted</p>
+<p>[root@master cka]# kubectl get replicaset<br />
+NAME DESIRED CURRENT READY AGE<br />
+deployment7-5f4f9cf99d 3 3 3 11s</p>
+<p>Let’s try to change the container image to nginx<br />
+<img title="NewImage.png" src="{{ site.baseurl }}/assets/newimage-1.png" alt="NewImage" width="599" height="356" border="0" /></p>
+<p>Let’s check the existing Pod names<br />
+[root@master cka]# kubectl get pods<br />
+NAME READY STATUS RESTARTS AGE<br />
+deployment7-5f4f9cf99d-2dqj8 1/1 Running 0 8m33s<br />
+deployment7-5f4f9cf99d-p2rwf 1/1 Running 0 8m33s<br />
+deployment7-5f4f9cf99d-x2tzs 1/1 Running 0 8m33s</p>
+<p>Let’s apply this configuration to the Deployment<br />
+[root@master cka]# kubectl apply -f ex7.yml<br />
+Warning: kubectl apply should be used on resource created by either kubectl create --save-config or kubectl apply<br />
+deployment.apps/deployment7 configured</p>
+<p>The Deployment has deleted the old ReplicaSet and created a new ReplicaSet and as a result old Pods are replaced with new ones as the container image has changed, this is evident from the Pod names<br />
+The string after the deployment name (75b544658b)helps identifying the change in ReplicaSet name and the string after the last hyphen (ex: 6blpw) helps identifying the Pod name<br />
+[root@master cka]# kubectl get pods<br />
+NAME READY STATUS RESTARTS AGE<br />
+deployment7-75b544658b-6blpw 1/1 Running 0 25s<br />
+deployment7-75b544658b-84tcb 1/1 Running 0 19s<br />
+deployment7-75b544658b-wk459 1/1 Running 0 16s</p>
+<p>Deleting a Deployment will delete the associated ReplicaSet and all the Pods controlled by the ReplicaSet</p>
+<p>kubectl delete deployment/deployment7</p>
+<p>[root@master cka]# kubectl get deployment<br />
+No resources found.<br />
+[root@master cka]# kubectl get rs<br />
+No resources found.<br />
+[root@master cka]# kubectl get pods<br />
+No resources found.</p>
+<p>--end-of-post--</p>

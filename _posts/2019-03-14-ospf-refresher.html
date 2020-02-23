@@ -1,0 +1,292 @@
+---
+layout: post
+title: OSPF Refresher
+date: 2019-03-14 21:40:11.000000000 +05:30
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags:
+- ospf
+meta:
+  _wp_old_date: '2018-11-14'
+  _publicize_job_id: '28634859958'
+  _wpas_skip_18195285: '1'
+  timeline_notification: '1552579815'
+  _rest_api_published: '1'
+  _rest_api_client_id: '11'
+author:
+  login: shak1r
+  email: shakir@techie.com
+  display_name: shakir
+  first_name: ''
+  last_name: ''
+permalink: "/2019/03/14/ospf-refresher/"
+---
+<p><span style="color:#3366ff;"><strong>Overview</strong></span></p>
+<p>OSPF is a link state routing protocol</p>
+<p>OSPF neighbors share (flood) with each other, info (link state info also called LSAs) about their attached links (networks) and their states</p>
+<p>i.e the LSA contains the advertising router's id, its neighbor routers, its attached networks (connected routes), and the costs associated with those neighboring routers and attached networks.</p>
+<p>the flooding is done to the OSPF multicast address 224.0.0.5</p>
+<p>each router (neighbors) maintain a LSDB which is a series of typically thousands of LSAs, and this LSDB must be identical for each neighbor in the OSPF area. The LSDB is also called as topological database.</p>
+<p>The LSDB is used to calculate the best path (least cost path) for each destination prefix, all at once, using SPF (Dijsktra) algortithm. And the results from the Dijsktra's algorithm are handled to the router's routing table for the actual forwarding of packets.</p>
+<p>Note: Dijkstra's algorithm is commonly used in GPS systems to help find shortest traffic paths</p>
+<p>OSPF process in a router: LSAs -&gt; LSDB -&gt; SPF -&gt; Routing Table</p>
+<hr />
+<p><span style="color:#3366ff;"><strong>Packet types</strong></span></p>
+<p>There are 5 types of packets that are flooded between routers in an OSPF area.</p>
+<p>Type 1 - Hello<br />
+Type 2 - Database Description (DD)</p>
+<p>types 3,4 and 5 form the LSAs(Advertisements)<br />
+Type 3 - Link-State Request<br />
+Type 4 - Link-State Update<br />
+Type 5 - Link-State Acknowledgement</p>
+<p>OSPF Header is included in all 5 packet types<br />
+Its length is 24Bytes.</p>
+<p><span style="color:#3366ff;"><strong>ABR</strong></span><br />
+When a router acts as an ABR after manual configuration by the administrator, it would set the B bit in the router LSA(type 1) that it floods to other routers in the area, note that the other bits V and E represent virtual link and ASBR(External) functionality of the router respectively</p>
+<p><img class="alignnone size-full wp-image-892" src="{{ site.baseurl }}/assets/screenshot-2019-03-22-at-9.21.56-am.png" alt="Screenshot 2019-03-22 at 9.21.56 AM.png" width="1034" height="922" /></p>
+<hr />
+<p><span style="color:#3366ff;"><strong>Hello</strong></span></p>
+<p>Multi cast Hello Packet is sent to all OSPF routers' address 224.0.0.5</p>
+<p>It consits of the OSPF Header(24B) + Following Fields:</p>
+<p>NM* | HI* | DI* | Options*(8b)<br />
+RP | DR | BDR | Neighbor</p>
+<p>the first row with* needs to match among two routers to form neighborship<br />
+NM matching isnt reqd. for p2p links, its appl only for B/C Media Like Eth.<br />
+All routers on the segment must agree on the subnet mask of the link.</p>
+<p>NM=Mask, HI/DI=Hello/Dead Interval, RP=Pri., DR/BDR=Designated/Backup</p>
+<p>HI=Flooding Interval(10s by def)<br />
+DeadInterval/keepalive= how long to wait before removing the adjaceny from a neighbor</p>
+<p>Options= represents such things as the ability to be a stub area</p>
+<p><span style="color:#3366ff;"><strong>Database Description</strong></span></p>
+<p>Database Description Packet<br />
+only during adjacency formation</p>
+<p>serves two purposes<br />
+1. determine which router is incharge(master) for transferring the LSAs (among the two: master and slave)<br />
+2. the incharge transfers the LSA headers, LSDB sync between the two.</p>
+<p>the router with the highest RID among the two, is the master, and the other one the slave.</p>
+<p>master sets the sequence no. for LSA transfers so that LSDBs sync. once the LSDBs sync, and the transfer is complete, the master/slave relation is forgotten.</p>
+<p>DD packet contents:<br />
+OSPF Header(24B) + Seq.no. + LSA Header</p>
+<p>Seq. no. is set to a unique value by the master in the first DD packet. and the sequence is incremented in subsequent packets. seq. no. ensures complete DD packets are received during the LSDB sync. Process.</p>
+<p>LSA Header: lists some or all of the headers of the LSAs in the originator's LSDB. The LSA Header contains enough information to uniquely identify the LSA and the particular instance of the LSA.</p>
+<hr />
+<p><span style="color:#3366ff;"><strong>Link state request</strong></span></p>
+<p>after receiving a number of DD packets from the master, if the slave router detects that the master has sent a linkstate header, which is not in the slave's LSDB<br />
+then the slave sends the LSR packet which contains the LSA header for the missing link</p>
+<p>Link State Request (Type 3)<br />
+---------------------------</p>
+<p>LSR packet contents:<br />
+-------------------<br />
+OSPF Header (24B)<br />
++<br />
+Link state type (LSAdv Type No., router/network LSA)<br />
++<br />
+Link-State ID (type dependent on the LSA header)<br />
++<br />
+Adv. Router (the router that originated the LSA)</p>
+<p>Who sends it<br />
+------------<br />
+sent by a router which detects its LSDB is stale, so that it receives the precise version of the LSDB</p>
+<p><span style="color:#3366ff;"><strong>LinkState Update</strong></span></p>
+<p>LinkStateUpdate (Type4)<br />
+-----------------------</p>
+<p>These packets are the basic information block in OSPF</p>
+<p>contents<br />
+--------<br />
+OSPF Header(24Bytes)<br />
++<br />
+No. of LSAs<br />
++<br />
+Full LSAs (the packet carries multiple LSAs depending on the maximum packet size) in OSPF LSA Formats</p>
+<p>Sent to?<br />
+--------<br />
+Update Packets are mulitcast transmitted to either all OSPF routers (224.0.0.5) or to all DRs (224.0.0.6) depending on the link type</p>
+<p>Sent When?<br />
+----------<br />
+In response to an LSRequest packet during the adjacency database sync. or after an adjacency is formed, if the information about that link changes</p>
+<p><span style="color:#3366ff;"><strong>LinkState Acknowledgement</strong></span></p>
+<p>sent when?<br />
+----------<br />
+In response to LSUpdate Packets<br />
+A single LSAck packet can contain responses to multiple LSUpdate Packets<br />
+LSAck packets are sent in unicast fashion to the originating router, to acknowledge, and this implies reliable flooding in OSPF</p>
+<p>contents<br />
+--------<br />
+OSPF Header(24Bytes)<br />
++<br />
+LSA Header(s) = single header for ack single LSA or multiple headers for ack multiple LSAs</p>
+<p><span style="color:#3366ff;"><strong>States</strong></span></p>
+<p>7 States of an OSPF router<br />
+--------------------------</p>
+<p>1. Down: OSPF process not turned ON, OSPF is waiting for a start event<br />
+2. Init: Hello packet sent, but not received<br />
+3. 2Way: Hello packet (Type1) received<br />
+4. ExStart: Master/Slave Determination<br />
+5. Exchange: LSA headers transferred (DD packets type2)<br />
+6. Loading: router has finished transferring its database to its peer, but is still receiving database from the peer<br />
+7. Full: The database is completely sync between the two routers</p>
+<p>once the state is full, that particular link information could be advertised to OSPF</p>
+<p><span style="color:#3366ff;"><strong>Designated Router</strong></span></p>
+<p>A single router in an OSPF area will be responsible for forming adjaceny will all other routers (DR Other)<br />
+And the DR will advertise the link state information to the AS</p>
+<p>DR election significantly reduces traffic on the segment, and implies adjaceny optimisation.</p>
+<p><span style="color:#3366ff;"><strong>Backup Designated Router</strong></span></p>
+<p>if the DR fails, then the BDR takes over the role of DR. BDR also forms adjaceny with all other routers (DR Other), but doesnt adv the linkstate information to the AS. It advertises the linkstate information once it assumes the role of DR.</p>
+<p><span style="color:#3366ff;"><strong>DR Election</strong></span></p>
+<p>Higher value wins<br />
+First Tie Breaker - Priority (0-255, junos def-128), 0 isnt eligible.<br />
+Second tie breaker - RID.</p>
+<p>The BDR is election is also similar</p>
+<p>Both DR and BDR elections are non-deterministic, implies the router assumes the role of DR/BDR until it leaves the N/W, even if another router with a higher pri/RID joins.</p>
+<p>The election of the first DR in a segment occurs within 40s of the first router transmitting the Hello packet. this wait time is honoured every time an election is held.</p>
+<p>OSPF interface. But, if the device with the higher priority has preemt configured, it can trigger the election and become the DR, as and when it comes up.</p>
+<p>p2p<br />
+------<br />
+There is no DR/BDR election in p2p link and about 40s is saved.<br />
+we configure the interface as p2p,<br />
+edit -&gt; prtotocols -&gt; ospf -&gt; area 0.0.0.0 -&gt; interface ge-1/0/0 -&gt; unit 0 -&gt; interface-type p2p</p>
+<p>As per RFC2328, section 10.5 (Receiving Hello Packets), for Point-to-Point interfaces and on virtual links, the network mask in the received hello packets should be ignored.<br />
+However, in Junos OS, the network mask will still be considered when Ethernet interfaces are used as Point-to-Point. When Ethernet interfaces are used as Broadcast, Junos OS will still consider the network mask; in case of a mismatch, the<br />
+OSPF neighbor will not form. The RFC exception applies to only actual Point-to-Point interfaces, such as Frame Relay; so, when configuring the Ethernet as Point-to-Point, it is recommended that the network mask also matches with the peer.</p>
+<p><span style="color:#3366ff;"><strong>Areas</strong></span></p>
+<p>As the network size grows, if all the routers belong to only one area, their resources will be heavily utilised just for flooding the LSAs so as to sync the LSDB, and in computing the best path using the SPF algorithm, this way the routers couldn't route correctly.</p>
+<p>So we divide a single big area(AS) into multiple small areas. Thus the LSDB size will be reduced. each router with in an area maintains an identical copy of the LSDB of the area to which it belongs to.</p>
+<p><span style="color:#3366ff;"><strong>Route summarization</strong></span><br />
+1) reduces the size of the LSDB<br />
+2) hides instabilities in one area from other areas</p>
+<p>For route summarization to be effective, careful addressing needs to be done with in the OSPF Network, so that subnets can be more easily summarized.</p>
+<p><span style="color:#3366ff;"><strong>Backbone Area</strong></span></p>
+<p>Area 0 or 0.0.0.0 by default, all other areas should get connected / pass traffic through the back bone area to ensure routing.</p>
+<p>RFC5185 describes how to eliminate the default behaviour of transiting all inter area traffic through the backbone area</p>
+<p>When a new area is introduced, and it doesn't have a direct physical connectivity with the Backbone area, we can configure virtual links.</p>
+<p>Virtual links cannot be configured through a stub area.</p>
+<p><span style="color:#3366ff;"><strong>Stub Area</strong></span></p>
+<p>Need of Stub Area<br />
+------------------<br />
+Stub areas would be created when much of the topological database consists of AS external advertisements (types 4 and 5 LSAs). Doing so, reduces the size of the topological databases and, therefore, the amount of memory required on the internal routers in the stub area.AS External advertisements (types 4 and 5 LSAs) are not flooded into or through a stub area.</p>
+<p>Stub area allows intra-area (internal) routes and default route.</p>
+<p>Default Route<br />
+-------------<br />
+Stub areas block external advertisements and advertise only default routes in place of external routes.</p>
+<p>Default route from the backbone area is advertised into the stub area through the ABR, and in junOS the ABR meant for a stub area, needs to be explicitly configured for default route generation.</p>
+<p>The default route provides the stub area with reachability to external routes.</p>
+<p>Note:<br />
+-----<br />
+A stub area can not contain ASBRs (as ASBRs are used only for external routes) and virtual links cannot be created through a stub area.</p>
+<p>A totally stubby area doesnt allow types3,4, and 5 LSAs</p>
+<p>It allows only a default route.</p>
+<p>A Not so stubby area advertises a default route from the backbone area.</p>
+<p>It allows external routes but not from other areas (types 4 and 5 LSAs are blocked).</p>
+<p>stub -- LSA type 1,2,3<br />
+default route from abr to reach external route</p>
+<p>tsa - type 1,2<br />
+default route from abr to reach both inter area and external route</p>
+<p>nssa - type 1,2,3,7</p>
+<p>totally nssa - 1,2,7</p>
+<p><span style="color:#3366ff;"><strong>LSA types</strong></span></p>
+<p>Routers are not required to store or forward LSAs with unkown LS Type<br />
+looking at the options field advertised by its neighbor, a router knows which LSAs to forward and which LSAs to keep itself</p>
+<p>Type1 - Router (Intra Area)<br />
+Type2 - Network (Intra Area) originated by DR<br />
+Type3 - Network (Inter Area / Summary) Originated by ABR<br />
+Type4 - ASBR Summary (Inter Area), originated by ABR of an area where the ASBR also resides.<br />
+Type5 - External Links originated by ASBR<br />
+Type7 - Extenral Links originated by ASBR in an NSSA</p>
+<p>Type 6: Multicast OSPF LSA<br />
+Type 8: External attributes LSA<br />
+Type 9: Opaque LSA (link scope)<br />
+Type 10: Opaque LSA (area scope—used for traffic engineering) and<br />
+Type 11: Opaque LSA (AS scope)</p>
+<p>LS Type1 = Router LSA, 1 LSA per router, indicates active interfaces, IP addresses and neighbors, p2p networks contains only type1 LSAs</p>
+<p>LS Type2 = Network LSA, to describe the network segment along with list of currently attached routers, Network summary LSAs are used in the SPF calculation only when their advertising router is reachable</p>
+<p><span style="color:#3366ff;"><strong>Commands</strong></span></p>
+<p>user@R1# edit protocols ospf<br />
+user@R1# set area 0.0.0.0 interface ge-1/0/0 unit 0 interface-type p2p</p>
+<p>user@R1&gt; show ospf interface<br />
+Interface State Area DR ID BDR ID Nbrs<br />
+ge-1/0/0.0 PtToPt 0.0.0.0 0.0.0.0 0.0.0.0 1</p>
+<p>Its a point to point to link and there is no DR/BDR election in this case<br />
+DR/BDR election is only applicable for broadcast network like ethernet</p>
+<p>configuring the link as p2p saves up to 40s for the adjaceny to form, as no DR-BDR election will be done, and no type 2 LSA (indicating multi-access segment) will be generated, reducing the size of LSDB</p>
+<p>user@router&gt; show ospf neighbor<br />
+Address Interface State ID Pri Dead<br />
+172.25.0.1 ge-0/0/1.0 Full 1.1.1.1 255 37<br />
+172.25.0.3 ge-0/0/1.0 2Way 1.1.1.3 128 34</p>
+<p>DR-Other routers form 2Way States with other DR-Other routers</p>
+<hr />
+<p><strong><span style="color:#3366ff;">LSA</span></strong> = LSA Header + DATA (varies for each type)</p>
+<p><span style="color:#3366ff;"><strong>LSA Header 20B</strong></span><br />
+LS <span style="color:#cc99ff;">A</span>ge 2B | <span style="color:#cc99ff;">O</span>ptions 1B | LS <span style="color:#cc99ff;">T</span>ype 1B<br />
+LS <span style="color:#cc99ff;">I</span>D 4B<br />
+Adv. <span style="color:#cc99ff;">R</span>outer 4B<br />
+LS <span style="color:#cc99ff;">S</span>eq. No. 4B<br />
+LS <span style="color:#cc99ff;">C</span>hecksum 2B | <span style="color:#cc99ff;">L</span>ength 2B</p>
+<p>The LS Age field is incremented at each hop during flooding, which eventually breaks any flooding loop by causing a looping LSA's LS Age field to reach the MaxAge</p>
+<p>options E bit (7) == external lsas, P bit (5) == nssa external lsas<br />
+accordingly lsa4 would be generated by ABR<br />
+N/P = NSSA/Propagate 1=&gt;translate and propagate lsa7to4<br />
+O(2) = if set allows remote router to flood lsas to the local router</p>
+<p>LS TYPE (1B), LS ID (4B), Adv Router (4B)<br />
+<em>Router(1), Local router id, Router id </em><br />
+<em>Network(2), DRs IP, DR ID </em><br />
+<em>Summary(3), Network Address, Router ID </em><br />
+<em>ASBR Summary(4), ASBR address, ABR ID </em><br />
+<em>External(5), Network Address, ASBR ID </em><br />
+<em>NSSA External(7), Network Address, ASBR ID</em></p>
+<p>LSID = router id (for router LSA, both LS ID, and ADR same)</p>
+<p>OSPFv2 uses linear sequence space, the sequence no.s are 32 bit signed values, the sequence number is inceremented by 1 each time the LSA is updated by the advertising router, the InitialSequenceNumber S0 is 0x80000001,<br />
+and the MaximumSequenceNumber Smax is 0x7fffffff, after which it has to start again from S0 rolling over the sequence space, but it should flood this LSA with sequence number S0 only after deleting the LSA instance with<br />
+sequence number Smax, so that other routers can consider the new LSA instance with S0 as recent and accept it. OSPF routers are not allowed to update their self-orignated LSAs more than once every 5 seconds, in the absence<br />
+of h/w or s/w errors, this 32 bit sequence could take more than 600 years to roll over</p>
+<p>LS checksums are used to detect data corruption with in an LSA</p>
+<p>Components to check recency of an LSA = LS Seq no., LS Age, LS Check sum<br />
+Routers are allowed only to update or delete only self originated LSAs in which advertising router field refers to its own router ID, a self originated LSA can be updated by incrementing the LS Seq. number, which could then be used<br />
+to replace any instances of this LSA with lesser seq. no. on other routers, if the Seq. no.s are same on two instances of the LSA, then the LS Age and LS Checksum fields are checked by the router before declaring the two LSA<br />
+instances identical</p>
+<hr />
+<p><strong><span style="color:#3366ff;">LSA Data</span></strong><br />
+Type1 Router LSA<br />
+00000VEB + Res(1B, all 0) + no.of links (2B) + link-id (4B) + link-data (4B) + link type (1B) + No.ofTos metrics (1B, all 0) + Metric(2B) + Additional Tos data(4B,unused)</p>
+<p>Type2 Network LSA<br />
+NWMask(4B) + Attached Router(s)(4B)</p>
+<p>Type3 Summary LSA<br />
+NWMask(4B) + Res(1B, all0), Metric(3B), TOS(1B, unused), TOS Metric(3B, unused)</p>
+<p>Type4 ASBR Summary LSA<br />
+NWMask(4B all 0) + Res(1B, all0) + Metric(3B), TOS(1B, unused), TOS Metric(3B, unused)</p>
+<p>Type5 external / Type7 NSSA external LSA<br />
+NWMAsk(4B) + E 7*0s + Met(3) + FWAdd(4) + ExtRouTag(4) + ToS (4)<br />
+FWAdd === ASBR (0.0.0.0) or the nexthop<br />
+for NSSA FWAdd = 0.0.0.0 or ASBR ID</p>
+<p>type 6 - multicast<br />
+type 8 - external attributes<br />
+type 9 - opaque, gr, link-local<br />
+type 10 - opaque, mpls te, area<br />
+type 11 - opaque, not supp, domain</p>
+<hr />
+<p>Link-type, Link-ID, Link Data</p>
+<ul>
+<li>p2p(1), neighbor rid, local interface ip</li>
+<li>transit(2), DR's interface ip, local interface ip</li>
+<li>stub(3), network number, subnet mask</li>
+<li>virtual link(4), neighbor rid, local interface ip</li>
+</ul>
+<hr />
+<p><span style="color:#0000ff;"><span style="color:#3366ff;"><strong>Default route</strong></span></span><br />
+The OSPF router does not, by default, generate a default route into the OSPF domain. In order for OSPF to generate a default route, you must use the default−information originate command in Cisco. There are two ways to advertise a default route into a normal area. The first is to advertise 0.0.0.0 into the OSPF domain, provided the advertising router already has a default route. The second is to advertise 0.0.0.0<br />
+regardless of whether the advertising router already has a default route. The second method can be accomplished by adding the keyword always to the default−information originate command. In both cases the router would originate a type 5 LSA with a link ID of 0.0.0.0.</p>
+<hr />
+<p><span style="color:#3366ff;"><strong>External route</strong></span></p>
+<p>External routing information may originate from another routing protocol such as BGP, or be statically configured (static routes). Default routes can also be included as part of the Autonomous System external routing information.</p>
+<p>cost to a destination network is the sum of the cost to the advertising router and the cost advertised in the LSA</p>
+<p>Type 1 external metrics are expressed in the same units as OSPF interface cost. Type 2 external metrics assumes that routing between AS'es is the major cost of routing a packet, and eliminates the need for conversion of external costs to internal link state<br />
+metrics.</p>
+<p>E = 0, type-1 metric<br />
+E = 1, type-2 metric</p>
+<p>Both Type 1 and Type 2 external metrics can be present in the AS<br />
+at the same time. In that event, Type 1 external metrics always<br />
+take precedence.</p>
+<p><span style="color:#3366ff;"><strong>--end-of-post--</strong></span></p>

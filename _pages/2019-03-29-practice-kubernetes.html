@@ -1,0 +1,54 @@
+---
+layout: page
+title: k8s
+date: 2019-03-29 10:08:22.000000000 +05:30
+type: page
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags: []
+meta:
+  _publicize_pending: '1'
+  _rest_api_published: '1'
+  _rest_api_client_id: "-1"
+author:
+  login: shak1r
+  email: shakir@techie.com
+  display_name: shakir
+  first_name: ''
+  last_name: ''
+permalink: "/practice-kubernetes/"
+---
+<p><a href="https://networkandcode.blog/2019/02/19/kubernetes-cka-preparation-create-a-cluster-on-google-cloud-platform/">Kubernetes &gt; Create a cluster on Google cloud platform</a></p>
+<p><a href="https://networkandcode.blog/2019/03/28/launch-a-kubernetes-cluster-using-kubeadm/" target="_blank" rel="noopener noreferrer">Launch a Kubernetes Cluster using Kubeadm</a></p>
+<p><a href="http://networkandcode.blog/2019/03/29/kubernetes-run-pods/" target="_blank" rel="noopener noreferrer">Kubernetes &gt; Run &gt; Pods</a></p>
+<p><a href="https://networkandcode.blog/2019/03/28/kubernetes-pods-node-selector-label/" target="_blank" rel="noopener noreferrer">Kubernetes &gt; Pods &gt; Node Selector &gt; Labels</a></p>
+<p><a href="https://networkandcode.blog/2019/03/28/kubernetes-pods-containers-resources-memory/" target="_blank" rel="noopener noreferrer">Kubernetes &gt; Pods &gt; Containers &gt; Resources &gt; Memory</a></p>
+<p><a href="https://networkandcode.blog/2019/03/28/kubernetes-pods-containers-resources-cpu/" target="_blank" rel="noopener noreferrer">Kubernetes &gt; Pods &gt; Containers &gt; Resources &gt; CPU</a></p>
+<p><a href="https://networkandcode.blog/2019/03/28/kubernetes-pods-volumes-empty-dir/" target="_blank" rel="noopener noreferrer">Kubernetes &gt; Pods &gt; Volumes &gt; Empty Dir</a></p>
+<p><a href="https://networkandcode.blog/2019/03/28/kubernetes-pods-volumes-gce-persistent-disk/" target="_blank" rel="noopener noreferrer">Kubernetes &gt; Pods &gt; Volumes &gt; GCE Persistent Disk</a></p>
+<p><a href="http://networkandcode.blog/2019/03/29/kubernetes-replicasets/" target="_blank" rel="noopener noreferrer">Kubernetes &gt; ReplicaSets</a></p>
+<p><a href="http://networkandcode.blog/2019/04/02/kubernetes-horizontalpodautoscaler/" target="_blank" rel="noopener noreferrer">Kubernetes &gt; HorizontalPodAutoscaler</a></p>
+<p>Some notes:</p>
+<p>Kubernetes has 2 different layers: 1. Master, 2. Nodes<br />
+Master is responsible for scheduling, provisioning, controlling and exposing the API to the clients which can come via API, UI or CLI</p>
+<p>Kubernetes understands declarative artifacts which are defined using YAML. These YAML definitions are submitted to the master.</p>
+<p>Kubernetes is like a distributed computing architecture with a master/slave kind of a scenario. Nodes form the cluster.</p>
+<p>The registry is where the docker images are going to be centrally stored. This can be a private registry or a public registry like docker hub, google container registry etc.</p>
+<p>There are 3 main components in the master: 1. API server, which exposes various APIs, in-fact Kubernetes is highly API centered, 2. Scheduler, 3. Controller</p>
+<p>etcd – lightweight key value database, central database to store the current cluster state, single source of truth</p>
+<p>Kubectl is a tiny golang binary</p>
+<p>Every pod is completely autonomous and independent</p>
+<p>Alias:<br />
+pod(s) = po<br />
+replicaset(s) = rs<br />
+namespace(s) = ns<br />
+service(s) = svc</p>
+<p>apiVersion:<br />
+Pod: v1<br />
+ServiceAccount: v1<br />
+ReplicaSet: apps/v1<br />
+HorizontalPodAutoScaler: autoscaling/v1</p>
+<p>--end-of-post--</p>

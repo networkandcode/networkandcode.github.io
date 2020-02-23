@@ -1,0 +1,68 @@
+---
+layout: post
+title: Kubernetes > Node selection > Taints and Tolerations
+date: 2019-08-03 00:39:44.000000000 +05:30
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags: []
+meta:
+  _rest_api_published: '1'
+  _rest_api_client_id: "-1"
+  timeline_notification: '1564772987'
+  _publicize_job_id: '33575661240'
+author:
+  login: shak1r
+  email: shakir@techie.com
+  display_name: shakir
+  first_name: ''
+  last_name: ''
+permalink: "/2019/08/03/kubernetes-node-selection-taints-and-tolerations/"
+---
+<p>We taint Nodes and add matching tolerations on Pods. This means that a Node with a taint can not accept a Pod that doesn't have a corresponding toleration. In other words, a Pod can not launch on a Node if it doesn’t have a toleration matching the taint.</p>
+<p>Let’s see this in action</p>
+<p>Let’s first check the list of nodes in our cluster, we have 3</p>
+<p><img src="{{ site.baseurl }}/assets/null.png" width="601" height="121" alt="" title="" /></p>
+<p>Let’s taint the first node that has suffix kvx5, here tag refers to key of the taint, and taint20 is it’s value, NoSchedule refers to the taint effect</p>
+<p>networkandcode:~ kubectl taint node gke-standard-cluster-1-default-pool-66ebdca6-kvx5 tag=taint20:NoSchedule</p>
+<p>node/gke-standard-cluster-1-default-pool-66ebdca6-kvx5 tainted</p>
+<p>Similarly let’s taint the second node with suffix pjh8, with taint key as nodenumber, value as 2, and the taint effect as NoSchedule</p>
+<p>networkandcode:~ kubectl taint node gke-standard-cluster-1-default-pool-66ebdca6-pjh8 nodenumber=2:NoSchedule</p>
+<p>node/gke-standard-cluster-1-default-pool-66ebdca6-pjh8 tainted</p>
+<p>The following deployment configuration should create 7 Pods with the specified toleration</p>
+<p><img src="{{ site.baseurl }}/assets/null-1.png" width="601" height="421" alt="" title="" /></p>
+<p>We have defined tolerations at template &gt; spec &gt; tolerations, this matches exactly with the taint we have defined for the first node i.e. tag=taint20:NoSchedule, however inside the Pod Spec we write this in 4 sections i.e. key(tag), operator(Equal for =), value(taint20), and effect(NoSchedule). Hence, all of these Pods should get scheduled on the first node as there is a matching taint there, similarly none of the Pods would be launched on the second node as we have added a different tain there ‘which is nodeNumber=2:NoSchedule’. The Pods shouldn’t have any problem launching on the third node, because that node is not tainted. If a node is not tainted it would accept any Pod irrespective of it’s tolerations. So the Pods should be launched only on nodes 1 and 3</p>
+<p>The deployment and subsequently the ReplicaSet and Pods are to be created</p>
+<p>networkandcode:~ kubectl create -f ex20-deploy-taint-tol.yaml</p>
+<p>deployment.apps/deploy20 created</p>
+<p>The Pods are now running but note that none of the Pods are running on the second node i.e., gke-standard-cluster-1-default-pool-66ebdca6-pjh8, this is because we had the effect as NoSchedule for the taint on the node</p>
+<p><img src="{{ site.baseurl }}/assets/null-2.png" width="601" height="82" alt="" title="" /></p>
+<p>So far we have seen the example for operator ‘equal’ on toleration, however we can use a different operator called ‘exists’, where in it would do a check only if the taint key exists, and there is no need to specify a taint value here. For example, the toleration could have key: tag, operator: exits.</p>
+<p>Similarly the taint effect we have seen so far is NoSchedule, likewise there are two other effects such as PreferNoSchedule and NoExecute. PrefereNoSchedule will prefer not to schedule Pods with no matching taints, on a node, however will schedule it when there is no other option, like say when there is no other node, or all the other nodes are occupied. NoExecute works like this, when a Pod is already running on a Node, and if a new taint is added to the node with NoExecute, then that Pod will be evicted out of the node immediately if it doesn’t have a matching toleration, this case is not true with other taint effects.</p>
+<p>In our example, we have 7 Pods running on two nodes with suffixes kvx5 and tx76, now let’s add a new taint to the node kvx5 with taint effect NoSchedule</p>
+<p>networkandcode:~ kubectl taint node gke-standard-cluster-1-default-pool-66ebdca6-kvx5 newkey=newvalue:NoSchedule</p>
+<p>node/gke-standard-cluster-1-default-pool-66ebdca6-kvx5 tainted</p>
+<p>Let’s check the Pods again, we shouldn’t see any change, because the newly added taint with effect NoSchedule should not affect Pods that are already running, even if the Pods do not have a matching toleration</p>
+<p><img src="{{ site.baseurl }}/assets/null-2.png" width="601" height="82" alt="" title="" /></p>
+<p>Let’s now try to taint the other Pod tx76 with taint effect NoExecute</p>
+<p>networkandcode:~ kubectl taint node gke-standard-cluster-1-default-pool-66ebdca6-tz76 anotherkey=anothervalue:NoExecute</p>
+<p>node/gke-standard-cluster-1-default-pool-66ebdca6-tz76 tainted</p>
+<p>If we check the Pods, we find the Pods that were running on tx76 were thrown out and subsequently they are in Pending state, and couldn’t be accepted on any node, this is because we have also tainted the node kvx5 recently and it wouldn’t accept any new Pods with out a matching toleration, even though it doesn’t affect existing Pods. This is how NoExecute and NoSchedule effects work.</p>
+<p><img src="{{ site.baseurl }}/assets/null-3.png" width="601" height="81" alt="" title="" /></p>
+<p>Now let’s say if we have to launch the pending nodes on the node kvx5, we can remove the unmatching taint from this node</p>
+<p>networkandcode:~ kubectl taint node gke-standard-cluster-1-default-pool-66ebdca6-kvx5 newkey:NoSchedule-</p>
+<p>node/gke-standard-cluster-1-default-pool-66ebdca6-kvx5 untainted</p>
+<p>All the Pods should now run on the node kvx5, however we see one Pending Pod</p>
+<p><img src="{{ site.baseurl }}/assets/null-4.png" width="601" height="80" alt="" title="" /></p>
+<p>Let’s troubleshoot</p>
+<p>networkandcode:~ kubectl describe pod deploy20-57b89b969f-fctf8</p>
+<p>--TRUNCATED--</p>
+<p><img src="{{ site.baseurl }}/assets/null-5.png" width="601" height="42" alt="" title="" /></p>
+<p>It should be now clear that the pending Pod couldn’t be scheduled because of insufficient CPU on this node kvx5, and not because of any taint on this node kvx5</p>
+<p>Let’s delete the deployment</p>
+<p>networkandcode:~ kubectl delete deployments --all</p>
+<p>deployment.extensions "deploy20" deleted</p>
+<p>--end-of-post--</p>

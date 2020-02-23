@@ -1,0 +1,63 @@
+---
+layout: post
+title: A simple 'Go' program to swap variable values with pointers
+date: 2018-07-28 21:50:38.000000000 +05:30
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags:
+- go
+meta:
+  _publicize_job_id: '20489560949'
+  _rest_api_client_id: "-1"
+  _rest_api_published: '1'
+  timeline_notification: '1532794841'
+  _publicize_done_external: a:1:{s:7:"twitter";a:1:{i:18195285;s:60:"https://twitter.com/Mh84ibrShakir/status/1023241850025586688";}}
+  _publicize_done_18419479: '1'
+  _wpas_done_18195285: '1'
+  publicize_twitter_user: Mh84ibrShakir
+author:
+  login: shak1r
+  email: shakir@techie.com
+  display_name: shakir
+  first_name: ''
+  last_name: ''
+permalink: "/2018/07/28/a-simple-go-program-to-swap-variable-values-with-pointers/"
+---
+<p>Code:</p>
+<p><span style="color:#999999;">// this statement is required on all programs that should compile as an executable</span><br />
+<span style="color:#999999;">package main</span></p>
+<p><span style="color:#999999;">//to import the 'fmt' package that implements formatted I/O functions</span><br />
+<span style="color:#999999;">import "fmt"</span></p>
+<p><span style="color:#999999;">// * is used to indicate pointers</span><br />
+<span style="color:#999999;">// * is also used to indicate the value inside the pointers</span><br />
+<span style="color:#999999;">func swap(xPtr *int, yPtr *int) {</span></p>
+<p><span style="color:#999999;">//Println means Print line</span><br />
+<span style="color:#999999;">fmt.Println("The value in location", xPtr, "is", *xPtr)</span><br />
+<span style="color:#999999;">fmt.Println("The value in location", yPtr, "is", *yPtr)</span></p>
+<p><span style="color:#999999;">fmt.Println("The values are being swapped")</span><br />
+<span style="color:#999999;">*xPtr, *yPtr = *yPtr, *xPtr</span><br />
+<span style="color:#999999;">}</span></p>
+<p><span style="color:#999999;">func main() {</span></p>
+<p><span style="color:#999999;">// := is used when the variable is initialized</span><br />
+<span style="color:#999999;">x := 1</span><br />
+<span style="color:#999999;">y := 2</span></p>
+<p><span style="color:#999999;">fmt.Println("The location in memory for variable x is ", &amp;x)</span><br />
+<span style="color:#999999;">fmt.Println("The location in memory for variable y is ", &amp;y)</span></p>
+<p><span style="color:#999999;">// &amp; is used to refer to the location in memory</span><br />
+<span style="color:#999999;">swap(&amp;x, &amp;y)</span><br />
+<span style="color:#999999;">fmt.Println("The value in location", &amp;x, "is", x)</span><br />
+<span style="color:#999999;">fmt.Println("The value in location", &amp;y, "is", y)</span><br />
+<span style="color:#999999;">}</span></p>
+<p>c:\Go\src\test&gt;go run test.go<br />
+The location in memory for variable x is 0xc042054058<br />
+The location in memory for variable y is 0xc042054070<br />
+The value in location 0xc042054058 is 1<br />
+The value in location 0xc042054070 is 2<br />
+The values are being swapped<br />
+The value in location 0xc042054058 is 2<br />
+The value in location 0xc042054070 is 1</p>
+<p>--end-of-post--</p>

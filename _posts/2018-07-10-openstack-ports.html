@@ -1,0 +1,142 @@
+---
+layout: post
+title: OpenStack | Ports
+date: 2018-07-10 21:34:35.000000000 +05:30
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags:
+- openstack
+meta:
+  _wpas_skip_18169689: '1'
+  _wpas_skip_18195285: '1'
+  _publicize_job_id: '19867851556'
+  timeline_notification: '1531238679'
+  _rest_api_published: '1'
+  _rest_api_client_id: "-1"
+author:
+  login: shak1r
+  email: shakir@techie.com
+  display_name: shakir
+  first_name: ''
+  last_name: ''
+permalink: "/2018/07/10/openstack-ports/"
+---
+<p>ports get created when we add subnets to the router, one port for each subnet</p>
+<p>#to view the list of all ports</p>
+<p>cumulus@server01:~$ <span style="color:#3366ff;">openstack port list</span><br />
++--------------------------------------+------+-------------------+------------------------------------<br />
+------------------------------------------+--------+<br />
+| ID | Name | MAC Address | Fixed IP Addresses<br />
+| Status |<br />
++--------------------------------------+------+-------------------+------------------------------------<br />
+------------------------------------------+--------+<br />
+| 04fa2fd3-7c55-4042-9831-b9159d3f68b6 | | fa:16:3e:46:74:c6 | ip_address='192.168.0.100', subnet_id='c679c440-8286-4eeb-8025-19e0c0895aef' | ACTIVE || 45fb02cf-c6ce-4406-a4cf-8846ad9b6784 | | fa:16:3e:8f:59:59 | ip_address='192.168.1.1', subnet_id='6ebf3ecb-caac-4c24-80aa-953a04bc23a8' | ACTIVE || 81a509eb-ca8d-4f05-8188-5ba7e320ba8a | | fa:16:3e:c3:fd:df | ip_address='192.168.1.2', subnet_id='6ebf3ecb-caac-4c24-80aa-953a04bc23a8' | ACTIVE || 938eeb78-86be-4db0-abaa-d23469cc1a20 | | fa:16:3e:93:ec:10 | ip_address='192.168.2.1', subnet_id='eff1b2c9-7169-4f41-8d68-8d40cca3d3d3' | ACTIVE |<br />
++--------------------------------------+------+-------------------+------------------------------------<br />
+------------------------------------------+--------+</p>
+<p>#to check the port list for a particular router, ex. firstRouter</p>
+<p>cumulus@server01:~$ <span style="color:#3366ff;">openstack port list --router firstRouter</span><br />
++--------------------------------------+------+-------------------+------------------------------------<br />
+----------------------------------------+--------+<br />
+| ID | Name | MAC Address | Fixed IP Addresses<br />
+| Status |<br />
++--------------------------------------+------+-------------------+------------------------------------<br />
+----------------------------------------+--------+<br />
+| 45fb02cf-c6ce-4406-a4cf-8846ad9b6784 | | fa:16:3e:8f:59:59 | ip_address='192.168.1.1', subnet_id<br />
+='6ebf3ecb-caac-4c24-80aa-953a04bc23a8' | ACTIVE |<br />
+| 938eeb78-86be-4db0-abaa-d23469cc1a20 | | fa:16:3e:93:ec:10 | ip_address='192.168.2.1', subnet_id<br />
+='eff1b2c9-7169-4f41-8d68-8d40cca3d3d3' | ACTIVE |<br />
++--------------------------------------+------+-------------------+------------------------------------<br />
+----------------------------------------+--------+</p>
+<p>#to create a port, to refer to a static IP, this can be used to assign a static IP to an instance</p>
+<p>cumulus@server01:~$ <span style="color:#3366ff;">openstack port create --network firstNetwork --fixed-ip subnet=firstSubnet,ip-address=192.168.1.10 firstServerPort</span><br />
++-----------------------+-----------------------------------------------------------------------------+<br />
+| Field | Value |<br />
++-----------------------+-----------------------------------------------------------------------------+<br />
+| admin_state_up | UP |<br />
+| allowed_address_pairs | |<br />
+| binding_host_id | |<br />
+| binding_profile | |<br />
+| binding_vif_details | |<br />
+| binding_vif_type | unbound |<br />
+| binding_vnic_type | normal |<br />
+| created_at | 2018-07-10T12:59:53Z |<br />
+| data_plane_status | None |<br />
+| description | |<br />
+| device_id | |<br />
+| device_owner | |<br />
+| dns_assignment | None |<br />
+| dns_name | None |<br />
+| extra_dhcp_opts | |<br />
+| fixed_ips | ip_address='192.168.1.10', subnet_id='6ebf3ecb-caac-4c24-80aa-953a04bc23a8' |<br />
+| id | 5aea7944-f9fd-4ea7-95c5-643b528acdbf |<br />
+| ip_address | None |<br />
+| mac_address | fa:16:3e:fa:40:83 |<br />
+| name | firstServerPort |<br />
+| network_id | dfb787e9-25e6-4e0d-996f-4619ba3b360d |<br />
+| option_name | None |<br />
+| option_value | None |<br />
+| port_security_enabled | True |<br />
+| project_id | 6d9cb60806744bbc9618963e77bda3cd |<br />
+| qos_policy_id | None |<br />
+| revision_number | 3 |<br />
+| security_group_ids | d01afa75-8581-44ab-993d-3a781e5e7a02 |<br />
+| status | DOWN |<br />
+| subnet_id | None |<br />
+| tags | |<br />
+| trunk_details | None |<br />
+| updated_at | 2018-07-10T12:59:53Z |<br />
++-----------------------+-----------------------------------------------------------------------------+<br />
+cumulus@server01:~$</p>
+<p>#let's assign the static IP to a new server, this has to be assigned while it's created/booted.</p>
+<p>cumulus@server01:~$ <span style="color:#3366ff;">openstack server create --flavor m1.nano --image cirros firstServer --port firstServerPort</span><br />
++-------------------------------------+-----------------------------------------------+<br />
+| Field | Value |<br />
++-------------------------------------+-----------------------------------------------+<br />
+| OS-DCF:diskConfig | MANUAL |<br />
+| OS-EXT-AZ:availability_zone | |<br />
+| OS-EXT-SRV-ATTR:host | None |<br />
+| OS-EXT-SRV-ATTR:hypervisor_hostname | None |<br />
+| OS-EXT-SRV-ATTR:instance_name | |<br />
+| OS-EXT-STS:power_state | NOSTATE |<br />
+| OS-EXT-STS:task_state | scheduling |<br />
+| OS-EXT-STS:vm_state | building |<br />
+| OS-SRV-USG:launched_at | None |<br />
+| OS-SRV-USG:terminated_at | None |<br />
+| accessIPv4 | |<br />
+| accessIPv6 | |<br />
+| addresses | |<br />
+| adminPass | kkoGGv45KWgC |<br />
+| config_drive | |<br />
+| created | 2018-07-10T13:15:22Z |<br />
+| flavor | m1.nano (0) |<br />
+| hostId | |<br />
+| id | 528b162f-6b69-4320-99d3-5fca3cc0d36b |<br />
+| image | cirros (0b16d59f-71f4-48a6-9aef-add8f535bc7d) |<br />
+| key_name | None |<br />
+| name | firstServer |<br />
+| progress | 0 |<br />
+| project_id | 6d9cb60806744bbc9618963e77bda3cd |<br />
+| properties | |<br />
+| security_groups | name='default' |<br />
+| status | BUILD |<br />
+| updated | 2018-07-10T13:15:22Z |<br />
+| user_id | d85316e4978a4454836d21cbde99322d |<br />
+| volumes_attached | |<br />
++-------------------------------------+-----------------------------------------------+</p>
+<p>#let's check the port list associated with firstServer</p>
+<p>cumulus@server01:~$ <span style="color:#3366ff;">openstack port list --server firstServer</span><br />
++--------------------------------------+-----------------+-------------------+-------------------------<br />
+----------------------------------------------------+--------+<br />
+| ID | Name | MAC Address | Fixed IP Addresses<br />
+| Status |<br />
++--------------------------------------+-----------------+-------------------+-------------------------<br />
+----------------------------------------------------+--------+<br />
+| 5aea7944-f9fd-4ea7-95c5-643b528acdbf | firstServerPort | fa:16:3e:fa:40:83 | ip_address='192.168.1.10<br />
+', subnet_id='6ebf3ecb-caac-4c24-80aa-953a04bc23a8' | DOWN |<br />
++--------------------------------------+-----------------+-------------------+-------------------------<br />
+----------------------------------------------------+--------+</p>
+<p>--end-of-post--</p>

@@ -1,0 +1,842 @@
+---
+layout: post
+title: BGP Refresher
+date: 2018-09-22 18:06:49.000000000 +05:30
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags:
+- bgp
+meta:
+  _rest_api_client_id: "-1"
+  _publicize_job_id: '22415533928'
+  timeline_notification: '1537619814'
+  _rest_api_published: '1'
+  publicize_linkedin_url: www.linkedin.com/updates?topic=6449244946049392640
+  _publicize_done_18395822: '1'
+  _wpas_done_18169689: '1'
+  _publicize_done_external: a:1:{s:7:"twitter";a:1:{i:18195285;s:60:"https://twitter.com/Mh84ibrShakir/status/1043479258172145664";}}
+  _publicize_done_18419479: '1'
+  _wpas_done_18195285: '1'
+  publicize_twitter_user: Mh84ibrShakir
+author:
+  login: shak1r
+  email: shakir@techie.com
+  display_name: shakir
+  first_name: ''
+  last_name: ''
+permalink: "/2018/09/22/bgp-refresher/"
+---
+<p><span style="color:#3366ff;"><strong>BGP Overview<br />
+</strong></span><span style="color:var(--color-neutral-600);">It's a Path vector routing protocol, it's the Defacto standard on the Internet for inter AS(Autonomous system) routing. BGP is a c</span><span style="color:var(--color-neutral-600);">lassless routing protocol, supports prefix routing, regardless of the class definitions of IpV4 addressing. Classless means that the subnet mask for an IP address need not be the default mask as specified in Classful addressing.</span></p>
+<p>Intra-AS(e.g. OSPF): can focus on performance<br />
+Inter-AS(BGP): policy may dominate over performance</p>
+<p>It uses AS Path (vector) which is a series of AS no.s to prevent inter domain routing loops. An AS is a set of routers that operate under the same administrative authority</p>
+<p>A Cisco router running BGP could belong to only one AS. The IOS will only allow one BGP routing process to run on a router.</p>
+<p>BGP uses TCP, while interior routing protocols like OSPF and EIGRP do not use TCP and work directly under IP, for example OSPF is IP protocol 89. BGP runs over TCP and enjoys all the convenience that TCP offers. BGP is just another application layer protocol to the TCP/IP stack.</p>
+<hr />
+<p><strong><span style="color:#3366ff;">The BGP routing table</span></strong><br />
+Routers maintain a separate BGP routing table in addition to the main IP routing table<br />
+It contains the list of routes that could be advertised to BGP Peers</p>
+<p>BGP routes are based on it's own set of attributes like AS Path, Local Preference etc., it's Independent of IGP metrics like distance/cost</p>
+<p>Cisco command to show the BGP routing table<br />
+router# show ip bgp</p>
+<p>status code * indicates valid, and &gt; indicates best</p>
+<p>BGP will not advertise a route to its EBGP Peer unless it is both valid and best.</p>
+<p>BGP routes that are both valid and best will also be added to the IP routing table. So the IP routing table would contain BGP routes that are both best and valid.</p>
+<hr />
+<p><span style="color:#3366ff;"><strong>NLRI<br />
+</strong></span>Network layer reachability information<br />
+This is nothing but the term used to covey information that BGP routers exchange with their peers, in the form of 'Update' messages</p>
+<hr />
+<p><span style="color:#3366ff;"><strong>EBGP and IBGP<br />
+</strong></span><span style="color:var(--color-neutral-600);">These are the two main forms of BGP.<br />
+</span>EBGP session exists between a device in one AS and another device in a different AS. They should be physically connected.<br />
+By default, EBGP exists between directly connected devices as the TTL is set to 1. If the devices are more than a hop away, then a multi hop EBGP session should be established. EBGP peering is generally between the physical interface's IP addresses. Physical interface peering's advantage is that each AS is prevented from knowing the routing information of the other AS, besides what is received through BGP. the peering interfaces share only a shared ip subnet. EBGP peers advertise routes received from their EBGP or IBGP peers.</p>
+<p>IBGP peers with in an AS may not be directly connected, and the sessions are between the loopback addresses. Loopback addresses are used for stability reasons, as they are always alive, unless the route itself dies. As the devices are remote, an IGP other than IBGP is still needed with in the AS. The IGP will maintain reachability between the loopback addresses even if the physical topology changes.</p>
+<p>IBGP advertises routes originated locally or that received from EBGP peers, but IBGP doesn't advertise any routes learnt from IBGP as BGP uses ASPATH as loopdetection mechanism, and the AS path isnt changed with in an AS. IBGP sessions cannot rely on IBGP received routing information</p>
+<p>IBGP sessions usually use loopback addresses because the underlying interior gateway protocol (igp) normally provides redundant paths between two bgp speakers</p>
+<hr />
+<p><span style="color:#3366ff;"><strong>When Should we use BGP</strong></span></p>
+<p>single homed customers don't need a dynamic routing protocol, they can configure a static default route towards their ISP, and ISP uses a static route vice versa.</p>
+<p>when they are multiple upstream connections from multi homed cx.s to single or multi ISPs, BGP may be used.</p>
+<p>the provider assigns an aggregate of public IP addresses which could be used by the Cx. when they are the cx. of that SP. these addresses are also called non-portable addresses as they are owned by the SP.</p>
+<p>BGP can detect and route around failures in redundant environments (external), but they don't react quickly with in the same AS (Internal), and they often rely on other IGPs to maintain the network operational when failures occur.</p>
+<p>multihomed cx.s to a single ISP mostly use non-portable addresses, where as multi homed cx.s with multiple ISPs more likely get portable addresses obtained directly from the RAR (regional address registry).</p>
+<p>BGP is not really required when there are multiple connections to the Internet. IGPs like OSPF or EIGRP can easily handle fault tolerance or redundance of outbound traffic.</p>
+<p>BGP is also completely unnecessary when there is only one connection to the internet. As that will burden internal router, because internet has more than 1L routes.</p>
+<p>BGP should be used when:<br />
+1. mul Xns to diff ASs via different SPs<br />
+2. mul Xns to diff ASs via same SP</p>
+<p>BGP's true benefit lies in controlling inbound traffic to the local AS rather than outbound traffic.</p>
+<hr />
+<p><span style="color:#3366ff;"><strong>4 BGP entities carry ASNs</strong></span></p>
+<p>there are 4 bgp data entities that carry ASNs</p>
+<p>. as_path attribute<br />
+. aggregator attribute<br />
+. communities attribute<br />
+. open message</p>
+<hr />
+<p><span style="color:#3366ff;"><strong>4 Byte ASN</strong></span></p>
+<p>rfc 4893</p>
+<p>4 byte (32 bit) asns have been created to solve the 2 byte as number depletion problem.</p>
+<p>a new capability code 65 is used in the open message to neg supp of the 4 byte asn bet two bgp speakers</p>
+<p>bgp communities are supported in 4 byte asn environments using a new extended community attribute called the 4-octet AS specific bgp extended community</p>
+<p>2 byte (16 bit) as_trans -- 23456 for interoparability with the old BGP imp that do not understand 4 byte asns</p>
+<p>detecting that the neighboring AS is the old AS,the local router puts the as_trans to the as_path as a place holder for its own AS and for any other AS numbers appearing on the path</p>
+<p>as4_path and as4_aggregator are optional transitive attributes<br />
+where as as_path is a well known mandatory attribute</p>
+<p>Juniper configuration example:</p>
+<p>edit routing-options<br />
+set autonomous-system 100000 */4 byte ASN as-plain notation*/<br />
+or<br />
+set autonomous-system 1.34464 */4 byte ASN as-dot notation*/</p>
+<hr />
+<p><span style="color:#3366ff;"><strong>BGP Messages</strong></span></p>
+<p>BGP peers exchange the following messages: open, keepalive, update, notification, refresh</p>
+<p>the message length will be between 19(just header) and 4096(header+data) Octets (Bytes)</p>
+<p>1. Open<br />
+...............<br />
+Opens TCP connection to the peer and authenticates the sender.<br />
+To initiate the BGP session.<br />
+contents:<br />
+bgp version no. (currently 4, must match between peers), router id, local AS no., BGP Rev no., Keepalive Holdtime, etc...</p>
+<p>2. Keep Alive<br />
+..........................<br />
+sent every 60 s by default, if a router doesn't receive keep alive from its neighbor for a Hold-Time Period (180s by default), that peer is declared as dead. keepalives are sent by TCP not by BGP. Keeps connection alive in the absence of UPDATES, also Acknowledges OPEN request</p>
+<p>3. Updates<br />
+.....................<br />
+exchange routing updates between peers. advertises new path (or withdraws old)</p>
+<p>4. Notification<br />
+..........................<br />
+sent by a router to its existing peer when there is a fatal error condition, and the BGP peering session will be torn down and reset. It reports errors in the previous msg, and is also used to close connection</p>
+<hr />
+<p><span style="color:#3366ff;"><strong>BGP States</strong></span></p>
+<p>Unlike other dynamic routing protocols, BGP neighboring should only be defined manually.</p>
+<p>no automatic neighborship discovery.</p>
+<p>BGP uses TCP as its transport protocol (port 179)</p>
+<p>BGP considers its peers to be idle until a TCP connection is established between them</p>
+<p>3 TCP states (idle, connect, active)<br />
+3 BGP states (open sent, open confirm, established)</p>
+<p>BGP Peer Session States (6)<br />
+-----------------------------------------<br />
+This refers to the state of the router with its peer</p>
+<p>As a BGP peer session is forming, it will pass through several states, this process is known as the BGP FSM (Finite State Machine)</p>
+<p>1. Idle<br />
+............<br />
+The Initial BGP State</p>
+<p>All incoming BGP connections are refused. A start event is required for the local system (router) to initialize bgp resources and prepare for a TCP connection with the other router.</p>
+<p>2. Connect<br />
+.....................</p>
+<p>BGP process in the router, waits for a TCP connection with the peer.<br />
+If successful, OPEN message is sent.<br />
+If unsuccessful, the router restarts the ConnectRetry timer, listens for a connection initiated by the peer, the session is changed to Active State.</p>
+<p>3. Active<br />
+.................<br />
+BGP attempts to initiate a TCP connection with the remote peer.<br />
+If successful (TCP 3way HandshakE), OPEN message is sent.<br />
+If unsuccessful, the session will be changed back to connect state, once the ConnectRetry timer expires.</p>
+<p>If fails, it remains in active state</p>
+<p>If a peer session is stuck in an Active state, potential problems can include:<br />
+physical connectivity issues, no IP connectivity (no route to host), an incorrect neighbor statement, or an ACL filtering TCP port 179.</p>
+<p>4. OpenSent<br />
+.........................<br />
+TCP connection is established, after which the Open Message is sent.<br />
+In the OpenSent state, the router is waiting for a reply Open message from its Peer.</p>
+<p>If an open message is received with errors, it reverts back to the idle state, and the process continues. If an open message is received with no errors, the local device sends a keep alive message.</p>
+<p>5. OpenConfirm<br />
+...............................<br />
+Once the reply open message is recived, the router will send Keep Alive message.<br />
+The session is in OpenConfirm state, and the router is awaiting a reply KeepAlive message from its peer.</p>
+<p>if the peer sends a keepalive msg, then the local device gets into established state. if it sends a notification, then the local device reverts back to idle. if it doesnt send keepalive with in the hold timer, then the local device sends a notification and gets back to idle.</p>
+<p>6. Established<br />
+............................<br />
+Reply Keep alive message is recieved from the peer.<br />
+BGP session is completely established.<br />
+The router will now send routing information to its peer in the form of UPDATE messages.</p>
+<p>once BGP forms neighborship, it exchanges complete routing table with the peer.<br />
+later on, only changes in the routing table are forwarded to peers.</p>
+<p>if an update or keepalive is received with in the hold timer, the timer is again restarted. if an update or keep alive isnt received with in the hold timer, the local router sends a keep alive message and restarts the timer. the update message contains routing information which may be either received or ignored depending on the routing policy.</p>
+<p>if a notification is sent or received, the router changes its state to idle.</p>
+<hr />
+<p><span style="color:#3366ff;"><strong>Example BGP Initial configuration, authentication, timers etc. on Cisco</strong></span></p>
+<p>1. Start the BGP process and specify the ASN<br />
+routerB(config)# router bgp 100</p>
+<p>2. Specify the neighbor<br />
+iBGP<br />
+routerB(config-router)# neighbor 10.1.1.1 remote-as 100<br />
+eBGP<br />
+routerB(config-router)# neighbor 172.16.1.2 remote-as 900</p>
+<p>neighbor 192.168.100.2 version 4 -- bgp v4</p>
+<p>3. For stability purposes, the source interface used to generate updates to a particular neighbor can be specified<br />
+routerB(config-router)# neighbor 172.16.1.2 update-source lo0</p>
+<p>Though eBGP assumes that external peers are one hop away, using lo0 as a source interface, puts routerB two hops away from routerC. Although Router B and Router C are directly connected physically.</p>
+<p>4. use ebg-multihop to discover the ebg neighbor as its 2 hops away<br />
+routerC(config-router)# neighbor 1.1.1.1 ebgp-multihop 2<br />
+the default no. of hops if not specified, is 255.</p>
+<p>5. to authenticate updates between two bgp peers<br />
+router(config-router)# neighbor 172.16.1.2 password &lt;anypassword&gt;</p>
+<p>6. configure global or neighbor specific keepalive and hold timers, the default values are 60 and 180s<br />
+if the configured timers vary between peers, then the smallest values among them would be considered.<br />
+these values need not be equal among peers</p>
+<p>routerB(config-router)# timers bgp 30 90 <span style="color:#cc99ff;">/* global */</span><br />
+routerB(config-router)# neighbor 172.16.1.2 timers 30 90 <span style="color:#cc99ff;">/* per neighbor */</span></p>
+<hr />
+<p><strong><span style="color:#3366ff;">Cisco command to view neighbors</span></strong></p>
+<p>1. Viewing BGP Neighbors<br />
+routerB# show ip bgp neighbors</p>
+<p>2. View the status of a specific BGP neighbor<br />
+routerB# show ip bgp neighbors 172.16.1.2</p>
+<p>sh ip bgp neighbors<br />
+this command displays:<br />
+the bgp neighbor address<br />
+remote ASN<br />
+BGP Version no.<br />
+neighbor's router id (highest ip address on the loopback interface, or the physical interface if loopback interface doesnt exist)<br />
+keep alive time<br />
+keep alive hold time<br />
+table version etc...</p>
+<p>eg. table version = 4, this should be same on all the peers<br />
+if table version keeps on increasing, it means some route might be flapping, causing the routing table to be updated</p>
+<hr />
+<p><strong><span style="color:#3366ff;">6pe</span></strong></p>
+<p>rfc 4798 - 6pe is a tech that provides interconnectivity of ipv6 sites over the isp's ipv4 mpls cloud</p>
+<p>6pe is similar to mpls l3 vpn where customer packets are transported over the isp network in mpls packets</p>
+<p>PEs are dual-stack routers running ipv6 towards an ipv6 island and ipv4 towards the core. the interface between the edge router of the ipv6 island and the 6pe router is a native ipv6 interface</p>
+<p>pe to pe sessions must be multiprotocol sessions supporting ipv4 and ipv6 families</p>
+<p>PEs (a 6pe asbr router) convey family labeledipv6 unicast between them over ipv4 bgp sessions</p>
+<p>we must configure appropriate export policies on the PE router to share routing information between bgp and other protocols</p>
+<hr />
+<p><span style="color:#3366ff;"><strong>BGP synchronization</strong></span></p>
+<p>BGP Synchronization is disabled by default.</p>
+<p>BGP follows a synchronization rule that states all routers including non bgp ones in a transit AS, must learn of a route, before BGP advertises it to an external peer.</p>
+<p>scenario<br />
+ra (AS 100) -&gt; rb--rc[non bgp]-rd (AS 200) -&gt; re(AS300)</p>
+<p>let network x is advertised by Router A to Router B via EBGP.<br />
+RouterB sends route X to RouterD via iBGP.<br />
+However, a blackhole would exist if Router D then advertises that update (route X) to RouterE.<br />
+as Router C would not have the Route X in its routing table. If Router E tries to reach route X, router C will drop the packet.</p>
+<p>BGP synchronization rule, if enabled on router D, will make router D to wait until router C learns about route X.<br />
+This will be known to router D through an IGP update (such as OSPF) from router C about route X.</p>
+<p>BGP Synchronization can be disabled under 2 cicumstances:<br />
+1. The local AS is not a transit AS.<br />
+2. all routers in the transit AS run iBGP, and are fully meshed.</p>
+<p>cisco config.<br />
+-------------<br />
+router(config)# router bgp 100<br />
+router(config-router)# no synchronization</p>
+<hr />
+<p><strong><span style="color:#3366ff;">Network statement</span></strong></p>
+<p>3 Ways to originate prefixes:<br />
+1. Network statements<br />
+2. Aggregate address statements<br />
+3. Redistributing an IGP into BGP</p>
+<p>Note: prefix + attributes(Local Preference, AS Path etc.) = “route”</p>
+<p>The route must be in the routing table before BGP will advertise the network to an eBGP peer.<br />
+This is a fundamental BGP rule.</p>
+<p>network command could be used under router bgp hierarchy<br />
+to indicate which networks should be advertised using bgp<br />
+but the networks should already be present in the routing table of the router</p>
+<p>The network statement could be used to inject any route from the local AS to an eBGP peer, not just connected routes but also other routes learnt from IGP. The network statement isnt used to specify which interfaces should run BGP.</p>
+<p>cisco config.<br />
+------------------<br />
+RouterB(config)# router bgp 100<br />
+RouterB(config-router)# neighbor 172.16.1.2 remote-as 900<br />
+RouterB(config-router)# network 10.5.0.0 255.255.0.0</p>
+<p>eg:<br />
+router(config-router)# network 10.0.0.0<br />
+this can either include a specific mask or the default classful mask will be applied</p>
+<hr />
+<p><span style="color:#3366ff;"><strong>Full Mesh Requirement</strong></span><br />
+---------------------</p>
+<p>iBGP peering doesnt have any hop limit, but is dependent on the IGP running in the AS. By default, all iBGP peers must be fully meshed, with in an AS.</p>
+<p>IBGP routers can advertise routes from their EBGP peers, to another IBGP peers<br />
+IBGP routers can also advertise routes originated by themselves to another IBGP peers<br />
+But they donot advertise routes received from an IBGP peer to another IBGP peer</p>
+<p>This is to prevent loops and IBGP peers do not update the AS path with an AS<br />
+the AS path is only updated by EBGP peers</p>
+<p>for eg. if R1 receives an EBGP route from the ISP, it advertises it to R2, but R2 can not advertise the same to R3<br />
+so R3 lacks info about the ISP. Here R1,R2,R3 all belong to the same AS<br />
+This enforces full mush requirement with in an AS.<br />
+Full mesh requirement doesnt mean physical full mesh, as the peering is only between Loopback addresses. and the physical reachability is mostly maintained by an IGP other than IBGP.</p>
+<hr />
+<p><span style="color:#3366ff;"><strong>&lt;BGP Route Reflectors&gt;</strong></span></p>
+<p>Route Reflectors (RFC 2796)</p>
+<p>iBGP with in an AS requires full mesh peering.<br />
+for eg. if there are 6 routers, it would require 6*(6-1)/2 = 15 iBGP sessions. cisco recommends RR technique to alleviate full mesh.</p>
+<p>we use route reflectors which peers with iBGP speakers and forwards routes from other peers to route reflector clients. route reflector clients peer only with the route reflector server, thus decreasing the no. of iBGP sessions resulting in less bandwidth and CPU usage, as the neighbor connections are few.</p>
+<p>BGP updates will flow from the server to the clients, without the clients having to interact with each other. route reflector clients can not forward iBGP routes to route reflector server unless specified to do so. the rr server and rr client forms a cluster and more than one cluster can exist in an AS.</p>
+<p>Reflection rule<br />
+----------------------<br />
+<img class="alignnone  wp-image-861" src="{{ site.baseurl }}/assets/screenshot-2019-02-21-at-9.37.13-am.png" alt="Screenshot 2019-02-21 at 9.37.13 AM" width="219" height="366" /><br />
+<span style="font-weight:400;">When an RR receives a route from an IBGP peer, it selects the best</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">   path based on its path selection rule. After the best path is</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">   selected, it must do the following depending on the type of the peer</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">   it is receiving the best path from:</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">      1) A Route from a Non-Client IBGP peer</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">         Reflect to all the Clients.</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">      2) A Route from a Client peer</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">         Reflect to all the Non-Client peers and also to the Client</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">         peers. (Hence the Client peers are not required to be fully</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">         meshed.)</span></p>
+<p>originator_id attribute (optional nontransitive)<br />
+------------------------------------------------------------------------<br />
+<span style="font-weight:400;">ORIGINATOR_ID is a new optional, non-transitive BGP attribute of Type</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">   code 9. This attribute is 4 bytes long and it will be created by a RR</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">   in reflecting a route.  This attribute will carry the ROUTER_ID of</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">   the originator of the route in the local AS. A BGP speaker should not</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">   create an ORIGINATOR_ID attribute if one already exists.  A router</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">   which recognizes the ORIGINATOR_ID attribute should ignore a route</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">   received with its ROUTER_ID as the ORIGINATOR_ID.</span></p>
+<p>cluster_list attribute (optional nontransitive)<br />
+--------------------------------------------------------------------</p>
+<p><span style="font-weight:400;">Usually a cluster of clients will have a single RR. In that case, the</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">   cluster will be identified by the ROUTER_ID of the RR. However, this</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">   represents a single point of failure so to make it possible to have</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">   multiple RRs in the same cluster, all RRs in the same cluster can be</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">   configured with a 4-byte CLUSTER_ID example 1.1.1.1 so that an RR can discard routes</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">   from other RRs in the same cluster.</span></p>
+<p><span style="font-weight:400;">Cluster-list is a new optional, non-transitive BGP attribute of Type</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">   code 10. It is a sequence of CLUSTER_ID values representing the</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">   reflection path that the route has passed. </span><span style="font-weight:400;"><br />
+</span></p>
+<p>Cluster ID is a 4 Byte value, used to prevent loops when more than one rr cluster exists in an AS. The cluster-list contains the list of cluster_id s indicating the path through which the route has reflected. the cluster_id is also the bgp id of the rr. if the rr receives an update with no cluster_id, it adds its cluster_id... if the message contains a cluster_list with out the cluster id of the rr, it prepends it cluster_id to the list. if the list contains the rr's cluster_id, it ignores the update avoiding loop</p>
+<p>Config.<br />
+----------<br />
+All RR specific configuration takes place on the server</p>
+<p>routerA(config)# router bgp 100<br />
+routerA(config-router)# neighbor 10.2.1.2 remote-as 100<br />
+routerA(config-router)# neighbor 10.2.1.2 route-reflector-client *routerD*<br />
+routerA(config-router)# neighbor 10.1.1.2 remote-as 100<br />
+routerA(config-router)# neighbor 10.1.1.2 route-reflector-client *routerB*</p>
+<hr />
+<p><span style="color:#3366ff;"><strong>BGP Confederations</strong></span></p>
+<p>this is also to alleviate full mesh iBGP, using sub ASs with in an AS</p>
+<p>routerB(config)# router bgp 888 <span style="color:#cc99ff;">/* this is the sub-AS */</span><br />
+routerB(config-router)# bgp confederation identifier 300 <span style="color:#cc99ff;">/* this is the parent AS */</span><br />
+routerB(config-router)# bgp confederation peer 777<br />
+routerB(config-router)# neighbor 10.1.1.1 remote-as 777 <span style="color:#cc99ff;">/* iBGP neighbor with parent AS 300 */</span><br />
+routerB(config-router)# neighbor 172.16.1.2 remote-as 500 <span style="color:#cc99ff;">/* eBGP neighbor router C */</span></p>
+<p>routerC(config)# router bgp 500<br />
+routerC(config-router)# neighbor 172.16.1.1 remote-as 300 <span style="color:#cc99ff;">/* form peer with routerB */</span></p>
+<p>routerC isnt aware of routerB's confederation status.</p>
+<hr />
+<p><span style="color:#3366ff;"><strong>BGP Peer Groups</strong></span><br />
+this is used to send updates to all routers with in a peer group at once, rather than individually. and thus saves processor / memory resources. useful in the case of a route reflector server.</p>
+<p>all neighboring parameters will be applied to the peering group itself</p>
+<p>router(config)# router bgp 200<br />
+router(config-router)# neighbor MYPEERGROUP peer-group<br />
+router(config-router)# neighbor MYPEERGROUP remote-as 200<br />
+router(config-router)# neighbor MYPEERGROUP update-source lo0<br />
+router(config-router)# neighbor MYPEERGROUP route-reflector-client</p>
+<p>router(config-router)# neighbor 10.10.1.1 peer-group MYPEERGROUP *to define routers in the group*<br />
+router(config-router)# neighbor 10.10.2.2 peer-gorup MYPEERGROUP<br />
+router(config-router)# neighbor 10.10.3.3 peer-group MYPEERGROUP</p>
+<p>all members of a group must exclusively be iBGP or eBGP peers. mix of eBGP and iBGP peers is not allowed.</p>
+<p>outbound route filtering via dl, rmap, etc. must be identical on all members of the group. inbound route filtering can still be applied on a per-neighbor basis.</p>
+<hr />
+<p><strong><span style="color:#3366ff;">BGP Attributes</span></strong></p>
+<p>RFC1771</p>
+<p>Attributes are used to find the best path, which may not be the shortest path</p>
+<p>Classes:</p>
+<p>1. Well Known Mandatory e.g: AS Path, origin, next-hop<br />
+2. Well known discretionary-Must be supported, not necessarily be incl. in the update message<br />
+e.g: Local Preference, Atomic Aggregate<br />
+3. Optional transitive-support optional, but if supported, must be included e.g: community, aggregator, implies a non compliant BGP router will forward the unsupported attribute unchanged, when sending updates to peers.<br />
+4. Optional nontransitive-support optional, ignored if not added in the update e.g: MED, Cluster List, Originator ID, implies a non compliant BGP router strips out the unsupported attribute, when sending updates to the peers.</p>
+<p><span style="color:#3366ff;"><strong>BGP Route Selection Summary</strong></span></p>
+<p>Before the BGP router installs a route it checks:<br />
+1. next-hop is reachable<br />
+2. there are no loops (AS path doesnt contain its AS no.)<br />
+3. if multiple routes exist to the same destination prefix, the lower route preference will be selected<br />
+4. if routes have the same route preference, the following BGP path selection process will be considered:</p>
+<p>The BGP path selection process:<br />
+------------------------------------------------<br />
+If BGP contains multiple routes to the same destination, it compares the routes in pairs, starting with the newest entries listed higher in the routing table, and working towards the oldest entries listed lower in the table.<br />
+The attributes of each route pair are compared in a specific order:</p>
+<p>1. Higher Local Preference - to route traffic through a preferred edge router in the AS<br />
+2. Shortest AS path - often a tie breaker<br />
+3. Lowest Origin Code 0&lt;1&lt;2 iGP&lt;eGP&lt;incomplete<br />
+4. lowest MED value - if multiple paths between the two ASs<br />
+5. routes learned through EBGP peer preferred over that learned through IBGP peer, for EBGP skip to step9</p>
+<p>6. only for iBGP:<br />
+a. inet.3 routes are preferred over inet.0 routes<br />
+b. if inet.3 and inet.0 routes have same preference, inet.3 will still be chosen<br />
+c. if multiple routes with the same preference exist in the same routing table, often due to traffic-engineering bgp-igp knob in mpls, then the physical next hops of an instance with more hops is installed.</p>
+<p>7. route from the peer with the lowest router id is preferred<br />
+8. shortest cluster length</p>
+<p>9. only for EBGP: route from the peer with the lowest router id is preferred</p>
+<hr />
+<p>Simple path selection based on 3 important attributes (<span style="color:#3366ff;">LAN</span>: LP, ASPATH, NextHop)</p>
+<ul>
+<li>Highest Local preference value</li>
+<li>Shortest AS-PATH</li>
+<li>Closest NEXT-HOP router</li>
+</ul>
+<hr />
+<p>from router alley:<br />
+order<br />
+...........<br />
+1. weight (cisco only) - highest weight will be considered<br />
+2. local preference - highest local preference wins<br />
+3. locally originated - is the next-hop 0.0.0.0<br />
+4. AS-Path - shortest AS Path will be considered<br />
+5. Origin Code - lowest origin value wins 0&lt;1&lt;2 iGP&lt;eGP&lt;incomplete<br />
+6. MED - lowest MED<br />
+7. BGP route type - eBGP routes preferred over iBGP<br />
+8. Age of route - oldest preferred<br />
+9. Router ID -- RID of the router which originated the route initially, lowest ID preferred.<br />
+10. Peer IP address - lowest Peer IP.</p>
+<p>when applying attributes, weight and LP are applied to inbound routes, dictating the best outbound path<br />
+AS-Path and MED are applied to outbound routes, dictating the best inbound path.</p>
+<hr />
+<p><span style="color:#3366ff;"><strong>BGP Weight Attribute (cisco propreitary)</strong></span></p>
+<p>This is cisco propreitory and is never passed on to BGP neighbors.<br />
+This is of local significance to the router only.</p>
+<p>similar to local preference, provides a local weight to determine the best path for outbound traffic.</p>
+<p>Value ranges from 0 - 65535<br />
+Default value is 32768 for routes originated on the local router<br />
+and is 0 for all other routes.</p>
+<p>Weight is only applied to inbound routes, dictating the best outbound path.</p>
+<p>a single weight value could be applied to all routes from a neighbor</p>
+<p>routerA(config)# router bgp 100<br />
+routerA(config-router)# neighbor 10.1.1.2 weight 200</p>
+<p>weight could also be applied to selective routes coming from a neighbor</p>
+<p>1. define the specific route<br />
+routerA(config)# ip prefix-list MYLIST 192.168.1.0/24</p>
+<p>2. define route map to set weight 200<br />
+routerA(config)# route-map WEIGHT permit 10<br />
+routerA(config-route-map)# match ip address prefix-list MYLIST<br />
+routerA(config-route-map)# set weight 200</p>
+<p>3. apply the route map<br />
+routerA(config)# router bgp 100<br />
+routerA(config)# neighbor 10.1.1.2 route-map WEIGHT in <span style="color:#cc99ff;">/* in for inbound routes coming from neighbor */</span></p>
+<hr />
+<p><strong><span style="color:#3366ff;">Local preference (higher is best)</span></strong></p>
+<p>This is used only with IBGP, the designated peer adds a local preference to all received routes, by configuring the BGP protocol hierarchy or the routing-policy hierarchy. This is to direct outbound traffic through a specific peer with in an AS. if the local preference value is configured in both the BGP protocol and routing-policy hierarchies, the routing-policy configuration will be preferred. Higher local preference will be preferred when selecting a route, 100 is the default value.</p>
+<p>Local preference is applied to inbound external routes, unlike weight, it is passed in an update to iBGP peers.</p>
+<p>highest value wins</p>
+<p>used when multiple paths exists, to choose the best path to exit the AS.</p>
+<p>32 bit value, 0 to 4294967295<br />
+default LP is 100</p>
+<p>1. can be set globally to all inbound external routes<br />
+--------------------------------------------------------------------------<br />
+routerB(config)# router bgp 100<br />
+routerB(config-router)# bgp default local-preference 200</p>
+<p>routerD(config-router)# router bgp 100<br />
+routerD(config-router)# bgp default local-preference 300<br />
+as LP is flood across to all iBGP peers, routers A and B will now prefer the route through router D to reach any destination outside the local AS.</p>
+<p>2. lp can also be applied on a per route basis<br />
+-------------------------------------------------------------------<br />
+routerD(config)# ip prefix-list 192.168.1.0/24</p>
+<p>routerD(config)# route-map PREFERENCE<br />
+routerD(config-route-map)# match ip address prefix-list MYLIST<br />
+routerD(config-route-map)# set local-preference 300</p>
+<p>routerD(config)# router bgp 100<br />
+routerD(config-router)# neighbor 172.17.1.2 remotes-as 900<br />
+routerD(config-router)# neighbor 172.17.1.2 route-map PREFERENCE in</p>
+<hr />
+<p><strong><span style="color:#3366ff;">BGP AS-Path Prepend / Filtering using Regular Expressions</span></strong></p>
+<p>AS-Path prepend or filter could be applied to the outgoing routes dictating the best inbound path</p>
+<p>1. Prepend - to make the route less desirable<br />
+--------------------------------------------------------------------<br />
+routerB(config)# access-list 5 permit 10.5.0.0 0.0.255.255</p>
+<p>routerB(config)# route-map ASPREPEND permit 10<br />
+routerB(config-route-map)# match ip address 5<br />
+routerB(config-route-map)# set as-path prepend 200 200</p>
+<p>routerB(config)# router bgp 100<br />
+routerB(config-router)# neighbor 172.16.1.2 route-map ASPREPEND out</p>
+<p>the artificial AS-Path information is not added to a route until it is advertised to an eBGP peer.</p>
+<p>if we check router C's bgp database table it will have two entries for 10.5/16 one through router D (*&gt;) and other through router B (* inflated), it will chose route via routerD as through B will have a bigger AS Path.</p>
+<p>2. Filtering<br />
+----------------</p>
+<p>Regular AS string expressions:<br />
+----------------------------------------------<br />
+^ start, $ end, . any one char, ? any one char including none, + any one or more charactesrs, * any one or more characters including none, - serves the functionality of virtually all of the above</p>
+<p>examples<br />
+^100_ = learned from AS 100<br />
+_100$ = originated from AS 100<br />
+^$ = originated locally<br />
+.* = everything<br />
+_100_ = any instance of AS 100</p>
+<p>to configure RouterF to only accept routes that originated from AS 100</p>
+<p>define access list<br />
+routerF(config)# ip as-path access-list 15 permit _100$</p>
+<p>define route map and call the access list 15<br />
+routerF(config)# route-map ASFILTER permit 10<br />
+routerF(config)# match as-path 15</p>
+<p>set the route map for inbound routes in bgp<br />
+routerF(config)# router bgp 50<br />
+routerF(config)# neighbor 10.5.1.1 remote-as 100<br />
+routerF(config)# neighbor 10.5.1.1 route-map ASFILTER in</p>
+<p>sample command to see what routes will match a regular expression<br />
+routerF# sh ip bgp regexp _100$</p>
+<p>filter-list<br />
+--------------<br />
+router bgp 24084<br />
+!<br />
+address-family ipv4<br />
+neighbor 59.160.150.129 filter-list 10 out</p>
+<p>ip as-path access-list 10 permit ^$ --- this is used to advertise all locally generated routes</p>
+<hr />
+<p><span style="color:#3366ff;"><strong>MED(Multi Exit Discriminator) (lesser is best)</strong></span></p>
+<p>provides a preference to eBGP peers to a specific inbound router.<br />
+by default, MED is set on a router when multiple upstream connections exist between the router's AS to a different AS.<br />
+the MED value is set on the edge routers forming the physical connection with the remote AS. the local router with the lowest MED will be chosen, and the remote router receiving the route will transfer back updates using the same link/path.<br />
+if MED is not specified, junos will take it as 0.<br />
+MED is configured either under protocols BGP hierarchy using metric-out statement<br />
+or under routing-policy then statement, specifying the action as metric with the value.</p>
+<p>applied to outbound routes, dictating the best inbound path<br />
+default cisco MED is 0</p>
+<p>the MED is identified as the BGP metric when viewing the BGP routing table<br />
+lower metric is preferred.</p>
+<p>we can assign the med on routerB to 200 so that router D will be preferred for inbound traffic</p>
+<p>routerB(config)# access-list 5 permit 10.5.0.0 0.0.255.255</p>
+<p>routerB(config)# route-map SETMED permit 10<br />
+routerB(config-route-map)# match ip address 5<br />
+routerB(config-route-map)# set metric 200</p>
+<p>routerB(config)# router bgp 100<br />
+routerB(config-router)# neighbor 172.16.1.2 route-map SETMED out</p>
+<p>above config forces AS 900 to prefer the path through router C (med 0) for the prefix 10.5/16</p>
+<p>when we enter show ip bgp<br />
+med is shown by the metric column</p>
+<p>med is adv only from one as to another and not further that<br />
+so in this case from as100 to as900 and not further, metric will be reset to 0 if the route is advertised beyond this AS</p>
+<p>BGP's method of route selection<br />
+--------------------------------<br />
+when multiple routes are received for the same prefix, bgp compares them in pairs starting from newest to oldest entries, which could sometimes lead to suboptimal routing</p>
+<p>two MED related commands on AS 900 (in scenario) are used to alleviate this situation</p>
+<p>deterministic-med (multiple routes from the same AS)<br />
+always-compare-med (multiple routes from different ASs)</p>
+<p>MED values would be compared regardless of the order in which the routes are received</p>
+<p>routerE(config)# router bgp 900<br />
+routerE(config)# bgp deterministic-med<br />
+disable by default, above command ensures med values are compared while doing best path selection comparing routes<br />
+if enabled, all the routers should in the AS should have this turned ON<br />
+routerE(config)# bgp always-compare-med</p>
+<p>Setting igp metric as bgp med<br />
+------------------------------<br />
+*metric-type internal*</p>
+<p>routerB(config)# access-list 1 permit 10.5.0.0 0.0.255.255</p>
+<p>routerB(config)# route-map IGPMETRIC permit 10<br />
+routerB(config)# match ip address 1<br />
+routerB(config)# set metric-type internal</p>
+<p>routerB(config)# router bgp 100<br />
+routerB(config)# neighbor 172.17.1.2 route-map IGPMETRIC out</p>
+<p>sets MED as the link state cost metric of OSPF (if igp running is OSPF), for 10.5/16 prefix</p>
+<hr />
+<p><span style="color:#3366ff;"><strong>Community</strong></span></p>
+<p>tags groups that share common characteristics into communities.<br />
+used to tag a group of destination prefixes.<br />
+communities are set, added, or deleted in a routing policy under the edit-&gt;policy options hierarchy</p>
+<p>bgp communities are supported in 4 byte asn environments using a new extended community attribute called the 4-octet as specific bgp extended commuunity</p>
+<p>communities are used to tag routes, so that specific policies may be applied to them</p>
+<p>3 types of community formats<br />
+----------------------------<br />
+Decimal - default<br />
+Hexadecimal<br />
+ASN:No. - ip bgp community new-format, command to be used to enable this format</p>
+<p>ASN : No. (Generic Identifier Number) -- 16 bit + 16 bit</p>
+<p>4 Well Known Communities<br />
+-------------------------<br />
+No-Export -- to EBGP -- set community no-export<br />
+No-advertise -- to IBGP or EBGP -- set community no-advertise<br />
+Internet -- advertised out of local AS -- set community internet<br />
+Local-AS -- not advertised to EBGP or confederation peers with in the AS -- set community local-as</p>
+<p>the community attribute will not be sent by default, to a peer<br />
+routerB(config-router)# neighbor 172.16.1.2 send-community</p>
+<p>example - 10.5/16 routes not to be sent out of AS 900<br />
+-----------------------------------------------------<br />
+step1 acl<br />
+routerB(config)# access-list 1 permit 10.5.0.0 0.0.255.255</p>
+<p>step2 route-map<br />
+routerB(config)# route-map NOEXPCOMM permit 10<br />
+routerB(config)# match ip address 1<br />
+routerB(config)# set community no-export</p>
+<p>step3 applying route map to bgp peer<br />
+routerB (config)# router bgp 100<br />
+routerB(config)# neighbor 172.16.1.2 remote-as 900<br />
+routerB(config)# neighbor 172.16.1.2 send-community<br />
+routerB(config)# neighbor 172.16.1.2 route-map NOEXPCOMM out</p>
+<p>the above route 10.5/16 will be received by router C and it sends it to all its IBGP peers<br />
+but doesnt send beyond the AS to any EBGP peer</p>
+<p>modifications:<br />
+--------------<br />
+set community no-export will simply over write the old community values<br />
+additive key word may be used to append values<br />
+*set community no-export additive*</p>
+<p>bgp communities are supported in 4 byte asn environments using a new extended community attribute called the 4-octet as specific bgp extended commuunity</p>
+<hr />
+<p><span style="color:#3366ff;"><strong>BGP Summarization</strong></span></p>
+<p>routes redistributed into BGP are automatically summarized by default</p>
+<p>router bgp 100<br />
+no auto-summary -- to disable auto-summary</p>
+<p>manual summary<br />
+--------------<br />
+for four routes redistributed into bgp - 172.16/24, 172.16.1/24, 172.16.2/24, and 172.16.3/24<br />
+summary route be created as 172.16.0/22</p>
+<p>*note that auto-summary would lead to 172.16/16 instead (classful)*</p>
+<p>routerB(config)# router bgp 100<br />
+routerB(config-router)# aggregate-address 172.16.0.0 255.255.252.0</p>
+<p>BGP will send both 172.16/22 as well as the 4 specific routes</p>
+<p>routerB(config-router)# aggregate-address 172.16.0.0 255.255.252.0 summary-only<br />
+the above command makes BGP not send the 4 specific routes</p>
+<p>summarize specific routes<br />
+-------------------------<br />
+to create a specific route only for 2 prefixes - 172.16/24 and 172.16.1/24<br />
+and ignore the other two</p>
+<p>step1 acl<br />
+routerB(config)# access-list 1 permit 172.16.0.0 0.0.0.255<br />
+routerB(config)# access-list 1 permit 172.16.1.0 0.0.0.255</p>
+<p>step2 route-map<br />
+routerB(config)# route-map SUPPRESSMAP permit 10<br />
+routerB(config-route-map)# match ip address 1</p>
+<p>step3 apply route-map as suppress map<br />
+routerB(config)# router bgp 100<br />
+routerB(config-router)# aggregate-address 172.16.0.0 255.255.252.0 summary-only suppress SUPRESSMAP</p>
+<p>as-set to make the summary routes retain the AS path info<br />
+----------------------------------------------------------<br />
+routerB(config-router)# aggregate-address 172.16.0.0 255.255.252.0 summary-only suppress SUPRESSMAP as-set</p>
+<hr />
+<p><span style="color:#3366ff;"><strong>BGP Route Damping / Dampening RFC 2439</strong></span><br />
+---------------------------------------------------------------------</p>
+<p>What is Route Flapping / Flapping:<br />
+phenomenon where routes (in few cases thousands) will appear and disappear rapidly<br />
+due to link fail and restore repeatedly in short duration of time<br />
+link flaps up and down</p>
+<p>causes more processing power/bandwidth consumption<br />
+because all the update/withdrawn msgs are propagated to peers, and effects cascade quickly</p>
+<p>BGP is quite unstable with Route Flapping due to:<br />
+1. BGP maintains separate tables in memory for inbound and outbound traffic per peer basis<br />
+2. BGP propagates information on an as-needed basis</p>
+<p>one intermittently failing link can adversely affect a whole network</p>
+<p>to avoid protocol churn, Damping is employed which causes routers to ignore routes that are frequently changing</p>
+<p>causes of route instability:<br />
+1. Bad Links/Circuits<br />
+2. IGP instability (due to bag links causing igp failure, when raw IGP routes are advertised into bgp)<br />
+3. Bad Routing Policies<br />
+4. Link Congestion<br />
+5. Old routers with software bugs, insufficient processing power, insufficent memory, network upgrades and maintenance</p>
+<p>Damipng is ignored on iBGP sessions, applied on EBGP sessions (thousands of routes)</p>
+<p>BGP has no reachability information of its own, and relies on IGP to resolve next hops</p>
+<p>once damping is enabled, the local router maintains a database of instability<br />
+some ISPs no longer use route damping</p>
+<p>damping Figure of Merit (point value) -- penatly<br />
+------------------------------------------------<br />
+1000 is the deault penalty in cisco and juniper<br />
+0 for new route (default value), 1000 for withdrawn route, 1000 for readvertised route, 500 when path attribute is changed</p>
+<p>points decay (reduce) at a certain rate (half-life)<br />
+when figure of merit &gt; configurable cutoff (suppressed) threshold, route becomes unusable (isnt advertised and isnt used locally as well)<br />
+suppress value should be &lt;= merit ceiling value</p>
+<p>setting route-dampening on cisco for two prefixes 10.1/16 and 10.2/16<br />
+---------------------------------------------------------------------<br />
+step1 prefix-list<br />
+router(config)# ip prefix-list DAMPLIST seq 10 10.1.0.0/16<br />
+router(config)# ip prefix-list DAMPLIST seq 20 10.2.0.0/16</p>
+<p>step2 route-map<br />
+router(config)# route-map DAMPMAP permit 10<br />
+router(config-route-map)# match ip address prefix-list DAMPLIST<br />
+router(config-route-map)# set dampening 15 750 2000 60</p>
+<p>step3 applying route-map<br />
+router(config)# bgp 100<br />
+router(config-router)# bgp dampening route-map DAMPMAP<br />
+15minutues =&gt; half-life timer, penalty decays by half every 15 minutes<br />
+750 =&gt; bottom threshold, if penalty &lt; 750, it is no longer suppressed<br />
+2000 =&gt; top threshold, if penalty &gt; 2000 its suppressed<br />
+60 =&gt; route can not be suppressed for more than 60 minutes</p>
+<hr />
+<p><strong><span style="color:#3366ff;">BGP Next-Hop-Self</span></strong></p>
+<p>IBGP routers donot change the next-hop address in the update message as its sent to the IBGP peer, by default.</p>
+<p>for example, let R1 and R2 belong to the same AS.</p>
+<p>let R1 receives a route from its EBGP peer, the isp router.<br />
+The isp router will advertise a route with the next-hop which is its physical interface/address connected to R1.</p>
+<p>now R1 will advertise the above received route to its IBGP peer R2, but with out changing the next-hop.</p>
+<p>the above is the default behavior.</p>
+<p>R2 can not install that route because the next-hop address is the ISP router's physical interface and R2 doesnt have any connectivity to it.</p>
+<p>solution<br />
+--------<br />
+so now R2 should reach the ISP router either through static routing or through an IGP like OSPF.<br />
+or R1 must send the routes by altering the next-hop, which is reachable to R2.</p>
+<p>however using next-hop self action under a policy in R1 would be a better option, as it has some advantages<br />
+this would make R1 advertise the received route from the ISP router, to R2 by changing the next-hop value from the ISP router's physical interface address, to R1's loopback address which has formed the peering with R2's loopback address through IBGP.</p>
+<p>so now as R2 receives the route, it would install it, as it has reachability to R1's loopback</p>
+<p>Changing the Next-Hop<br />
+---------------------</p>
+<p>configure R1 so that R2 could reach ISP A (AS 65501)<br />
+----------------------------------------------------<br />
+user@R1# edit policy-options<br />
+user@R1# edit policy-statemnt next-hop-self-policy<br />
+user@R1# set term alter-next-hop then next-hop self</p>
+<p>user@R1# edit protocols bgp group int-65503<br />
+user@R1# set export next-hop-self-policy</p>
+<p>configure R2 so that R1 could reach ISP B (AS 65502)<br />
+----------------------------------------------------<br />
+user@R2# set policy-options policy-statement next-hop-self-policy term alter-next-hop then next-hop self<br />
+user@R2# set protocols bgp group int-65003 export next-hop-self-policy<br />
+JunOS recommends that we always apply the next-hop self policy as an export policy to the internal peers or to the BGP group<br />
+to which those peers belong. Improper application of a next-hop self policy can cause suboptimal routing or result in<br />
+hidden routes.<br />
+When defining a next-hop self policy, ensure that we do not include the accept action in conjunction with the next-hop<br />
+action. Using the accept action in conjunction with the next-hop action effectively matches all routes, BGP and otherwise,<br />
+and advertises those routes to the configured IBGP peers.</p>
+<hr />
+<p>cisco command<br />
+-------------<br />
+sh ip bgp on router A would show the route for 192.168.1.0 as * =&gt; because next hop 172.16.1.2 (router C) isnt reachable</p>
+<p>routerB(config)# router bgp 100<br />
+routerB(config)# neighbor 10.1.1.1 remote-as 100<br />
+routerB(config)# neighbor 10.2.1.2 remote-as 100<br />
+routerB(config)# neighbor 10.1.1.1 next-hop-self<br />
+routerB(config)# neighbor 10.2.1.2 next-hop-self</p>
+<p>before sending an update to ibgp neighbors, we can used nhspolicy on the asbr or igp passive on the asbr's external interface</p>
+<p><span style="color:#3366ff;"><strong>BGP Backdoor</strong></span></p>
+<p>in certain cases a particular destination may be reachable via both EBGP (AD 20) and IGP such as OSPF (AD 110)<br />
+by default, EBGP would be chosen, implies sub-optimal routing</p>
+<p>*we don't have to reach an internal network via outside (EBGP)*</p>
+<p>network address backdoor command is used to prefer IGP path over EBGP<br />
+alternate way is to modify the AD value of BGP<br />
+command: distance bgp external-distance (def 20) internal-distance (def 200) local-distance (def 200)</p>
+<p>example<br />
+router bgp 100<br />
+distance bgp 150 210 210</p>
+<p>router bgp 100<br />
+network 10.5.0.0 mask 255.255.0.0 back door</p>
+<p>back door command adjusts the ad value of EBGP from 20 to 200, by default</p>
+<p><strong><span style="color:#3366ff;">Maximum Prefix, Fast External Fallover</span></strong></p>
+<p>router bgp 100<br />
+neighbor 10.1.1.1 maximum-prefix 10000 -- only 10000 routes can be received from 10.1.1.1</p>
+<p>router bgp 200<br />
+bgp fast-external-fallover -- globally, to immediately rest an eBGP session if a link connecting two peers go down</p>
+<p>per interface basis<br />
+int s0/0<br />
+ip bgp fast-external-fallover permit</p>
+<p><span style="color:#3366ff;"><strong>BGP Operational Mode Commands</strong></span></p>
+<p>juniper operational mode commands<br />
+---------------------------------</p>
+<p>user@router&gt; show bgp summary<br />
+user@router&gt; show bgp neighbor<br />
+user@router&gt; show bgp group</p>
+<p>user@router&gt; show route hidden extensive</p>
+<p>user@router&gt; show route protocol bgp<br />
+user@router&gt; show route protocol bgp extensive<br />
+user@router&gt; show route protocol bgp detail</p>
+<p>user@router&gt; show route receive-protocol bgp 172.30.1.2<br />
+from the specified neighbor<br />
+this actually shows th RIB-In entries before being filtered using any import policy<br />
+but this doesnt how ever show hidden routes that are rejected by import policies</p>
+<p>user@router&gt; show route receive-protocol bgp 172.30.1.2 hidden</p>
+<p>user@router&gt; show route advertised-protocol bgp 172.30.1.2<br />
+to the specified neighbor<br />
+shows RIB out entries, after applying export policies</p>
+<p>cisco operation mode commands<br />
+-----------------------------<br />
+router# clear ip bgp * -- to clear all bgp sessions<br />
+router# clear ip bgp * soft -- to force a resending of routing updates / no bgp session reset<br />
+clear ip bgp 192.168.100.2</p>
+<p>router# show ip bgp summary -- *to view neighbor table* - list of connections, no. of routes etc..<br />
+show ip bgp neighbors</p>
+<p>show ip bgp -- forwarding table/database</p>
+<p>show ip route -- routing table<br />
+show ip route bgp -- bgp routes in the routing table</p>
+<p><span style="color:#3366ff;"><strong>AS Path:</strong></span><br />
+--------</p>
+<p>by default the router at the edge of an AS adds its AS no. to the front of the AS Path, as it transitions between different ASs.</p>
+<p>when a bgp router receives an update message, the first action would be to check the AS path, junos performs a verification if the local AS no. is in the path, if so it drops it and the route is not advertised, to avoid loops, as the route would have already crossed that AS no.</p>
+<p><span style="color:#3366ff;"><strong>BGP Attribute codes</strong></span></p>
+<p>Origin Code 1<br />
+AS-Path Code 2<br />
+Next Hop Code 3<br />
+MED Code 4<br />
+LocalPref Code 5<br />
+AutAgg Code 6<br />
+Aggr Code 7<br />
+Comm Code 8<strong><br />
+</strong></p>
+<p><span style="color:#3366ff;"><strong>BGP NextHop</strong></span></p>
+<p>up on receiving an update bgp always checks the bgp next hop for reachabiliy. bgp next hops are only changed over ebgp sessions and not over ibgp sessions</p>
+<p>next-hop:<br />
+---------<br />
+the bgp peer which advertises the route, places its address in the next-hop attribute. when the update message reaches the remote peer, the next-hop attribute may be changed to this remote peer's address and then advertised to the next peer only if its an EBGP. by default for IBGP, the next-hop attribute is not changed as the route is re-advertised to other peer, though they can be changed using policy controls.</p>
+<p>if a next-hop becomes unreachable, the corresponding hidden route may be viewed by<br />
+user@router&gt; show route hidden<br />
+or<br />
+user@route&gt; show route protocol bgp all</p>
+<p>A router chooses prefers a route from the closest next hop router, this refers to hot potato routing. Hot-potato routing is the practice of passing traffic off to another autonomous system as quickly as possible, thus using their network for wide-area transit. Cold-potato routing is the opposite, where the originating autonomous system holds onto the packet until it is as near to the destination as possible.</p>
+<p><span style="color:#3366ff;"><strong>BGP Numbers</strong></span></p>
+<p>max 200 network entries could be used with BGP v4</p>
+<p>cisco ebgp ad 20, ibgp 200, 1 for static, 110 for ospf, 90 for eigrp, 120 for rip, 100 for igrp</p>
+<p>cisco prop weight def value 32768, range 0 to 65535</p>
+<p>RFC 4271 -- BGP Version 4<br />
+TCP 179<br />
+cisco Default EBGP TTL 1<br />
+BGP Header Size 19 B<br />
+Max BGP Msg Size 4096 B<br />
+Min BGP Msg Size 19 B, with just header, no data<br />
+Keeaplive Msg Size 19 B, coz no data<br />
+default local preference is 100<br />
+default route prefence of bgp is 170<br />
+Well Known Communities RFC 1997<br />
+Comuunity Attribute - 32 bit -- ASN:no. 16+16, ASN0 and ASN65535 are restricted<br />
+RFC 4360 Extended Community Attribute -- 64 bits -- Tye: ADministrator: no.<br />
+rfc 4893 - 4 byte asn<br />
+open message capality code for 4 byte asn - 65<br />
+2 byte as_trans -- 24356 for interoparability with the old bgp imp that do not understand 4 byte asns<br />
+rfc 4798 - 6pe<br />
+Well Known<br />
+3 standard values:<br />
+0xffffff01 - No exprt to other AS<br />
+0xffffff02 - no advertise to other BGP peers<br />
+oxffffff03 - no export-subconfed, no export to ebgp, confined to sub-as)<br />
+RFC 1930 -16 bit ASNs 0 to 65536, private 64512 - 65534<br />
+reserved - 0, 56320-64511, 65536</p>
+<p>ASN -- 16 bit, 1 to 65535<br />
+64512 - 65535 (Internal / Private Use)<br />
+RFC 4893 - 32 bit ASNs x.y<br />
+reserved - 1.y and 65535.65535<br />
+old ASNs are written as 0.y</p>
+<p>med default value 0, lower better</p>
+<p>Cisco AD Value EBGP 20, IBGP 200</p>
+<p>junos idle timeout up to 40 hours<br />
+junos holdtimer default 90 seconds, modifying range 20s to 65535 seconds</p>
+<p>BGP Route Flap Damping RFC 2439, November 1998</p>
+<p><span style="color:#3366ff;"><strong>Locally originated</strong></span></p>
+<p>next hop of 0.0.0.0 indicates that the route was locally originated into BGP.<br />
+path is empty as the route originated in the AS.</p>
+<p><span style="color:#3366ff;"><strong>Difference between Import and Export Policies</strong></span></p>
+<p>import policies determine which routes out of the existing ones(RIB In) should be present in the routing table before they are installed in the routing table (RIB-Local)</p>
+<p>export policies determine which routes out of the active routes in the local routing table (RIB local) should be forwarded to others (RIB Out)</p>
+<p>export policies can only export active routes that are present in rib local, by default, to override this we can use advertise-inactive option to advertise bgp routes that are inactive because of route preference</p>
+<p><span style="color:#3366ff;"><strong>Origin</strong></span></p>
+<p>the router that advertises a route places the origin attribute in its update message. by default origni will be 0,1, and 2 for IGP, EGP, and Incomplete(not Igp/egp) received routes respectively.(where the actual router received the routes from)</p>
+<p>this refers to the origin of the route<br />
+i&lt;e&lt;?</p>
+<p>in juniper its<br />
+0&lt;1&lt;2</p>
+<p>0 is most preferred, 2 is least preferred</p>
+<p>i refers to igp most probably the routes obtained by the network command<br />
+e refers to egp<br />
+? refers to incomplete, which is mostly redistribute command for connected, static, or igp routes</p>
+<p>when we enter<br />
+show ip bgp</p>
+<p>the path column shows something like i implying igp origin<br />
+or 900? impying 900AS path and incomplete (redistributed)</p>
+<p>routes with just origin tag ? and no path implies<br />
+ibgp routes whose origin are static/connected<br />
+or<br />
+local router's static/connected routes redistributed into bgp</p>
+<p>routes with just origin tag i and no path implies<br />
+ibgp routes whose origin are igp<br />
+or<br />
+local router's igp routes redistributed into bgp</p>
+<p><strong><span style="color:#3366ff;">Reset</span></strong></p>
+<p>Generally BGP couldnt advertise routes that are already sent. Refresh messages are used for soft clearing of BGP sessions, so that routes could be re-advertised. this has specific uses in case of MPLS VPNs.</p>
+<p>clear ip bgp *<br />
+clear ip bgp 192.168.1.1</p>
+<p>--end-of-post--</p>

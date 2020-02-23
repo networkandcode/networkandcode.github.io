@@ -1,0 +1,30 @@
+---
+layout: post
+title: TCP Refresher
+date: 
+type: post
+parent_id: '0'
+published: false
+password: ''
+status: draft
+categories: []
+tags: []
+meta: {}
+author:
+  login: shak1r
+  email: shakir@techie.com
+  display_name: shakir
+  first_name: ''
+  last_name: ''
+permalink: "/"
+---
+<p><span style="color:#3366ff;">History</span></p>
+<p>TCP is a window based protocol, i.e. it implements a window based flow control mechanism where the current window size restricts the amount of unacknowledged data that can be transferred between a TCP sender and receiver. Originally this maximum window size awnd(advertised windows) was advertised by the receiver.</p>
+<p>1980s - new congestion control mechanisms introduced to prevent congestion in the internet caused by TCP senders overrunning resources of the network.</p>
+<p>1988 - Tahoe TCP released, included 3 congestion control algorithms: slow start, congestion avoidance and fast retransmit. Two new variables cwnd(congestion window) and ssthresh(slow start threshold) introduced.</p>
+<p>1990 - Reno TCO released, included the fast recovery algorithm</p>
+<hr />
+<p>TCP sender's window size w = min (cwnd, awnd)<br />
+awnd prevents the sender from overrunning the resources of the receiver. cwnd prevents the sender from sending more data than that the network can handle. cwnd can be set according to the packet loss condition which can be detected either via a time-out mechanism or via duplicate ACKs.<br />
+Each packet has a timer (RTO Retransmission timeout) associated with it, and when that timer expires the packet is retransmitted. RTO should be similar to that of an RTT(Round trip time) which is usually calculated using algorithms such as Karn.</p>
+<p>&nbsp;</p>

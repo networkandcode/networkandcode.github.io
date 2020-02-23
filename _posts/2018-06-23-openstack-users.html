@@ -1,0 +1,130 @@
+---
+layout: post
+title: OpenStack | Users
+date: 2018-06-23 21:58:50.000000000 +05:30
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags:
+- openstack
+meta:
+  timeline_notification: '1529771334'
+  switch_like_status: '1'
+  _rest_api_published: '1'
+  _rest_api_client_id: "-1"
+  _wpas_skip_18169689: '1'
+  _wpas_skip_18195285: '1'
+  _publicize_job_id: '19275789658'
+author:
+  login: shak1r
+  email: shakir@techie.com
+  display_name: shakir
+  first_name: ''
+  last_name: ''
+permalink: "/2018/06/23/openstack-users/"
+---
+<div>Command syntax for reference: openstack user &lt;action&gt; &lt;--parameters values&gt; &lt;username&gt;</div>
+<div>&lt;action&gt;: list, create, set, show, help...</div>
+<div>&lt;parameters&gt;: domain, project, description, email...</div>
+<div></div>
+<div>To check the list of users</div>
+<div></div>
+<div>cumulus@server01:~$ openstack user list</div>
+<div>+----------------------------------+-----------+</div>
+<div>| ID                               | Name      |</div>
+<div>+----------------------------------+-----------+</div>
+<div>| bf8e72b9dab54fce9582d0eb6acee95a | placement |</div>
+<div>| c30b5df613ae4e818c8f7b38afdc2dae | neutron   |</div>
+<div>| cd557406ef264e47a83856406c39f54c | admin     |</div>
+<div>| d20131a2f7644c1b8a2d1bed13fe71ef | demo      |</div>
+<div>| e9ec70ddc0114ed1a1fa97bdf007c200 | glance    |</div>
+<div>| fe656dc2c15541c1ab96f6fdc1df39f4 | nova      |</div>
+<div>+----------------------------------+-----------+</div>
+<div></div>
+<div>note that placement, neutron, glance and nova refer to system users created for each of the respective services and they all belong to the 'service' project  in the 'default' domain</div>
+<div>cumulus@server01:~$ openstack user list --project service</div>
+<div>+----------------------------------+-----------+</div>
+<div>| ID                               | Name      |</div>
+<div>+----------------------------------+-----------+</div>
+<div>| fe656dc2c15541c1ab96f6fdc1df39f4 | nova      |</div>
+<div>| e9ec70ddc0114ed1a1fa97bdf007c200 | glance    |</div>
+<div>| c30b5df613ae4e818c8f7b38afdc2dae | neutron   |</div>
+<div>| bf8e72b9dab54fce9582d0eb6acee95a | placement |</div>
+<div>+----------------------------------+-----------+</div>
+<div></div>
+<div>The other two usernames admin and demo are used by operators, admin user belongs to the 'admin' project, and 'demo' user belongs to the 'demo' project</div>
+<div>cumulus@server01:~$ openstack user list --project admin</div>
+<div>+----------------------------------+-------+</div>
+<div>| ID                               | Name  |</div>
+<div>+----------------------------------+-------+</div>
+<div>| cd557406ef264e47a83856406c39f54c | admin |</div>
+<div>+----------------------------------+-------+</div>
+<div>cumulus@server01:~$ openstack user list --project demo</div>
+<div>+----------------------------------+------+</div>
+<div>| ID                               | Name |</div>
+<div>+----------------------------------+------+</div>
+<div>| d20131a2f7644c1b8a2d1bed13fe71ef | demo |</div>
+<div>+----------------------------------+------+</div>
+<div></div>
+<div>To check the username belonging to a specific domain, with the --domain flag</div>
+<div>cumulus@server01:~$ openstack user list --domain default</div>
+<div>+----------------------------------+-----------+</div>
+<div>| ID                               | Name      |</div>
+<div>+----------------------------------+-----------+</div>
+<div>| bf8e72b9dab54fce9582d0eb6acee95a | placement |</div>
+<div>| c30b5df613ae4e818c8f7b38afdc2dae | neutron   |</div>
+<div>| cd557406ef264e47a83856406c39f54c | admin     |</div>
+<div>| d20131a2f7644c1b8a2d1bed13fe71ef | demo      |</div>
+<div>| e9ec70ddc0114ed1a1fa97bdf007c200 | glance    |</div>
+<div>| fe656dc2c15541c1ab96f6fdc1df39f4 | nova      |</div>
+<div>+----------------------------------+-----------+</div>
+<div></div>
+<div>There isn't any user mapped to the 'firstDomain' domain yet</div>
+<div>cumulus@server01:~$ openstack user list --domain firstDomain</div>
+<div></div>
+<div>cumulus@server01:~$</div>
+<div></div>
+<div>Let's try creating a new user 'firstUser' with the password 'firstPassword' and mapping it to the domain 'firstDomain' and the project 'firstProject'</div>
+<div>cumulus@server01:~$ openstack user create --password firtDomain --project firstProject firstUser</div>
+<div>+---------------------+---------------------------------</div>
+<div>-+</div>
+<div>| Field               | Value</div>
+<div>|</div>
+<div>+---------------------+---------------------------------</div>
+<div>-+</div>
+<div>| default_project_id  | ad0c7ad26a0b407f8ad41e223338f810</div>
+<div>|</div>
+<div>| domain_id           | f0bb69245afe41eb9aba9873421c3595</div>
+<div>|</div>
+<div>| enabled             | True</div>
+<div>|</div>
+<div>| id                  | 9684ca0673544c4680ed074b69a831bb</div>
+<div>|</div>
+<div>| name                | firstUser</div>
+<div>|</div>
+<div>| options             | {}</div>
+<div>|</div>
+<div>| password_expires_at | None</div>
+<div>|</div>
+<div>+---------------------+---------------------------------</div>
+<div>-+</div>
+<div></div>
+<div>The user should now show up in the domain</div>
+<div>cumulus@server01:~$ openstack user list --domain firstDomain</div>
+<div>+----------------------------------+-----------+</div>
+<div>| ID                               | Name      |</div>
+<div>+----------------------------------+-----------+</div>
+<div>| 9684ca0673544c4680ed074b69a831bb | firstUser |</div>
+<div>+----------------------------------+-----------+</div>
+<div></div>
+<div>Note that, the project that we mapped during the user creation, is only the default project, but the user won't show up in the project yet.</div>
+<div>cumulus@server01:~$ openstack user list --project firstProject</div>
+<div></div>
+<div>cumulus@server01:~$</div>
+<div></div>
+<div>To see the user listed in a project, we need to add a specific role for the user in that project, we will see that in another post, with the title OpenStack | Roles</div>
+<div></div>
+<div>--end-of-post--</div>

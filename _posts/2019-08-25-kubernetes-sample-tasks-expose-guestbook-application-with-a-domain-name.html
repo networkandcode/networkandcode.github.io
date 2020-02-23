@@ -1,0 +1,48 @@
+---
+layout: post
+title: Kubernetes > Sample tasks > Expose guestbook application with a domain name
+date: 2019-08-25 15:20:28.000000000 +05:30
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags: []
+meta:
+  _rest_api_published: '1'
+  _rest_api_client_id: "-1"
+  _publicize_job_id: '34530344586'
+  timeline_notification: '1566726632'
+author:
+  login: shak1r
+  email: shakir@techie.com
+  display_name: shakir
+  first_name: ''
+  last_name: ''
+permalink: "/2019/08/25/kubernetes-sample-tasks-expose-guestbook-application-with-a-domain-name/"
+---
+<p>We can divert traffic from a single load balancer IP to nodePort services. We could do this scenario using the Load Balancer service on Kubernetes as well. However we are doing this using the Google cloud way.</p></p>
+<p>The node port services are as follows</p>
+<p><img src="{{ site.baseurl }}/assets/null-12.png" width="601" height="88" alt="" title="" /></p></p>
+<p>The respective end points are</p>
+<p><img src="{{ site.baseurl }}/assets/null-13.png" width="601" height="93" alt="" title="" /></p></p>
+<p>Reserve a static public IP for the load balancer</p>
+<p>networkandcode@cloudshell:~ gcloud compute addresses create loadbalancer-frontend --region us-central1</p></p>
+<p>Note that we can only reserve one static IP per region with free trial account</p></p>
+<p>Create a Load Balancer for the staging application</p>
+<p> <img src="{{ site.baseurl }}/assets/null-14.png" width="601" height="201" alt="" title="" /><img src="{{ site.baseurl }}/assets/null-15.png" width="601" height="266" alt="" title="" /></p>
+<p><img src="{{ site.baseurl }}/assets/null-16.png" width="492" height="428" alt="" title="" /><img src="{{ site.baseurl }}/assets/null-17.png" width="601" height="478" alt="" title="" /><img src="{{ site.baseurl }}/assets/null-18.png" width="601" height="416" alt="" title="" /><img src="{{ site.baseurl }}/assets/null-19.png" width="601" height="382" alt="" title="" /></p></p>
+<p>Similarly one more for production, however the difference is that we would be using the port 30200 for production</p>
+<p><img src="{{ site.baseurl }}/assets/null-20.png" width="601" height="238" alt="" title="" /></p></p>
+<p>So we now have two load balancers</p>
+<p><img src="{{ site.baseurl }}/assets/null-21.png" width="601" height="250" alt="" title="" /></p>
+<p>We could now access the staging and production front ends using the load balancer IP and nodePort, however the output would be the same for both, as we haven’t done any customization to the application itself</p></p>
+<p><img src="{{ site.baseurl }}/assets/null-22.png" width="497" height="289" alt="" title="" /><img src="{{ site.baseurl }}/assets/null-23.png" width="500" height="284" alt="" title="" /></p>
+<p>Let’s add DNS entries for this Public IP, note that this is an illustration, in reality the DNS settings have to be changed at the DNS provider end too</p></p>
+<p>Click Cloud DNS</p>
+<p><img src="{{ site.baseurl }}/assets/null-24.png" width="600" height="252" alt="" title="" /></p>
+<p><img src="{{ site.baseurl }}/assets/null-25.png" width="601" height="276" alt="" title="" /><img src="{{ site.baseurl }}/assets/null-26.png" width="601" height="680" alt="" title="" /></p>
+<p><img src="{{ site.baseurl }}/assets/null-27.png" width="601" height="409" alt="" title="" /></p>
+<p>So we could now access the staging application at frontend.guestbook.example.com:30100 and the production one at frontend.guestbook.example.com:30200. However it won’t work here as we have used fake domains just for illustration</p></p>
+<p>--end-of-post--</p>

@@ -1,0 +1,204 @@
+---
+layout: post
+title: Kubernetes > Pods > Containers > Resources > Memory
+date: 2019-03-28 19:42:51.000000000 +05:30
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags:
+- kubernetes
+meta:
+  timeline_notification: '1553782374'
+  _rest_api_published: '1'
+  _rest_api_client_id: "-1"
+  _wpas_skip_18195285: '1'
+  _publicize_job_id: '29137335416'
+author:
+  login: shak1r
+  email: shakir@techie.com
+  display_name: shakir
+  first_name: ''
+  last_name: ''
+permalink: "/2019/03/28/kubernetes-pods-containers-resources-memory/"
+---
+<p><span style="font-weight:400;">The memory resources we are going to see on this blog are</span></p>
+<p><span style="font-weight:400;">- Memory request = Minimum or guaranteed memory for the container</span></p>
+<p><span style="font-weight:400;">- Memory limit = Maximum memory, should not exceed for the container</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight:400;">Let’s define the Pod configuration</span></p>
+<p><span style="font-weight:400;">networkandcode@cloudshell:~ (kubernetes-cka-224606)$ cat ex1.yml</span></p>
+<p><span style="font-weight:400;">---</span></p>
+<p><span style="font-weight:400;">apiVersion: v1</span></p>
+<p><span style="font-weight:400;">kind: Pod</span></p>
+<p><span style="font-weight:400;">metadata:</span></p>
+<p><span style="font-weight:400;">  name: pod1</span></p>
+<p><span style="font-weight:400;">  namespace: default</span></p>
+<p><span style="font-weight:400;">spec:</span></p>
+<p><span style="font-weight:400;">  containers:</span></p>
+<p><span style="font-weight:400;">  - name: ctr1</span></p>
+<p><span style="font-weight:400;">    image: polinux/stress</span></p>
+<p><span style="font-weight:400;">    resources:</span></p>
+<p><span style="font-weight:400;">      limits:</span></p>
+<p><span style="font-weight:400;">        memory: "150Mi"</span></p>
+<p><span style="font-weight:400;">      requests:</span></p>
+<p><span style="font-weight:400;">        memory: "100Mi"</span></p>
+<p><span style="font-weight:400;">    command: ["stress"]</span></p>
+<p><span style="font-weight:400;">    # --vm-bytes 120M lets the container try to allocates 150MiB of memory</span></p>
+<p><span style="font-weight:400;">    args: ["--vm", "1", "--vm-bytes", "120M", "--vm-hang", "1"]</span></p>
+<p><span style="font-weight:400;">…</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight:400;">Let’s create the Pod</span></p>
+<p><span style="font-weight:400;">networkandcode@cloudshell:~ (kubernetes-cka-224606)$ kubectl create -f ex1.yml</span></p>
+<p><span style="font-weight:400;">pod/pod1 created</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight:400;">The Pod should now be running</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">networkandcode@cloudshell:~ (kubernetes-cka-224606)$ kubectl get pods</span></p>
+<p><span style="font-weight:400;">NAME   READY STATUS    RESTARTS AGE</span></p>
+<p><span style="font-weight:400;">pod1   1/1 Running   0 24m</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight:400;">To view more details about the Pod</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">networkandcode@cloudshell:~ (kubernetes-cka-224606)$ kubectl get pod pod1 -o yaml</span></p>
+<p><span style="font-weight:400;">--TRUNCATED--</span></p>
+<p><span style="font-weight:400;">spec:</span></p>
+<p><span style="font-weight:400;">  containers:</span></p>
+<p><span style="font-weight:400;">  - args:</span></p>
+<p><span style="font-weight:400;">    - --vm</span></p>
+<p><span style="font-weight:400;">    - "1"</span></p>
+<p><span style="font-weight:400;">    - --vm-bytes</span></p>
+<p><span style="font-weight:400;">    - 120M</span></p>
+<p><span style="font-weight:400;">    - --vm-hang</span></p>
+<p><span style="font-weight:400;">    - "1"</span></p>
+<p><span style="font-weight:400;">    command:</span></p>
+<p><span style="font-weight:400;">    - stress</span></p>
+<p><span style="font-weight:400;">    image: polinux/stress</span></p>
+<p><span style="font-weight:400;">    imagePullPolicy: Always</span></p>
+<p><span style="font-weight:400;">    name: ctr1</span></p>
+<p><span style="font-weight:400;">    resources:</span></p>
+<p><span style="font-weight:400;">      limits:</span></p>
+<p><span style="font-weight:400;">        memory: 150Mi</span></p>
+<p><span style="font-weight:400;">      requests:</span></p>
+<p><span style="font-weight:400;">        cpu: 100m</span></p>
+<p><span style="font-weight:400;">        memory: 100Mi</span></p>
+<p><span style="font-weight:400;">   --TRUNCATED--</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight:400;">To get the metric details of the Pod</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">networkandcode@cloudshell:~ (kubernetes-cka-224606)$ kubectl top pod pod1</span></p>
+<p><span style="font-weight:400;">NAME   CPU(cores)   MEMORY(bytes)</span></p>
+<p><span style="font-weight:400;">pod1   80m      120Mi</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight:400;">So, it’s currently consuming 120Mi, which is 20Mi above the ‘memory request’ value(100Mi) we specified, however is  30Mi below the ‘memory limit’ configured(150Mi).</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight:400;">Let’s define another pod by modifying the memory resources as follows</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">networkandcode@cloudshell:~ (kubernetes-cka-224606)$ cat ex2.yml</span></p>
+<p><span style="font-weight:400;">---</span></p>
+<p><span style="font-weight:400;">apiVersion: v1</span></p>
+<p><span style="font-weight:400;">kind: Pod</span></p>
+<p><span style="font-weight:400;">metadata:</span></p>
+<p><span style="font-weight:400;">  name: pod2</span></p>
+<p><span style="font-weight:400;">  namespace: default</span></p>
+<p><span style="font-weight:400;">spec:</span></p>
+<p><span style="font-weight:400;">  containers:</span></p>
+<p><span style="font-weight:400;">  - name: ctr2</span></p>
+<p><span style="font-weight:400;">    image: polinux/stress</span></p>
+<p><span style="font-weight:400;">    resources:</span></p>
+<p><span style="font-weight:400;">      requests:</span></p>
+<p><span style="font-weight:400;">        memory: "50Mi"</span></p>
+<p><span style="font-weight:400;">      limits:</span></p>
+<p><span style="font-weight:400;">        memory: "100Mi"</span></p>
+<p><span style="font-weight:400;">    command: ["stress"]</span></p>
+<p><span style="font-weight:400;">    args: ["--vm", "1", "--vm-bytes", "120M", "--vm-hang", "1"]</span></p>
+<p><span style="font-weight:400;">...</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight:400;">Let’s create this Pod now</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">networkandcode@cloudshell:~ (kubernetes-cka-224606)$ kubectl create -f ex2.yml</span></p>
+<p><span style="font-weight:400;">pod/pod2 created</span></p>
+<p><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">This Pod isn’t running due to memory constraint</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">networkandcode@cloudshell:~ (kubernetes-cka-224606)$ kubectl get pod pod2</span></p>
+<p><span style="font-weight:400;">NAME   READY STATUS             RESTARTS AGE</span></p>
+<p><span style="font-weight:400;">pod2   0/1 CrashLoopBackOff   3 67s</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight:400;">There is no metrics as it isn’t running</span></p>
+<p><span style="font-weight:400;">networkandcode@cloudshell:~ (kubernetes-cka-224606)$ kubectl top pod pod2</span></p>
+<p><span style="font-weight:400;">NAME   CPU(cores)   MEMORY(bytes)</span></p>
+<p><span style="font-weight:400;">pod2   0m      0Mi</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight:400;">Let’s check for more details</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">networkandcode@cloudshell:~ (kubernetes-cka-224606)$ kubectl get pod pod2 -o yaml</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">--TRUNCATED--</span></p>
+<p><span style="font-weight:400;">    containerStatuses:</span></p>
+<p><span style="font-weight:400;">  - containerID: docker://7a42ac697350621cbf53245a60a5e550b1314971b65eae204334cebef6aabd26</span></p>
+<p><span style="font-weight:400;">    image: polinux/stress:latest</span></p>
+<p><span style="font-weight:400;">    imageID: docker-pullable://polinux/stress@sha256:6d1825288ddb6b3cec8d3ac8a488c8ec2449334512ecb938483fc2b25cbbdb9a</span></p>
+<p><span style="font-weight:400;">    lastState:</span></p>
+<p><span style="font-weight:400;">      terminated:</span></p>
+<p><span style="font-weight:400;">        containerID: docker://5e34e57ffa71e06dfd9abf4550bf847320dcf14ea78f2e16d130f72fcce47362</span></p>
+<p><span style="font-weight:400;">        exitCode: 1</span></p>
+<p><span style="font-weight:400;">        finishedAt: 2019-03-23T18:25:55Z</span></p>
+<p><span style="font-weight:400;">        reason: OOMKilled</span></p>
+<p><span style="font-weight:400;">        startedAt: 2019-03-23T18:25:54Z</span></p>
+<p><span style="font-weight:400;">    name: ctr2</span></p>
+<p><span style="font-weight:400;">    ready: false</span></p>
+<p><span style="font-weight:400;">    restartCount: 4</span></p>
+<p><span style="font-weight:400;">    state:</span></p>
+<p><span style="font-weight:400;">      terminated:</span></p>
+<p><span style="font-weight:400;">        containerID: docker://7a42ac697350621cbf53245a60a5e550b1314971b65eae204334cebef6aabd26</span></p>
+<p><span style="font-weight:400;">        exitCode: 1</span></p>
+<p><span style="font-weight:400;">        finishedAt: 2019-03-23T18:26:45Z</span></p>
+<p><span style="font-weight:400;">        reason: OOMKilled</span></p>
+<p><span style="font-weight:400;">        startedAt: 2019-03-23T18:26:44Z</span></p>
+<p><span style="font-weight:400;">--TRUNCATED--</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight:400;">We can see this warning by checking the node details too</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">networkandcode@cloudshell:~ (kubernetes-cka-224606)$ kubectl describe nodes | grep Warning</span></p>
+<p><span style="font-weight:400;">  Warning  OOMKilling                 3m8s kernel-monitor, gke-cluster-default-pool-f22707e6-28mw   Memory cgroup out of memory: Kill process 11226 (stress) score 1958 or sacrifice child</span></p>
+<p><span style="font-weight:400;">  Warning  OOMKilling  3m7s kernel-monitor, gke-cluster-default-pool-f22707e6-28mw  Memory cgroup out of memory: Kill process 11274 (stress) score 1959 or sacrifice child</span></p>
+<p><span style="font-weight:400;">  Warning  OOMKilling  2m53s kernel-monitor, gke-cluster-default-pool-f22707e6-28mw  Memory cgroup out of memory: Kill process 11386 (stress) score 1958 or sacrifice child</span></p>
+<p><span style="font-weight:400;">  Warning  OOMKilling  2m28s kernel-monitor, gke-cluster-default-pool-f22707e6-28mw  Memory cgroup out of memory: Kill process 11482 (stress) score 1958 or sacrifice child</span></p>
+<p><span style="font-weight:400;">  Warning  OOMKilling  98s kernel-monitor, gke-cluster-default-pool-f22707e6-28mw  Memory cgroup out of memory: Kill process 11674 (stress) score 1959 or sacrifice child</span></p>
+<p><span style="font-weight:400;">  Warning  OOMKilling  8s kernel-monitor, gke-cluster-default-pool-f22707e6-28mw  Memory cgroup out of memory: Kill process 11985 (stress) score 1958 or sacrifice child</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight:400;">Let’s delete all the Pods we created - Pod1 and Pod2</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">networkandcode@cloudshell:~ (kubernetes-cka-224606)$ kubectl delete pods --all</span></p>
+<p><span style="font-weight:400;">pod "pod1" deleted</span></p>
+<p><span style="font-weight:400;">pod "pod2" deleted</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight:400;">Let’s define a new Pod which very high memory request that is more than the available memory on any one of the nodes in the Cluster</span></p>
+<p><span style="font-weight:400;">networkandcode@cloudshell:~ (kubernetes-cka-224606)$ cat ex3.yml</span></p>
+<p><span style="font-weight:400;">---</span></p>
+<p><span style="font-weight:400;">apiVersion: v1</span></p>
+<p><span style="font-weight:400;">kind: Pod</span></p>
+<p><span style="font-weight:400;">metadata:</span></p>
+<p><span style="font-weight:400;">  name: pod3</span></p>
+<p><span style="font-weight:400;">  namespace: default</span></p>
+<p><span style="font-weight:400;">spec:</span></p>
+<p><span style="font-weight:400;">  containers:</span></p>
+<p><span style="font-weight:400;">  - name: ctr3</span></p>
+<p><span style="font-weight:400;">    image: polinux/stress</span></p>
+<p><span style="font-weight:400;">    resources:</span></p>
+<p><span style="font-weight:400;">      requests:</span></p>
+<p><span style="font-weight:400;">        memory: "900Gi"</span></p>
+<p><span style="font-weight:400;">      limits:</span></p>
+<p><span style="font-weight:400;">        memory: "1000Gi"</span></p>
+<p><span style="font-weight:400;">    command: ["stress"]</span></p>
+<p><span style="font-weight:400;">    args: ["--vm", "1", "--vm-bytes", "120M", "--vm-hang", "1"]</span></p>
+<p><span style="font-weight:400;">…</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight:400;">It should remain in Pending state</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">networkandcode@cloudshell:~ (kubernetes-cka-224606)$ kubectl create -f ex3.yml</span></p>
+<p><span style="font-weight:400;">pod/pod3 created</span></p>
+<p><span style="font-weight:400;">networkandcode@cloudshell:~ (kubernetes-cka-224606)$ kubectl get pods pod3</span></p>
+<p><span style="font-weight:400;">NAME   READY STATUS    RESTARTS AGE</span></p>
+<p><span style="font-weight:400;">pod3   0/1 Pending   0 73s</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight:400;">Reference: </span><a href="https://kubernetes.io/docs/tasks/configure-pod-container/assign-memory-resource/"><span style="font-weight:400;">https://kubernetes.io/docs/tasks/configure-pod-container/assign-memory-resource/</span></a></p>
+<p>&nbsp;</p>
+<p><span style="font-weight:400;">--end-of-post--</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;"></p>
+<p></span></p>
+<p>&nbsp;</p>

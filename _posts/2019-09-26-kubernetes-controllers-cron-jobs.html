@@ -1,0 +1,169 @@
+---
+layout: post
+title: Kubernetes > Controllers > Cron Jobs
+date: 2019-09-26 08:40:06.000000000 +05:30
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags: []
+meta:
+  timeline_notification: '1569467409'
+  _publicize_job_id: '35685835814'
+author:
+  login: shak1r
+  email: shakir@techie.com
+  display_name: shakir
+  first_name: ''
+  last_name: ''
+permalink: "/2019/09/26/kubernetes-controllers-cron-jobs/"
+---
+<p><small>Prerequisite: Jobs<br />Setup: VM based cluster on Google Cloud</small></p>
+<p><!-- wp:paragraph --></p>
+<p>Cron Jobs are like Cron Tabs in Linux, It's used to run tasks based on a schedule and in a recurring way as required.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>To see the YAML manifest reference for Cron Jobs</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:code --></p>
+<pre class="wp-block-code"><code>networkandcode@k8s-master:~ kubectl explain cronjobs | head
+KIND:     CronJob
+VERSION:  batch/v1beta1
+DESCRIPTION:
+     CronJob represents the configuration of a single cron job.
+FIELDS:
+   apiVersion   &lt;string&gt;
+     APIVersion defines the versioned schema of this representation of an
+     object. Servers should convert recognized schemas to the latest internal</code></pre>
+<p><!-- /wp:code --></p>
+<p><!-- wp:paragraph --></p>
+<p>Cron Tab schedule has 5 fields - MIN HOUR DOM MON DOW<br />i.e. Minute(0-59), Hour(0-23), Day of Month(1-31), Month(1-12), Day of Week(0-6), we specify this at spec &gt; schedule of CronJob in Kubernetes. Note that the wildcard character * could be used to denote any value for each of these 5 fields.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Let's see the manifest for this exercise</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:syntaxhighlighter/code --></p>
+<pre class="wp-block-syntaxhighlighter-code">networkandcode@k8s-master:~ cat ex34-cj.yaml
+---
+kind: CronJob
+apiVersion: batch/v1beta1
+metadata:
+  name: cj34
+spec:
+  schedule: "*/1 * * * *"
+  jobTemplate:
+    spec:
+      completions: 9
+      parallelism: 3
+      template: # this is the Pod template
+        spec:
+          containers:
+          - name: ctr34
+            image: ubuntu
+            command:
+            - "/bin/bash"
+            - "-c"
+            - "echo Hi!; echo This hostname is ; hostname; echo The date/time is; date"
+          restartPolicy: Never
+...</pre>
+<p><!-- /wp:syntaxhighlighter/code --></p>
+<p><!-- wp:paragraph --></p>
+<p>The cronjob should create a Job every minute as per the schedule: "*/1 * * * *", we know the first field stands for minutes and */1 means every minute. The job in turn would create 9 Pods (completions) and the number of Pods that can be executed at once is 3 (Parallelism)</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Create the CronJob and check it's status</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:code --></p>
+<pre class="wp-block-code"><code>networkandcode@k8s-master:~ kubectl create -f ex34-cj.yaml
+cronjob.batch/cj34 created
+networkandcode@k8s-master:~ kubectl get cj
+NAME   SCHEDULE      SUSPEND   ACTIVE   LAST SCHEDULE   AGE
+cj34   */1 * * * *   False     0        &lt;none&gt;          4s</code></pre>
+<p><!-- /wp:code --></p>
+<p><!-- wp:paragraph --></p>
+<p>The CronJob should start creating the Job from the first minute and every minute from then onwards, the status of the jobs can be checked as follows, --watch is for real time check</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:code --></p>
+<pre class="wp-block-code"><code>networkandcode@k8s-master:~ kubectl get jobs --watch
+cj34-1569466860   0/9         0s
+cj34-1569466860   0/9   0s    0s
+cj34-1569466860   1/9   4s    4s
+cj34-1569466860   2/9   8s    8s
+cj34-1569466860   3/9   8s    8s
+cj34-1569466860   4/9   8s    8s
+cj34-1569466860   5/9   11s   11s
+cj34-1569466860   6/9   11s   11s
+cj34-1569466860   7/9   12s   12s
+cj34-1569466860   8/9   13s   13s
+cj34-1569466860   9/9   14s   14s
+cj34-1569466920   0/9         0s
+cj34-1569466920   0/9   0s    0s
+cj34-1569466920   1/9   3s    3s
+cj34-1569466920   2/9   3s    3s
+cj34-1569466920   3/9   4s    4s
+cj34-1569466920   4/9   6s    6s
+cj34-1569466920   5/9   6s    6s
+cj34-1569466920   6/9   7s    7s
+cj34-1569466920   7/9   9s    9s
+cj34-1569466920   8/9   9s    9s
+^Cnetworkandcode@k8s-master:~ kubectl get jobs
+NAME              COMPLETIONS   DURATION   AGE
+cj34-1569466860   9/9           14s        82s
+cj34-1569466920   9/9           11s        22s</code></pre>
+<p><!-- /wp:code --></p>
+<p><!-- wp:paragraph --></p>
+<p>This way it would keep on creating a new Job every minute, we should see additional jobs as time passes</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:code --></p>
+<pre class="wp-block-code"><code>networkandcode@k8s-master:~ kubectl get jobs
+NAME              COMPLETIONS   DURATION   AGE
+cj34-1569466920   9/9           11s        2m12s
+cj34-1569466980   9/9           10s        72s
+cj34-1569467040   9/9           9s         11s</code></pre>
+<p><!-- /wp:code --></p>
+<p><!-- wp:paragraph --></p>
+<p>Each job as we know should create 9 Pods, we can see the Pods created by a particular job</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:code --></p>
+<pre class="wp-block-code"><code>networkandcode@k8s-master:~ kubectl get po --selector=job-name=cj34-1569467040
+NAME                    READY   STATUS      RESTARTS   AGE
+cj34-1569467040-422qw   0/1     Completed   0          90s
+cj34-1569467040-7ph4j   0/1     Completed   0          88s
+cj34-1569467040-f654b   0/1     Completed   0          84s
+cj34-1569467040-fdpv2   0/1     Completed   0          84s
+cj34-1569467040-gnpn9   0/1     Completed   0          90s
+cj34-1569467040-jqx5r   0/1     Completed   0          85s
+cj34-1569467040-p552t   0/1     Completed   0          90s
+cj34-1569467040-pjmw7   0/1     Completed   0          88s
+cj34-1569467040-vgvw9   0/1     Completed   0          87s</code></pre>
+<p><!-- /wp:code --></p>
+<p><!-- wp:paragraph --></p>
+<p>Let's see the log of one of the Pods, and verify the output based on the commands we gave in the Job template of the CronJob manifest</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:code --></p>
+<pre class="wp-block-code"><code>networkandcode@k8s-master:~ kubectl logs cj34-1569467040-vgvw9
+Hi!
+This hostname is
+cj34-1569467040-vgvw9
+The date/time is
+Thu Sep 26 03:04:11 UTC 2019</code></pre>
+<p><!-- /wp:code --></p>
+<p><!-- wp:paragraph --></p>
+<p>Clean up, deleting the CronJob should delete the Jobs as well as the Pods that were created by the Jobs</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:code --></p>
+<pre class="wp-block-code"><code>networkandcode@k8s-master:~ kubectl delete cj cj34
+cronjob.batch "cj34" deleted
+networkandcode@k8s-master:~ kubectl get jobs
+No resources found.
+networkandcode@k8s-master:~ kubectl get po
+No resources found.</code></pre>
+<p><!-- /wp:code --></p>
+<p><!-- wp:html --><br />
+<small>Reference:<br /> <a href="https://kubernetes.io/docs/tasks/job/automated-tasks-with-cron-jobs/">https://kubernetes.io/docs/tasks/job/automated-tasks-with-cron-jobs/</a> </small><br />
+<!-- /wp:html --></p>
+<p><!-- wp:paragraph --></p>
+<p>--end-of-post--</p>
+<p><!-- /wp:paragraph --></p>

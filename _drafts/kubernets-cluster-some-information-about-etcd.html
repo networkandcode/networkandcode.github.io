@@ -1,0 +1,192 @@
+---
+layout: post
+title: Kubernets > Cluster > Some information about etcd
+date: 
+type: post
+parent_id: '0'
+published: false
+password: ''
+status: draft
+categories: []
+tags: []
+meta: {}
+author:
+  login: shak1r
+  email: shakir@techie.com
+  display_name: shakir
+  first_name: ''
+  last_name: ''
+permalink: "/"
+---
+<p><!-- wp:paragraph --></p>
+<p>etcd is a key value kinda database that stores all the Cluster related data, etcd implementation can itself be on separate clusters, or be setup on the nodes that are running as Kubernetes masters. On a High availabilty design, etcd clusters should be odd be in number, i.e. etcd should be installed on odd number of nodes 3, 5, and so on. However we are dealing here with a single ectd node, and etcd is futher or the master node of the k8s-cluster, so there isn't a separate etcd node.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>I am using a 4 node cluster - 1 Master and 3 Nodes, on Google cloud, let's start them</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:code --></p>
+<pre class="wp-block-code"><code>networkandcode@Linux:~/tech/kubernetes/cka$ gcloud compute instances list
+NAME        ZONE           MACHINE_TYPE               PREEMPTIBLE  INTERNAL_IP  EXTERNAL_IP  STATUS
+controller  us-central1-a  n1-standard-1                           10.128.0.2                TERMINATED
+k8s-master  us-central1-a  custom (2 vCPU, 5.00 GiB)               10.128.0.4                TERMINATED
+k8s-node1   us-central1-a  n1-standard-1                           10.128.0.5                TERMINATED
+k8s-node2   us-central1-a  n1-standard-1                           10.128.0.6                TERMINATED
+k8s-node3   us-central1-a  n1-standard-1                           10.128.0.7                TERMINATED
+
+etworkandcode@Linux:~/tech/kubernetes/cka$ gcloud compute instances start k8s-master k8s-node1 k8s-node2 k8s-node3
+No zone specified. Using zone &#091;us-central1-a] for instances: &#091;k8s-master, k8s-node1, k8s-node2, k8s-node3].
+Starting instance(s) k8s-master, k8s-node1, k8s-node2, k8s-node3...done.                                                                     
+Updated &#091;https://compute.googleapis.com/compute/v1/projects/excellent-ship-248017/zones/us-central1-a/instances/k8s-master].
+Updated &#091;https://compute.googleapis.com/compute/v1/projects/excellent-ship-248017/zones/us-central1-a/instances/k8s-node1].
+Updated &#091;https://compute.googleapis.com/compute/v1/projects/excellent-ship-248017/zones/us-central1-a/instances/k8s-node2].
+Updated &#091;https://compute.googleapis.com/compute/v1/projects/excellent-ship-248017/zones/us-central1-a/instances/k8s-node3].</code></pre>
+<p><!-- /wp:code --></p>
+<p><!-- wp:paragraph --></p>
+<p>We need to login to the master, to run kubectl commands from there</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:code --></p>
+<pre class="wp-block-code"><code>networkandcode@Linux:~/tech/kubernetes/cka$ gcloud compute ssh k8s-master</code></pre>
+<p><!-- /wp:code --></p>
+<p><!-- wp:paragraph --></p>
+<p>Let's see if there in any etcd installation on the cluster, please note that this cluster was launched using kubeadm</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:code --></p>
+<pre class="wp-block-code"><code>networkandcode@k8s-master:~$ kubectl get all -n kube-system | grep etcd
+pod/etcd-k8s-master                      1/1     Running   23         62d</code></pre>
+<p><!-- /wp:code --></p>
+<p><!-- wp:paragraph --></p>
+<p>So there is a single etcd pod, and it is running on the master</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:code --></p>
+<pre class="wp-block-code"><code>networkandcode@k8s-master:~$ kubectl get po etcd-k8s-master -n kube-system -o wide
+NAME              READY   STATUS    RESTARTS   AGE   IP           NODE         NOMINATED NODE   READINESS GATES
+etcd-k8s-master   1/1     Running   23         62d   10.128.0.4   k8s-master   &lt;none&gt;           &lt;none&gt;</code></pre>
+<p><!-- /wp:code --></p>
+<p><!-- wp:paragraph --></p>
+<p>Let's see more info about the etcd Pod</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:code --></p>
+<pre class="wp-block-code"><code>Name:                 etcd-k8s-master
+Namespace:            kube-system
+--TRUNCATED--
+Node:                 k8s-master/10.128.0.4
+--TRNUCATED--
+IP:                   10.128.0.4
+Containers:
+  etcd:
+    Container ID:  docker://44b8889c1872a344620a320ed9e3c2521be9a0559bc959d21777f4a9ebeb9c58
+    Image:         k8s.gcr.io/etcd:3.3.10
+--TRNUCATED--
+    Command:
+      etcd
+      --advertise-client-urls=https://10.128.0.4:2379
+      --cert-file=/etc/kubernetes/pki/etcd/server.crt
+      --client-cert-auth=true
+      --data-dir=/var/lib/etcd
+      --initial-advertise-peer-urls=https://10.128.0.4:2380
+      --initial-cluster=k8s-master=https://10.128.0.4:2380
+      --key-file=/etc/kubernetes/pki/etcd/server.key
+      --listen-client-urls=https://127.0.0.1:2379,https://10.128.0.4:2379
+      --listen-peer-urls=https://10.128.0.4:2380
+      --name=k8s-master
+      --peer-cert-file=/etc/kubernetes/pki/etcd/peer.crt
+      --peer-client-cert-auth=true
+      --peer-key-file=/etc/kubernetes/pki/etcd/peer.key
+      --peer-trusted-ca-file=/etc/kubernetes/pki/etcd/ca.crt
+      --snapshot-count=10000
+      --trusted-ca-file=/etc/kubernetes/pki/etcd/ca.crt
+--TRUNCATED--</code></pre>
+<p><!-- /wp:code --></p>
+<p><!-- wp:paragraph --></p>
+<p>The listen-client-urls and advertise-client-rules refer to the same node, however it has two IPs, 127.0.0.1 refers to the localhost itself, as the APIserver and etcd are on the same master node, the APIserver can communicate with etcd using 127.0.0.1, but this IP is not valid outside the host, so if ectd has to be reached from other node in the cluster, that should happen through the private IP, in this case 10.128.0.4, Note that ectd client to server communication happens on TCP port 2379, where as etcd server to server communication happens on TCP port 2389, In our case as there is only one etcd server, no communication happens on 2380</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>In a Kubernetes cluster, the kube-api-server is the centrail point of contact for all other components, so the etcd server should also communicate with the kube-apiserver, however the speciality here is that the kube-apiserver acts as a client(rather than a server) to talk with etcd server. So, the kube-apiserver is acting like an etcd client. Let's check the apiserver Pod in the cluster, the apiserver should run on the master too</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:code --></p>
+<pre class="wp-block-code"><code>networkandcode@k8s-master:~$ kubectl get all -n kube-system | grep api
+pod/kube-apiserver-k8s-master            1/1     Running   15         47d
+
+networkandcode@k8s-master:~$ kubectl get po kube-apiserver-k8s-master -n kube-system -o wide
+NAME                        READY   STATUS    RESTARTS   AGE   IP           NODE         NOMINATED NODE   READINESS GATES
+kube-apiserver-k8s-master   1/1     Running   15         47d   10.128.0.4   k8s-master   &lt;none&gt;           &lt;none&gt;
+</code></pre>
+<p><!-- /wp:code --></p>
+<p><!-- wp:paragraph --></p>
+<p>If we check more info about the apiserver Pod, we should find it has options specify etcd related information</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:code --></p>
+<pre class="wp-block-code"><code>networkandcode@k8s-master:~$ kubectl describe po kube-apiserver-k8s-master -n kube-system
+--TRUNCATED--
+Containers:
+  kube-apiserver:
+    --TRUNCATED--
+    Command:
+      kube-apiserver
+      --TRUNCATED--
+      --etcd-cafile=/etc/kubernetes/pki/etcd/ca.crt
+      --etcd-certfile=/etc/kubernetes/pki/apiserver-etcd-client.crt
+      --etcd-keyfile=/etc/kubernetes/pki/apiserver-etcd-client.key
+      --etcd-servers=https://127.0.0.1:2379
+--TRUNCATED--</code></pre>
+<p><!-- /wp:code --></p>
+<p><!-- wp:paragraph --></p>
+<p>In this cluster, we have a deployment in the default namespace with 10 Pod replicas, please make a note of this as we would illustrate how these deployments would come again once etcd is restored</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:code --></p>
+<pre class="wp-block-code"><code>networkandcode@k8s-master:~/tech/kubernetes/cka$ kubectl get deploy
+NAME      READY   UP-TO-DATE   AVAILABLE   AGE
+deploy7   10/10   10           10          9s</code></pre>
+<p><!-- /wp:code --></p>
+<p><!-- wp:paragraph --></p>
+<p>As ectd is storing all the cluster data, it's essential to backup it's data periodically, let's do the backup using etcdctl, we need to first install it if it's not there. While taking a backup we can specify pki(public key infrastructure) information such as ca certificate, server certificate and server key, these would match with what's there on the etcd Pod configuration checked earlier</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:code --></p>
+<pre class="wp-block-code"><code>networkandcode@k8s-master:~$ sudo apt install etcd-client -y
+
+networkandcode@k8s-master:~$ sudo ETCDCTL_API=3 etcdctl snapshot save /tmp/etcdbackup.db --cacert /etc/kubernetes/pki/etcd/ca.crt --cert /etc/kubernetes/pki/etcd/server.crt --key /etc/kubernetes/pki/etcd/server.key --endpoints https://127.0.0.1:2379
+Snapshot saved at /tmp/etcdbackup.db
+
+networkandcode@k8s-master:~$ ls /tmp/etcdbackup.db 
+/tmp/etcdbackup.db</code></pre>
+<p><!-- /wp:code --></p>
+<p><!-- wp:paragraph --></p>
+<p>We can verify if the snapshot was successful</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:code --></p>
+<pre class="wp-block-code"><code>networkandcode@k8s-master:~/tech/kubernetes/cka$ 
+networkandcode@k8s-master:~/tech/kubernetes/cka$ sudo ETCDCTL_API=3 etcdctl snapshot status /tmp/etcdbackup.db 
+4bb4b764, 813669, 939, 6.1 MB
+
+# for a tabular view
+networkandcode@k8s-master:~/tech/kubernetes/cka$ sudo ETCDCTL_API=3 etcdctl snapshot status /tmp/etcdbackup.db --write-out table
++----------+----------+------------+------------+
+|   HASH   | REVISION | TOTAL KEYS | TOTAL SIZE |
++----------+----------+------------+------------+
+| 4bb4b764 |   813669 |        939 |     6.1 MB |
++----------+----------+------------+------------+</code></pre>
+<p><!-- /wp:code --></p>
+<p><!-- wp:paragraph --></p>
+<p>This means that the etcd server is currently holding 6.1 MB of data in it, now let's go ahead and delete the deployment</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:code --></p>
+<pre class="wp-block-code"><code>networkandcode@k8s-master:~/tech/kubernetes/cka$ kubectl delete deploy --all
+deployment.extensions "deploy7" deleted
+networkandcode@k8s-master:~/tech/kubernetes/cka$ kubectl get deploy
+No resources found.</code></pre>
+<p><!-- /wp:code --></p>
+<p><!-- wp:paragraph --></p>
+<p>We will now restore etcd from its backup so that the deployments would be launched again</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>I am gonna shutdown the VMs to avoid billing :)</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:code --></p>
+<pre class="wp-block-code"><code>networkandcode@Linux:~/tech/kubernetes/cka$ gcloud compute instances stop k8s-master k8s-node1 k8s-node2 k8s-node3
+No zone specified. Using zone &#091;us-central1-a] for instances: &#091;k8s-master, k8s-node1, k8s-node2, k8s-node3].
+Stopping instance(s) k8s-master, k8s-node1, k8s-node2, k8s-node3...done.                                                                     
+Updated &#091;https://compute.googleapis.com/compute/v1/projects/excellent-ship-248017/zones/us-central1-a/instances/k8s-master].
+Updated &#091;https://compute.googleapis.com/compute/v1/projects/excellent-ship-248017/zones/us-central1-a/instances/k8s-node1].
+Updated &#091;https://compute.googleapis.com/compute/v1/projects/excellent-ship-248017/zones/us-central1-a/instances/k8s-node2].
+Updated &#091;https://compute.googleapis.com/compute/v1/projects/excellent-ship-248017/zones/us-central1-a/instances/k8s-node3].</code></pre>
+<p><!-- /wp:code --></p>

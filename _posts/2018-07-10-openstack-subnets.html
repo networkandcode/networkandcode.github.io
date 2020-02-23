@@ -1,0 +1,110 @@
+---
+layout: post
+title: OpenStack | Subnets
+date: 2018-07-10 11:51:42.000000000 +05:30
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags:
+- openstack
+meta:
+  _rest_api_published: '1'
+  timeline_notification: '1531203706'
+  _rest_api_client_id: "-1"
+  _wpas_skip_18169689: '1'
+  _wpas_skip_18195285: '1'
+  _publicize_job_id: '19852072298'
+author:
+  login: shak1r
+  email: shakir@techie.com
+  display_name: shakir
+  first_name: ''
+  last_name: ''
+permalink: "/2018/07/10/openstack-subnets/"
+---
+<p>command syntax: <em>openstack subnet &lt;action/operation&gt; &lt;--flags values&gt; &lt;subnet-name&gt;</em></p>
+<p>action/operation : list, create, show, delete...</p>
+<p>flags: no-dhcp, gateway, long, network, subnet-range...</p>
+<p>#to view the list of subnets</p>
+<p>cumulus@server01:~$ <span style="color:#3366ff;">openstack subnet list</span><br />
++--------------------------------------+----------+--------------------------------------+----------------+<br />
+| ID | Name | Network| Subnet |<br />
++--------------------------------------+----------+--------------------------------------+----------------+<br />
+| c679c440-8286-4eeb-8025-19e0c0895aef | provider | dc005f68-35c6-4151-ad18-ac21523ed4e5| 192.168.0.0/24 |<br />
++--------------------------------------+----------+--------------------------------------+----------------+</p>
+<p>#to get a detailed info of the subnet list<br />
+cumulus@server01:~$ <span style="color:#3366ff;">openstack subnet list --long</span><br />
++--------------------------------------+----------+--------------------------------------+----------------+----------------------------------+------+--------------+-----------------------------+-------------+------------+---------------+---------------+------+<br />
+| ID | Name | Network<br />
+| Subnet | Project | DHCP | Name Servers | Allocation Pools | Host Routes | IP Version | Gateway | Service Types | Tags |<br />
++--------------------------------------+----------+--------------------------------------+----------------+----------------------------------+------+--------------+-----------------------------+-------------+------------+---------------+---------------+------+<br />
+| c679c440-8286-4eeb-8025-19e0c0895aef | provider | dc005f68-35c6-4151-ad18-ac21523ed4e5<br />
+| 192.168.0.0/24 | 6d9cb60806744bbc9618963e77bda3cd | True | 8.8.4.4 | 192.168.0.100<br />
+-192.168.0.150 | | 4 | 192.168.0.254 | | |<br />
++--------------------------------------+----------+--------------------------------------+----------------+----------------------------------+------+--------------+-----------------------------+-------------+------------+---------------+---------------+------+</p>
+<p>#let's create a new subnet, we need to map it with the appropriate network name (already created), and the network IP with prefix<br />
+cumulus@server01:~$ <span style="color:#3366ff;">openstack subnet create --network firstNetwork --subnet-range 192.168.1.0/24 firstSubnet</span><br />
++-------------------------+--------------------------------------+<br />
+| Field | Value |<br />
++-------------------------+--------------------------------------+<br />
+| allocation_pools | 192.168.1.2-192.168.1.254 |<br />
+| cidr | 192.168.1.0/24 |<br />
+| created_at | 2018-07-10T05:24:44Z |<br />
+| description | |<br />
+| dns_nameservers | |<br />
+| enable_dhcp | True |<br />
+| gateway_ip | 192.168.1.1 |<br />
+| host_routes | |<br />
+| id | 6ebf3ecb-caac-4c24-80aa-953a04bc23a8 |<br />
+| ip_version | 4 |<br />
+| ipv6_address_mode | None |<br />
+| ipv6_ra_mode | None |<br />
+| name | firstSubnet |<br />
+| network_id | dfb787e9-25e6-4e0d-996f-4619ba3b360d |<br />
+| project_id | 6d9cb60806744bbc9618963e77bda3cd |<br />
+| revision_number | 0 |<br />
+| segment_id | None |<br />
+| service_types | |<br />
+| subnetpool_id | None |<br />
+| tags | |<br />
+| updated_at | 2018-07-10T05:24:44Z |<br />
+| use_default_subnet_pool | None |<br />
++-------------------------+--------------------------------------+<br />
+cumulus@server01:~$</p>
+<p>#to verify</p>
+<p>cumulus@server01:~$ <span style="color:#3366ff;">openstack subnet list --long | grep firstSubnet</span><br />
+| 6ebf3ecb-caac-4c24-80aa-953a04bc23a8 | firstSubnet | dfb787e9-25e6-4e0d-996f-4619ba3b360d | 192.168.1.0/24 | 6d9cb60806744bbc9618963e77bda3cd | True | | 192.168.1.2-192.168.1.254 | | 4 | 192.168.1.1 | | |<br />
+cumulus@server01:~$</p>
+<p>#Note that, by default, if not specified DHCP will be enabled on the subnet, and the first IP of the network will be chosen as the default gateway</p>
+<p>#let's create a subnet, for the external network</p>
+<p>cumulus@server01:~$ <span style="color:#3366ff;">openstack subnet create --network firstProviderNetwork --subnet-range 192.168.2.0/24 --no-dhcp firstProviderSubnet</span><br />
++-------------------------+--------------------------------------+<br />
+| Field | Value |<br />
++-------------------------+--------------------------------------+<br />
+| allocation_pools | 192.168.2.2-192.168.2.254 |<br />
+| cidr | 192.168.2.0/24 |<br />
+| created_at | 2018-07-10T05:52:19Z |<br />
+| description | |<br />
+| dns_nameservers | |<br />
+| enable_dhcp | False |<br />
+| gateway_ip | 192.168.2.1 |<br />
+| host_routes | |<br />
+| id | eff1b2c9-7169-4f41-8d68-8d40cca3d3d3 |<br />
+| ip_version | 4 |<br />
+| ipv6_address_mode | None |<br />
+| ipv6_ra_mode | None |<br />
+| name | firstProviderSubnet |<br />
+| network_id | 1a135cc1-f5c6-489d-9378-353424bbb4fc |<br />
+| project_id | 6d9cb60806744bbc9618963e77bda3cd |<br />
+| revision_number | 0 |<br />
+| segment_id | None |<br />
+| service_types | |<br />
+| subnetpool_id | None |<br />
+| tags | |<br />
+| updated_at | 2018-07-10T05:52:19Z |<br />
+| use_default_subnet_pool | None |<br />
++-------------------------+--------------------------------------+</p>
+<p>--end-of-post--</p>

@@ -1,0 +1,107 @@
+---
+layout: post
+title: Kubernetes > Sample tasks > Install guestbook app on two namespaces
+date: 2019-08-24 23:34:33.000000000 +05:30
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags: []
+meta:
+  timeline_notification: '1566669877'
+  _rest_api_published: '1'
+  _rest_api_client_id: "-1"
+  _publicize_job_id: '34505345776'
+author:
+  login: shak1r
+  email: shakir@techie.com
+  display_name: shakir
+  first_name: ''
+  last_name: ''
+permalink: "/2019/08/24/kubernetes-sample-tasks-install-guestbook-app-on-two-namespaces/"
+---
+<p>The files are structured as follows</p>
+<pre><code>
+networkandcode@k8s-master:~ tree
+.
+├── README.md
+├── deploy
+│   ├── frontend.yaml
+│   ├── redis-master.yaml
+│   └── redis-slave.yaml
+├── install-guestbook.py
+└── svc
+    ├── frontend.yaml
+    ├── redis-master.yaml
+    └── redis-slave.yaml
+2 directories, 8 files
+</code></pre>
+<p>The path on github for these files is https://github.com/s1405/k8s-sample-tasks/tree/master/set1/task4</p>
+<p>The deployment and service objects are being created</p>
+<pre><code>
+networkandcode@k8s-master:~ python3 install-guestbook.py
+deployment.apps/deploy4-frontend created
+deployment.apps/deploy4-redis-master created
+deployment.apps/deploy4-redis-slave created
+service/svc4-frontend created
+service/svc4-redis-master created
+service/svc4-redis-slave created
+deployment.apps/deploy4-frontend created
+deployment.apps/deploy4-redis-master created
+deployment.apps/deploy4-redis-slave created
+service/svc4-frontend created
+service/svc4-redis-master created
+service/svc4-redis-slave created
+</code></pre>
+<p>Verify</p>
+<pre><code>
+networkandcode@k8s-master:~ kubectl get all -n staging
+NAME                                        READY   STATUS    RESTARTS   AGE
+pod/deploy4-frontend-7bd8744c-4l4rt         1/1     Running   0          3m41s
+pod/deploy4-frontend-7bd8744c-d2lbm         1/1     Running   0          3m41s
+pod/deploy4-frontend-7bd8744c-zwxr9         1/1     Running   0          3m41s
+pod/deploy4-redis-master-7d48779954-zng26   1/1     Running   0          3m41s
+pod/deploy4-redis-slave-68c875877f-b8xtq    1/1     Running   0          3m40s
+pod/deploy4-redis-slave-68c875877f-h8tzr    1/1     Running   0          3m40s
+NAME                        TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)        AGE
+service/svc4-frontend       NodePort    10.96.71.207             80:30100/TCP   3m40s
+service/svc4-redis-master   ClusterIP   10.97.136.2              6379/TCP       3m40s
+service/svc4-redis-slave    ClusterIP   10.111.173.178           6379/TCP       3m40s
+NAME                                   READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/deploy4-frontend       3/3     3            3           3m41s
+deployment.apps/deploy4-redis-master   1/1     1            1           3m41s
+deployment.apps/deploy4-redis-slave    2/2     2            2           3m40s
+NAME                                              DESIRED   CURRENT   READY   AGE
+replicaset.apps/deploy4-frontend-7bd8744c         3         3         3       3m41s
+replicaset.apps/deploy4-redis-master-7d48779954   1         1         1       3m41s
+replicaset.apps/deploy4-redis-slave-68c875877f    2         2         2       3m40s
+
+networkandcode@k8s-master:~ kubectl get all -n production
+NAME                                        READY   STATUS    RESTARTS   AGE
+pod/deploy4-frontend-7bd8744c-22hj5         1/1     Running   0          4m5s
+pod/deploy4-frontend-7bd8744c-wtcvg         1/1     Running   0          4m5s
+pod/deploy4-frontend-7bd8744c-zz27b         1/1     Running   0          4m5s
+pod/deploy4-redis-master-7d48779954-8bnr6   1/1     Running   0          4m5s
+pod/deploy4-redis-slave-68c875877f-64nmb    1/1     Running   0          4m5s
+pod/deploy4-redis-slave-68c875877f-xmddj    1/1     Running   0          4m5s
+NAME                        TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)        AGE
+service/svc4-frontend       NodePort    10.106.169.249           80:30200/TCP   4m4s
+service/svc4-redis-master   ClusterIP   10.104.228.108           6379/TCP       4m4s
+service/svc4-redis-slave    ClusterIP   10.111.203.8             6379/TCP       4m4s
+NAME                                   READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/deploy4-frontend       3/3     3            3           4m5s
+deployment.apps/deploy4-redis-master   1/1     1            1           4m5s
+deployment.apps/deploy4-redis-slave    2/2     2            2           4m5s
+NAME                                              DESIRED   CURRENT   READY   AGE
+replicaset.apps/deploy4-frontend-7bd8744c         3         3         3       4m5s
+replicaset.apps/deploy4-redis-master-7d48779954   1         1         1       4m5s
+replicaset.apps/deploy4-redis-slave-68c875877f    2         2         2       4m5s
+</code></pre>
+<p>kubectl get nodes -o wide can be used to check the external IP of the node, you can either access the guestbook frontend over the browser or curl the external IP or the internal IP, with the nodePort i.e. 30100 for staging and 30200 for production front ends</p>
+<pre><code>
+networkandcode@k8s-master:~ curl nodePublicIP:30100
+networkandcode@k8s-master:~ curl nodePublicIP:30200
+<code /></code></pre>
+<p>--end-of-post--</p>

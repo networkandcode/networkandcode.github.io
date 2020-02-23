@@ -1,0 +1,108 @@
+---
+layout: post
+title: OpenStack | Roles
+date: 2018-06-23 23:15:22.000000000 +05:30
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags: []
+meta:
+  timeline_notification: '1529775925'
+  _rest_api_published: '1'
+  _rest_api_client_id: "-1"
+  _wpas_skip_18169689: '1'
+  _wpas_skip_18195285: '1'
+  _publicize_job_id: '19277644900'
+author:
+  login: shak1r
+  email: shakir@techie.com
+  display_name: shakir
+  first_name: ''
+  last_name: ''
+permalink: "/2018/06/23/openstack-roles/"
+---
+<div>Command syntax for reference: openstack role &lt;action&gt; &lt;--parameters values&gt; &lt;role-name&gt;</div>
+<div>&lt;action&gt;: list, add, remove...</div>
+<div>&lt;parameters&gt;: user, project, help...</div>
+<div></div>
+<div>To check the list of user roles that are already created / defined</div>
+<div>cumulus@server01:~$ openstack role list</div>
+<div>+----------------------------------+-------+</div>
+<div>| ID                               | Name  |</div>
+<div>+----------------------------------+-------+</div>
+<div>| be19db9b354f46a98a3ec2ae5818267f | admin |</div>
+<div>| e35ba09a6bca43e4866a0cc2f3c32ebd | user  |</div>
+<div>+----------------------------------+-------+</div>
+<div></div>
+<div>To add the user 'firstUser' with role 'user' to the project 'firstProject'</div>
+<div>cumulus@server01:~$ openstack role add --user firstUser --project firstProject user</div>
+<div></div>
+<div>The user should now show up in the project</div>
+<div>cumulus@server01:~$ openstack user list --project firstProject</div>
+<div>+----------------------------------+-----------+</div>
+<div>| ID                               | Name      |</div>
+<div>+----------------------------------+-----------+</div>
+<div>| 9684ca0673544c4680ed074b69a831bb | firstUser |</div>
+<div>+----------------------------------+-----------+</div>
+<div></div>
+<div>To see the list assigned to each user, in a project</div>
+<div>the --names flag is handy to identify based on names, as otherwise we may only see the lengthy IDs associated with the users/projects</div>
+<div>cumulus@server01:~$ openstack role assignment list --names</div>
+<div>+-------+-----------------------+-------+--------------------------+--------+-----------+</div>
+<div>| Role  | User                  | Group | Project                  | Domain | Inherited |</div>
+<div>+-------+-----------------------+-------+--------------------------+--------+-----------+</div>
+<div>| user  | firstUser@firstDomain |       | firstProject@firstDomain |        | False     |</div>
+<div>| admin | placement@default     |       | service@default          |        | False     |</div>
+<div>| admin | neutron@default       |       | service@default          |        | False     |</div>
+<div>| admin | admin@default         |       | admin@default            |        | False     |</div>
+<div>| user  | demo@default          |       | demo@default             |        | False     |</div>
+<div>| admin | glance@default        |       | service@default          |        | False     |</div>
+<div>| admin | nova@default          |       | service@default          |        | False     |</div>
+<div>+-------+-----------------------+-------+--------------------------+--------+-----------+</div>
+<div></div>
+<div>A user, can have a single default project, however it can be added to multiple projects in the domain, with different/similar roles with each project</div>
+<div>Let's create a user for this purpose in firstDomain</div>
+<div>cumulus@server01:~$ openstack user create --password firstPassword --domain firstDomain multiProjectUser</div>
+<div>+---------------------+----------------------------------+</div>
+<div>| Field               | Value                            |</div>
+<div>+---------------------+----------------------------------+</div>
+<div>| domain_id           | f0bb69245afe41eb9aba9873421c3595 |</div>
+<div>| enabled             | True                             |</div>
+<div>| id                  | 630204c2d68f43be925805dc72560c4b |</div>
+<div>| name                | multiProjectUser                 |</div>
+<div>| options             | {}                               |</div>
+<div>| password_expires_at | None                             |</div>
+<div>+---------------------+----------------------------------+</div>
+<div></div>
+<div>This user 'multiProjectUser' would be assigned with 'user' role in firstProject and 'admin' role in secondProject</div>
+<div>cumulus@server01:~$ openstack role add --user multiProjectUser --project firstProject user</div>
+<div>cumulus@server01:~$ openstack role add --user multiProjectUser --project secondProject admin</div>
+<div></div>
+<div>Let's verify what we just configured</div>
+<div>cumulus@server01:~$ openstack role assignment list --names | grep multiProjectUser</div>
+<div>| admin | multiProjectUser@firstDomain |       | secondProject@firstDomain |        | False     |</div>
+<div>| user  | multiProjectUser@firstDomain |       | firstProject@firstDomain  |        | False     |</div>
+<div></div>
+<div>It's also possible to grant a role to a user created in one domain, to a project in different domain, the following commands should illustrate this</div>
+<div>cumulus@server01:~$ openstack user create --password multiDomainPassword --domain firstDomain multiDomainUser</div>
+<div>+---------------------+----------------------------------+</div>
+<div>| Field               | Value                            |</div>
+<div>+---------------------+----------------------------------+</div>
+<div>| domain_id           | f0bb69245afe41eb9aba9873421c3595 |</div>
+<div>| enabled             | True                             |</div>
+<div>| id                  | a8d9490da3e84025ac5482b20f7cedc0 |</div>
+<div>| name                | multiDomainUser                  |</div>
+<div>| options             | {}                               |</div>
+<div>| password_expires_at | None                             |</div>
+<div>+---------------------+----------------------------------+</div>
+<div></div>
+<div>cumulus@server01:~$ openstack role add --project-domain default  --project demo --user multiDomainUser user</div>
+<div></div>
+<div>cumulus@server01:~$ openstack role assignment list --names | grep multiDomainUser</div>
+<div>| user  | multiDomainUser@firstDomain  |       | demo@default              |        | False     |</div>
+<div>cumulus@server01:~$</div>
+<div></div>
+<div>--end-of-post--</div>

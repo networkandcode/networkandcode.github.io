@@ -1,0 +1,114 @@
+---
+layout: post
+title: Kubernetes > Expose Service using Ingress
+date: 2019-09-13 17:54:34.000000000 +05:30
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags: []
+meta:
+  _publicize_job_id: '35245508522'
+  timeline_notification: '1568377478'
+author:
+  login: shak1r
+  email: shakir@techie.com
+  display_name: shakir
+  first_name: ''
+  last_name: ''
+permalink: "/2019/09/13/kubernetes-expose-service-using-ingress/"
+---
+<p><small>Prerequisites: Service</small></p>
+<p>Ingress objects in Kubernetes could be used to divert HTTP(S) traffic to an already created <mark>NodePort</mark> or <mark>LoadBalancer</mark> service. Ingress works in conjunction with an Ingress controller. In a GKE environment, when an Ingress object is created, the existing Ingress controller in the cluster would take charge and create a Google Cloud HTTP(S) LoadBalancer automatically and would also assign it an External/Public IP. So when someone tries to access this IP on the browser, the traffic would be forwarded to the Kubernetes service as defined in the Ingress manifest. We could also use LoadBalancer service in Kubernetes, for a similar purpose, however one of the differences between LoadBalancer and Ingress is that the former creates a TCP/UDP LoadBalancer in GCP, where as the latter creates an HTTP(S) LoadBalancer, although LoadBalancer Kubernetes service could be used for HTTP(S) applications, Ingress is more preferred as it offers more control</p>
+<p>Let's create a deployment, and a ClusterIP service to expose it</p>
+<p><!-- wp:code --></p>
+<pre class="wp-block-code"><code>
+networkandcode@cloudshell:~ cat ex25-deploy.yaml
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: deploy25
+spec:
+  template:
+    metadata:
+      labels:
+        tag: label25
+    spec:
+      containers:
+      - name: ctr25
+        image: nginx
+  replicas: 4
+  selector:
+    matchLabels:
+      tag: label25
+...
+
+networkandcode@cloudshell:~ kubectl create -f ex25-deploy.yaml
+
+networkandcode@cloudshell:~ kubectl get po
+NAME                        READY   STATUS    RESTARTS   AGE
+deploy25-6c7546577f-2dqwt   1/1     Running   0          11s
+deploy25-6c7546577f-4jv25   1/1     Running   0          11s
+deploy25-6c7546577f-ftgpp   1/1     Running   0          11s
+deploy25-6c7546577f-mc6cr   1/1     Running   0          11s
+
+networkandcode@cloudshell:~ cat ex25-svc-np.yaml
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: svc25-np
+spec:
+  type: NodePort
+  selector:
+    tag: label25
+  ports:
+  - name: port25
+    protocol: TCP
+    port: 8080  # this is the service port
+    targetPort: 80 # this is the container port
+...
+
+networkandcode@cloudshell:~ kubectl create -f ex25-svc-np.yaml
+service/svc25-np created
+
+networkandcode@cloudshell:~ kubectl get svc svc25-np
+NAME       TYPE       CLUSTER-IP   EXTERNAL-IP   PORT(S)          AGE
+svc25-np   NodePort   10.12.5.42           8080:31211/TCP   15s
+</code></pre>
+<p><!-- /wp:code --></p>
+<p> We shall now call this service with an Ingress object. Let's define a manifest for the Ingress object and create it</p>
+<p><!-- wp:code --></p>
+<pre class="wp-block-code"><code>
+networkandcode@cloudshell:~ cat ex25-ingress.yaml
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: ingress25
+spec:
+  backend:
+    serviceName: svc25-np
+    servicePort: 8080  # this is the serviceport, not nodeport
+...
+
+networkandcode@cloudshell:~ kubectl create -f ex25-ingress.yaml
+ingress.extensions/ingress25 created
+</code></pre>
+<p><!-- /wp:code --></p>
+<p> The Ingress object should now have an external IP, however it's hidden below</p>
+<pre class="wp-block-code"><code>
+networkandcode@cloudshell:~ kubectl get ingress ingress25
+NAME        HOSTS   ADDRESS          PORTS   AGE
+ingress25   *       *.*.*.*   80      63s
+</code></pre>
+<p>We could now access the nginx application using the Public IP over a browser, or we can curl it</p>
+<pre class="wp-block-code"><code>
+networkandcode@cloudshell:~ curl *.*.*.*
+Welcome to nginx!
+--TRUNCATED--
+</code></pre>
+<p>--end-of-post--</p>

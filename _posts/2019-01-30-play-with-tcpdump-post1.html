@@ -1,0 +1,106 @@
+---
+layout: post
+title: play with tcp(dump) ~ post1
+date: 2019-01-30 16:40:41.000000000 +05:30
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags:
+- tcp
+- tcpdump
+meta:
+  _wpas_skip_18195285: '1'
+  _wpas_skip_18169689: '1'
+  timeline_notification: '1548846644'
+  _rest_api_published: '1'
+  _rest_api_client_id: "-1"
+  _publicize_job_id: '27088387642'
+author:
+  login: shak1r
+  email: shakir@techie.com
+  display_name: shakir
+  first_name: ''
+  last_name: ''
+permalink: "/2019/01/30/play-with-tcpdump-post1/"
+---
+<p>Let's capture some TCP traffic and analyse it using tcpdump. I am using an ubuntu server on <a href="http://citc.cumulusnetworks.com/demo/" target="_blank" rel="noopener">CITC</a> (cumulus in the cloud) for this demonstration</p>
+<p><span style="color:#3366ff;">To check the version of Ubuntu</span><br />
+cumulus@server01:~$ lsb_release -a<br />
+No LSB modules are available.<br />
+Distributor ID: Ubuntu<br />
+Description: Ubuntu 16.04.1 LTS<br />
+Release: 16.04<br />
+Codename: xenial</p>
+<p><span style="color:#3366ff;">To see the list of network interfaces</span><br />
+cumulus@server01:~$ ip addr show<br />
+1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1<br />
+link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00<br />
+inet 127.0.0.1/8 scope host lo<br />
+valid_lft forever preferred_lft forever<br />
+inet6 ::1/128 scope host<br />
+valid_lft forever preferred_lft forever<br />
+2: <span style="color:#3366ff;">eth0</span>: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc pfifo_fast state UP group default qlen 1000<br />
+link/ether 44:38:39:00:08:00 brd ff:ff:ff:ff:ff:ff<br />
+inet 192.168.0.31/16 brd 192.168.255.255 scope global eth0<br />
+valid_lft forever preferred_lft forever<br />
+inet6 fe80::4638:39ff:fe00:800/64 scope link<br />
+valid_lft forever preferred_lft forever<br />
+3: eth1: &lt;BROADCAST,MULTICAST&gt; mtu 1500 qdisc noop state DOWN group default qlen 1000<br />
+link/ether 44:38:39:00:08:01 brd ff:ff:ff:ff:ff:ff<br />
+4: eth2: &lt;BROADCAST,MULTICAST&gt; mtu 1500 qdisc noop state DOWN group default qlen 1000<br />
+link/ether 44:38:39:00:08:02 brd ff:ff:ff:ff:ff:ff<br />
+c</p>
+<p>Let's focus on a single interface eth0<br />
+<span style="color:#3366ff;">To get the detail of eth0</span><br />
+cumulus@server01:~$ ip addr show eth0<br />
+2: eth0: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc pfifo_fast state UP group default qlen 1000<br />
+link/ether 44:38:39:00:08:00 brd ff:ff:ff:ff:ff:ff<br />
+inet <span style="color:#3366ff;">192.168.0.31/16</span> brd 192.168.255.255 scope global eth0<br />
+valid_lft forever preferred_lft forever<br />
+inet6 fe80::4638:39ff:fe00:800/64 scope link<br />
+valid_lft forever preferred_lft forever<br />
+<span style="color:#3366ff;"><br />
+Let's now try to capture some traffic associated with eth0<br />
+</span>cumulus@server01:~$ sudo tcpdump -i eth0 -w eth0.cap<br />
+tcpdump: listening on eth0, link-type EN10MB (Ethernet), capture size 262144 bytes<br />
+^C2 packets captured<br />
+4 packets received by filter<br />
+0 packets dropped by kernel</p>
+<p>-i is the flag for pointing at an interface, and -w is for writing the output on to a file in this case eth0.cap, it's better to store packet captures onto a file to read/analyse at a later stage, if the -w flag is not used, the captures would be displayed directly on the screen, we have to press Ctrl c when we need to stop the capture</p>
+<p><span style="color:#3366ff;">To see the content of the packet capture file<br />
+</span>cumulus@server01:~$ cat eth0.cap<br />
+Ôò¡*9Q\õ&gt;<br />
+¾¾D89DE°œ³@@/ƒ<br />
+èÂL°pÖ#ŽޤóqÉ5…Ïî5UvΕ#ñ”=ZÜêD–¢ù MNôaK¥¶ÎÅtÝìXèø:5aςygÓìԸîÿ\%²ʕ °Ý6…»Ybd·¨Çç³JoéíÊy¡ŠÈÚ.ԈÚœ",¿Q<br />
+7x»Öˬ„i„`C*´%{Ã*9Q\ÉC<br />
+BBD8D89E4!g@@–ßÀ¨þÀ¨©fÄ;1»†TŽ€ނ”<br />
+L°QèÂ</p>
+<p>cat is what we would normally use to read the contents of a file, however here the contents are all encrypted</p>
+<p><span style="color:#3366ff;">To read the content in plain text<br />
+</span>cumulus@server01:~$ sudo tcpdump -r eth0.cap<br />
+reading from file eth0.cap, link-type EN10MB (Ethernet)<br />
+05:42:02.802549 IP 192.168.0.31.ssh &gt; 192.168.0.254.43366: Flags [P.], seq 3146142738:3146142862, ack 3292213507, win 303, options [nop,nop,TS val 1239234 ecr 5025813], length 124<br />
+05:42:02.803785 IP 192.168.0.254.43366 &gt; 192.168.0.31.ssh: Flags [.], ack 124, win 222, options [nop,nop,TS val 5025873 ecr 1239234], length 0</p>
+<p>-r is the flag for reading a file in this case eth0.cap</p>
+<p><span style="color:#3366ff;">let's analyse the capture now</span></p>
+<ul>
+<li>05:42:02.802549 - timestamp</li>
+<li>192.168.0.31.ssh &gt; 192.168.0.254.43366 - this is the reverse traffic associated with the ssh (port22) session from the management server(0.254)'s random port 43366</li>
+<li>Flags [P.] - (P)ush flag to signal immediate push of data from the sender(server01) to the receiver(management server), requests the receiver to respond as soon as possible, this is usually set with interactive applications such as Telnet/SSH, in this case SSH, the second flag '.' indicates ACK(Acknowledgement)</li>
+<li>seq 3146142738:3146142862 - if we see the difference between these two 32-bit sequence numbers separated by ':', it implies the length of this TCP payload is 124 bytes</li>
+<li>ack 3292213507 - this is the 32-bit acknowledgement number for the corresponding seq. no. sent by the management server(sometime earlier), this has no relation to the sequence number that server01 has generated</li>
+<li>win 303 - server01 tells the management server that it's window size is 303, which is the TCP receive window and means it can receive upto 303 bytes of data until an acknowledgement is sent, this 16-bit value can grow or shrink as the connection progresses</li>
+<li>options [nop,nop,TS val 1239234 ecr 5025813] - TCP options are displayed as multiples of 8-bits each, i.e. one TCP options is of 8-bit length, and if we have 4 TCP options that would be 32-bit in length, nop means 'no-operation' and it's usually operating system dependent, we have 2 nops which comprise of 2*8 = 16 bits, TS val is a 32-bit time stamp value, ecr is a 32-bit timestamp echo reply value which is equivalent to the TS val sent by the opposite host(management server), ecr is only set when acknowledge is sent, else its set as 0, however with rare exceptions such as when during the first SYN phase with out an ACK, in our case we have an ecr set as we also have an ack number in the TCP header</li>
+<li>length 124 - the TCP payload's length is 124 bytes, we have seen this at the seq no. section, note that the length of the data section is not specified in the TCP segment header. It can be calculated by subtracting the combined length of the TCP header and the encapsulating IP header from the total IP datagram length (specified in the IP header).</li>
+<li>05:42:02.803785 - timestamp</li>
+<li>192.168.0.254.43366 &gt; 192.168.0.31.ssh - this is the forward SSH traffic from the management server to the local server(01)</li>
+<li>Flags [.] - only ACK</li>
+<li>ack 124 - Acknowledgement number 124</li>
+<li>win 222 - TCP window size 222 bytes</li>
+<li>options [nop,nop,TS val 5025873 ecr 1239234] - as explained earlier</li>
+<li>length 0 - TCP payload length is 0, so there is no data, as it's only used for Acknowledgement</li>
+</ul>
+<p>--end-of-post--</p>

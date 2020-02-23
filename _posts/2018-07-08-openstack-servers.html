@@ -1,0 +1,194 @@
+---
+layout: post
+title: OpenStack | Servers
+date: 2018-07-08 18:34:37.000000000 +05:30
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags:
+- openstack
+meta:
+  timeline_notification: '1531055082'
+  _rest_api_published: '1'
+  _rest_api_client_id: "-1"
+  _wpas_skip_18169689: '1'
+  _wpas_skip_18195285: '1'
+  _publicize_job_id: '19792182498'
+author:
+  login: shak1r
+  email: shakir@techie.com
+  display_name: shakir
+  first_name: ''
+  last_name: ''
+permalink: "/2018/07/08/openstack-servers/"
+---
+<p>Servers refer to the cloud VM instances</p>
+<p>command syntax: openstack server &lt;action/operation&gt; &lt;--flags  vlaues&gt; &lt;instance-name/UUID&gt;</p>
+<p>#to view the list of instances</p>
+<p>cumulus@server01:~$ <span style="color:#3366ff;">openstack server list</span></p>
+<p>cumulus@server01:~$</p>
+<p>#to create an instance with the referenced flavor and image</p>
+<p>cumulus@server01:~$ <span style="color:#3366ff;">openstack server create --image firstImage flavor--firstFlavor firstServer</span><br />
++-------------------------------------+---------------------------------------------------+<br />
+| Field | Value<br />
+|<br />
++-------------------------------------+---------------------------------------------------+<br />
+| OS-DCF:diskConfig | MANUAL<br />
+|<br />
+| OS-EXT-AZ:availability_zone |<br />
+|<br />
+| OS-EXT-SRV-ATTR:host | None<br />
+|<br />
+| OS-EXT-SRV-ATTR:hypervisor_hostname | None<br />
+|<br />
+| OS-EXT-SRV-ATTR:instance_name |<br />
+|<br />
+| OS-EXT-STS:power_state | NOSTATE<br />
+|<br />
+| OS-EXT-STS:task_state | scheduling<br />
+|<br />
+| OS-EXT-STS:vm_state | building<br />
+|<br />
+| OS-SRV-USG:launched_at | None<br />
+|<br />
+| OS-SRV-USG:terminated_at | None<br />
+|<br />
+| accessIPv4 |<br />
+|<br />
+| accessIPv6 |<br />
+|<br />
+| addresses |<br />
+|<br />
+| adminPass | qrHeime9M7NM<br />
+|<br />
+| config_drive |<br />
+|<br />
+| created | 2018-07-08T10:48<br />
+:16Z |<br />
+| flavor | firstFlavor (1)<br />
+|<br />
+| hostId |<br />
+|<br />
+| id | 83a229e3-313a-48<br />
+49-9240-87aed1a7a1da |<br />
+| image | firstImage (dfe1<br />
+fe95-1518-4c7d-a036-ad1e6b80a5c6) |<br />
+| key_name | None<br />
+|<br />
+| name | firstServer<br />
+|<br />
+| progress | 0<br />
+|<br />
+| project_id | 9a4ce13914f04447<br />
+89153f632722a42a |<br />
+| properties |<br />
+|<br />
+| security_groups | name='default'<br />
+|<br />
+| status | BUILD<br />
+|<br />
+| updated | 2018-07-08T10:48<br />
+:16Z |<br />
+| user_id | 17b0c21a5161488e<br />
+85891464c77edfac |<br />
+| volumes_attached |<br />
+|<br />
++-------------------------------------+---------------------------------------------------+</p>
+<p>#to verify</p>
+<p>cumulus@server01:~$ <span style="color:#3366ff;">openstack server list</span><br />
++--------------------------------------+-------------+--------+------------------------+------------+-------------+<br />
+| ID | Name | Status | Networks | Image | Flavor|<br />
++--------------------------------------+-------------+--------+------------------------+------------+-------------+<br />
+| 83a229e3-313a-4849-9240-87aed1a7a1da | firstServer | ACTIVE | Provider=192.168.0.102 | firstImage | firstFlavor |<br />
++--------------------------------------+-------------+--------+------------------------+------------+-------------+</p>
+<p>#let's create a new server with an associated keypair as well<br />
+cumulus@server01:~$ <span style="color:#3366ff;">openstack server create --image firstImage --flavor firstFlavor --key-name firstKeyPair firstServerWithKeyPair</span><br />
++-------------------------------------+---------------------------------------------------+<br />
+| Field | Value |<br />
++-------------------------------------+---------------------------------------------------+<br />
+| OS-DCF:diskConfig | MANUAL |<br />
+| OS-EXT-AZ:availability_zone | |<br />
+| OS-EXT-SRV-ATTR:host | None |<br />
+| OS-EXT-SRV-ATTR:hypervisor_hostname | None |<br />
+| OS-EXT-SRV-ATTR:instance_name | |<br />
+| OS-EXT-STS:power_state | NOSTATE |<br />
+| OS-EXT-STS:task_state | scheduling |<br />
+| OS-EXT-STS:vm_state | building |<br />
+| OS-SRV-USG:launched_at | None |<br />
+| OS-SRV-USG:terminated_at | None |<br />
+| accessIPv4 | |<br />
+| accessIPv6 | |<br />
+| addresses | |<br />
+| adminPass | MqdQ39d9bmaE |<br />
+| config_drive | |<br />
+| created | 2018-07-08T13:02:39Z |<br />
+| flavor | firstFlavor (1) |<br />
+| hostId | |<br />
+| id | 17dd9d80-ac5d-4827-a3f7-ed85ed2edd12 |<br />
+| image | firstImage (dfe1fe95-1518-4c7d-a036-ad1e6b80a5c6) |<br />
+| key_name | firstKeyPair |<br />
+| name | firstServerWithKeyPair |<br />
+| progress | 0 |<br />
+| project_id | 9a4ce13914f0444789153f632722a42a |<br />
+| properties | |<br />
+| security_groups | name='default' |<br />
+| status | BUILD |<br />
+| updated | 2018-07-08T13:02:39Z |<br />
+| user_id | 17b0c21a5161488e85891464c77edfac |<br />
+| volumes_attached | |<br />
++-------------------------------------+---------------------------------------------------+</p>
+<p>#to see the details about a server using the UUID</p>
+<p>cumulus@server01:~$ <span style="color:#3366ff;">openstack server show 51b75145-defd-45cd-9e05-97280d6e668c</span><br />
++-------------------------------------+----------------------------------------------------------+<br />
+| Field | Value |<br />
++-------------------------------------+----------------------------------------------------------+<br />
+| OS-DCF:diskConfig | MANUAL |<br />
+| OS-EXT-AZ:availability_zone | nova |<br />
+| OS-EXT-SRV-ATTR:host | server04 |<br />
+| OS-EXT-SRV-ATTR:hypervisor_hostname | server04 |<br />
+| OS-EXT-SRV-ATTR:instance_name | instance-00000001 |<br />
+| OS-EXT-STS:power_state | Running |<br />
+| OS-EXT-STS:task_state | None |<br />
+| OS-EXT-STS:vm_state | active |<br />
+| OS-SRV-USG:launched_at | 2018-07-09T16:53:43.000000 |<br />
+| OS-SRV-USG:terminated_at | None |<br />
+| accessIPv4 | |<br />
+| accessIPv6 | |<br />
+| addresses | provider=192.168.0.110 |<br />
+| config_drive | |<br />
+| created | 2018-07-09T16:53:19Z |<br />
+| flavor | m1.nano (0) |<br />
+| hostId | 7d4821dbc896dae367dbced6317c60d6edbbf18c2a42ccf35f822114 |<br />
+| id | 51b75145-defd-45cd-9e05-97280d6e668c |<br />
+| image | cirros (0b16d59f-71f4-48a6-9aef-add8f535bc7d) |<br />
+| key_name | firstKeyPair |<br />
+| name | firstServer |<br />
+| progress | 0 |<br />
+| project_id | 6d9cb60806744bbc9618963e77bda3cd |<br />
+| properties | |<br />
+| security_groups | name='default' |<br />
+| status | ACTIVE |<br />
+| updated | 2018-07-09T16:53:43Z |<br />
+| user_id | d85316e4978a4454836d21cbde99322d |<br />
+| volumes_attached | |<br />
++-------------------------------------+----------------------------------------------------------+</p>
+<p>#to see if the instance is running</p>
+<p>cumulus@server01:~$ <span style="color:#3366ff;">openstack server show firstServer | grep status</span><br />
+| status | ACTIVE|</p>
+<p>#to stop the instance</p>
+<p>cumulus@server01:~$ <span style="color:#3366ff;">openstack server stop firstServer</span></p>
+<p>#the status should now should to SHUTOFF</p>
+<p>cumulus@server01:~$ <span style="color:#3366ff;">openstack server show firstServer | </span><span style="color:#3366ff;">grep status</span><br />
+| status | SHUTOFF|</p>
+<p>#to start the server again, and subsequently check the status</p>
+<p>cumulus@server01:~$ <span style="color:#3366ff;">openstack server start firstServer</span><br />
+cumulus@server01:~$ <span style="color:#3366ff;">openstack server show firstServer |grep status</span><br />
+| status | ACTIVE|</p>
+<p>#to delete the instances - more than one instance could be deleted at the same time by mentioning instance names separated by a space</p>
+<p>cumulus@server01:~$ <span style="color:#3366ff;">openstack server delete firstServer firstSnapshotServer</span></p>
+<p>cumulus@server01:~$ <span style="color:#3366ff;">openstack server list</span></p>
+<p>cumulus@server01:~$</p>
+<p>--end-of-post--</p>

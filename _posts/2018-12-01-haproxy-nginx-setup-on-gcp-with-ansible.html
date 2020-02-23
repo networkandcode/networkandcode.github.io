@@ -1,0 +1,204 @@
+---
+layout: post
+title: HAProxy/NGINX installation on GCP with Ansible
+date: 2018-12-01 21:19:37.000000000 +05:30
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags:
+- Ansible
+meta:
+  publicize_linkedin_url: www.linkedin.com/updates?topic=6474660612239659008
+  _publicize_done_external: a:1:{s:7:"twitter";a:1:{i:18195285;s:60:"https://twitter.com/Mh84ibrShakir/status/1068894929223598080";}}
+  _rest_api_published: '1'
+  timeline_notification: '1543679381'
+  _rest_api_client_id: "-1"
+  _publicize_job_id: '24848358257'
+  _publicize_done_18395822: '1'
+  _wpas_done_18169689: '1'
+  _publicize_done_18419479: '1'
+  _wpas_done_18195285: '1'
+  publicize_twitter_user: Mh84ibrShakir
+author:
+  login: shak1r
+  email: shakir@techie.com
+  display_name: shakir
+  first_name: ''
+  last_name: ''
+permalink: "/2018/12/01/haproxy-nginx-setup-on-gcp-with-ansible/"
+---
+<p><span style="font-weight:400;"><span style="color:#0000ff;">Task</span></span></p>
+<p><span style="font-weight:400;">To install the base packages and to start appropriate services on the nodes</span></p>
+<p><span style="font-weight:400;"><span style="color:#0000ff;">Topology</span></span><span style="font-weight:400;"> </span></p>
+<p><span style="font-weight:400;">on Google Cloud Platform Compute Engine</span></p>
+<p><span style="font-weight:400;"><img src="{{ site.baseurl }}/assets/topology.png" class="wp-image-721 alignnone size-full" width="254" height="241" alt="" /></span></p>
+<p><span style="font-weight:400;color:#0000ff;">Generate SSH keys on the Master</span></p>
+<p><span style="font-weight:400;">This is needed to SSH all the nodes from the master</span></p>
+<p><span style="font-weight:400;">[networkandcode@ansible-master ~]$ ssh-keygen</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">Generating public/private rsa key pair.</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">Enter file in which to save the key (/home/networkandcode/.ssh/id_rsa): </span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">Enter passphrase (empty for no passphrase): </span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">Enter same passphrase again: </span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">Your identification has been saved in /home/networkandcode/.ssh/id_rsa.</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">Your public key has been saved in /home/networkandcode/.ssh/id_rsa.pub.</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">The key fingerprint is:</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">SHA256:L7C3LsDLyUQPgWEz63+kKzIRSI3BqiEcniWdkuPzwfQ networkandcode@ansible-master</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">The key's randomart image is:</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">+---[RSA 2048]----+</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">|..@o.            |</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">| @.X.            |</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">|B @ ..           |</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">|*B ooE           |</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">|oo+o.oo S        |</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">|o  o+o.o .       |</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">| . +o+o o .      |</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">|o . =o.. o       |</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">| o ..  oo  |</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">+----[SHA256]-----+</span></p>
+<p><span style="font-weight:400;color:#0000ff;">View the public key</span></p>
+<p><span style="font-weight:400;">[networkandcode@ansible-master ~]$ cat .ssh/id_rsa.pub</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDKidfQW6xyhJQaDrFvUmA3C6bNJvqGVo+7aKe+ZvlTdw46pxYczBP4lMLYbu1nl22KpxDK0HHn60tKgpx3VKkO9WGSKbiFb0UwTaqX4pRjPkVtXER2lRU6M6TxD16HFAQ+w9vIG2f</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">2lL1ultzqR6OUgDm3jYxUQU+EusNMFKhou9XKPkNfJtKkLIWTPgZkYM/M78uY+GHs2w4ItFf4gJITVXpJPnDruNB5rsFBCErvjF0AIG7xDBYn/Gazx1B5DzSE15TUOEvOZWdk2v7pZr15L9Wk4vrSfwxY5wMnUrglv+5FUNv0hU+8iP</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">K2xjjO22w8084BWvwjCLHvIiCr5OOj networkandcode@ansible-master</span></p>
+<p><span style="font-weight:400;"><span style="color:#0000ff;">Copy and Paste this on Compute Engine &gt; Metadata &gt; SSH keys</span></span><span style="font-weight:400;"><img src="{{ site.baseurl }}/assets/ssh.png?w=300" class="wp-image-722 alignnone size-medium" width="300" height="138" alt="" /></span></p>
+<p><span style="font-weight:400;">Install nano text editor if required, or use the default vim editor</span></p>
+<p><span style="font-weight:400;">[networkandcode@ansible-master ~]$ sudo yum install nano</span></p>
+<p><span style="font-weight:400;">Loaded plugins: fastestmirror</span></p>
+<p><span style="font-weight:400;">Loading mirror speeds from cached hostfile</span></p>
+<p><span style="font-weight:400;"> * base: mirrors.advancedhosters.com</span></p>
+<p><span style="font-weight:400;"> * epel: mirror.umd.edu</span></p>
+<p><span style="font-weight:400;"> * extras: mirrors.advancedhosters.com</span></p>
+<p><span style="font-weight:400;"> * updates: mirrors.advancedhosters.com</span></p>
+<p><span style="font-weight:400;">Resolving Dependencies</span></p>
+<p><span style="font-weight:400;">...</span></p>
+<p><span style="font-weight:400;">Installed:  nano.x86_64 0:2.3.1-10.el7                                                                                                                                                   Complete!</span></p>
+<p><span style="font-weight:400;color:#0000ff;">Install Ansible on the Master</span></p>
+<p><span style="font-weight:400;"><img src="{{ site.baseurl }}/assets/3.png?w=300" class="wp-image-723 alignnone size-medium" width="300" height="57" alt="" /></span></p>
+<p><span style="font-weight:400;">…</span></p>
+<p><span style="font-weight:400;"><img src="{{ site.baseurl }}/assets/4.png?w=300" class="wp-image-724 alignnone size-medium" width="300" height="27" alt="" /></span></p>
+<p><span style="font-weight:400;color:#0000ff;">Rename the defaults hosts file</span></p>
+<p><span style="font-weight:400;">This file is handy for any reference</span></p>
+<p><span style="font-weight:400;">[networkandcode@ansible-master ~]$ sudo mv /etc/ansible/hosts /etc/ansible/hosts-backup</span></p>
+<p><span style="font-weight:400;color:#0000ff;">Add a new default hosts file</span></p>
+<p><span style="font-weight:400;">[networkandcode@ansible-master ~]$ sudo vim /etc/ansible/hosts</span></p>
+<p><span style="font-weight:400;">[haproxy]haproxy-server[1:2]</span></p>
+<p><span style="font-weight:400;">[nginx]nginx-web-server[1:2]</span></p>
+<p><span style="font-weight:400;color:#0000ff;">Run an adhoc command to test connectivity</span></p>
+<p><span style="font-weight:400;">type yes(y) when prompted (not shown here)</span></p>
+<p><span style="font-weight:400;">[networkandcode@ansible-master ~]$ ansible all -a id</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">haproxy-server1 | CHANGED | rc=0 &gt;&gt;</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">uid=1000(networkandcode) gid=1001(networkandcode) groups=1001(networkandcode),4(adm),39(video),1000(google-sudoers)</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;"> context=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">haproxy-server2 | CHANGED | rc=0 &gt;&gt;</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">uid=1000(networkandcode) gid=1001(networkandcode) groups=1001(networkandcode),4(adm),39(video),1000(google-sudoers)</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;"> context=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">nginx-web-server1 | CHANGED | rc=0 &gt;&gt;</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">uid=1000(networkandcode) gid=1001(networkandcode) groups=1001(networkandcode),4(adm),39(video),1000(google-sudoers)</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;"> context=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">nginx-web-server2 | CHANGED | rc=0 &gt;&gt;</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">uid=1000(networkandcode) gid=1001(networkandcode) groups=1001(networkandcode),4(adm),39(video),1000(google-sudoers)</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;"> context=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023</span></p>
+<p><span style="font-weight:400;color:#0000ff;">Write a playbook</span></p>
+<p><span style="font-weight:400;">to install haproxy and nginx and to start/enable those services</span></p>
+<p><span style="font-weight:400;">[networkandcode@ansible-master ~]$ sudo nano playbook.yml</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">---  # '---' marks the beginning of a YAML file</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;"># anyline that begins with '#' is a comment</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;"># a playbook is a list of plays, each play can have a list of tasks</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">- name: play to install nginx # play1</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">  hosts: nginx  # this matches nginx-web-server1 and nginx-web-server2 on the /etc/ansible/hosts file</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">  tasks:</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">  - name: task to install nginx  # task1 of play1</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">    yum:  # yum module of Ansible refers to the yum package manager of Centos7</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">      name: nginx  # this is the package name</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">      state: latest  # the latest version of the nginx package will be installed</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">  - name: tast to activate nginx  # task2 of play1</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">    service:</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">      name: nginx</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">      state: started</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">      enabled: yes  # to be enabled after when the system starts</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">- name: play to install haproxy  # play2</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">  hosts: haproxy  # this matches haproxy-server1 and haproxy-server2 on the /etc/ansible/hosts file</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">  tasks:</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">  - name: task to install haproxy  # task1 of play2</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">    yum:</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">      name: haproxy</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">      state: latest</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">  - name: task to activate haproxy  # task2 of play2</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">    service:</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">      name: haproxy</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">      state: started</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">      enabled: yes     </span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">...  # '...' marks the end of a YAML file</span></p>
+<p><span style="font-weight:400;color:#0000ff;">Run the playbook</span></p>
+<p><span style="font-weight:400;">[networkandcode@ansible-master ~]$ ansible-playbook playbook.yml </span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">PLAY [play to install nginx] **************************************************************************************</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">TASK [Gathering Facts] ********************************************************************************************</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">ok: [nginx-web-server1]</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">ok: [nginx-web-server2]</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">TASK [task to install nginx] **************************************************************************************</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">changed: [nginx-web-server2]</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">changed: [nginx-web-server1]</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">TASK [tast to activate nginx] *************************************************************************************</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">changed: [nginx-web-server1]</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">changed: [nginx-web-server2]</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">PLAY [play to install haproxy] ************************************************************************************</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">TASK [Gathering Facts] ********************************************************************************************</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">ok: [haproxy-server1]</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">ok: [haproxy-server2]</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">TASK [task to install haproxy] ************************************************************************************</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">changed: [haproxy-server1]</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">changed: [haproxy-server2]</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">TASK [task to activate haproxy] ***********************************************************************************</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">changed: [haproxy-server1]</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">changed: [haproxy-server2]</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">PLAY RECAP ********************************************************************************************************</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">haproxy-server1            : ok=3 changed=2 unreachable=0    failed=0 </span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">haproxy-server2            : ok=3 changed=2 unreachable=0    failed=0 </span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">nginx-web-server1          : ok=3 changed=2 unreachable=0    failed=0 </span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">nginx-web-server2          : ok=3 changed=2 unreachable=0    failed=0</span></p>
+<p><span style="font-weight:400;">Actually it’s 4 web servers in the topology, not 2, let’s edit the hosts file</span></p>
+<p><span style="font-weight:400;">[networkandcode@ansible-master ~]$ cat /etc/ansible/hosts</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">[haproxy]</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">haproxy-server[1:2]</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">[nginx]</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">nginx-web-server[1:4]</span></p>
+<p><span style="font-weight:400;color:#0000ff;">Run the playbook again</span></p>
+<p><span style="font-weight:400;">[networkandcode@ansible-master ~]$ ansible-playbook playbook.yml </span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">PLAY [play to install nginx] **************************************************************************************</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">TASK [Gathering Facts] ********************************************************************************************</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">ok: [nginx-web-server2]</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">ok: [nginx-web-server1]</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">ok: [nginx-web-server4]</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">ok: [nginx-web-server3]</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">TASK [task to install nginx] **************************************************************************************</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">ok: [nginx-web-server2]</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">ok: [nginx-web-server1]</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">changed: [nginx-web-server4]</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">changed: [nginx-web-server3]</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">TASK [tast to activate nginx] *************************************************************************************</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">ok: [nginx-web-server2]</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">ok: [nginx-web-server1]</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">changed: [nginx-web-server4]</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">changed: [nginx-web-server3]</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">PLAY [play to install haproxy] ************************************************************************************</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">TASK [Gathering Facts] ********************************************************************************************</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">ok: [haproxy-server1]</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">ok: [haproxy-server2]</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">TASK [task to install haproxy] ************************************************************************************</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">ok: [haproxy-server1]</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">ok: [haproxy-server2]</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">TASK [task to activate haproxy] ***********************************************************************************</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">ok: [haproxy-server1]</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">ok: [haproxy-server2]</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">PLAY RECAP ********************************************************************************************************</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">haproxy-server1            : ok=3 changed=0 unreachable=0    failed=0 </span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">haproxy-server2            : ok=3 changed=0 unreachable=0    failed=0 </span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">nginx-web-server1          : ok=3 changed=0 unreachable=0    failed=0 </span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">nginx-web-server2          : ok=3 changed=0 unreachable=0    failed=0 </span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">nginx-web-server3          : ok=3 changed=2 unreachable=0    failed=0 </span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">nginx-web-server4          : ok=3 changed=2 unreachable=0    failed=0</span></p>
+<p><span style="font-weight:400;">Since Ansible is idempotent, it checked if the desired state already exists on the remote nodes and thus it has not changed any configuration on the first 4 nodes (haproxy1 and 2,  nginx-webserver1 and 2), and it mentions “changed = 0” at the end of playbook execution. It only changed the configuration on nginx-web-server3 and 4, as we edited the hosts file just before running the playbook to include those 2 nodes</span></p>
+<p><span style="font-weight:400;">--end-of-post--</span></p>

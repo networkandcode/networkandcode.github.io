@@ -1,0 +1,41 @@
+---
+layout: post
+title: ospf unnumbered with ecmp ~ cumulus linux
+date: 2017-09-19 23:16:17.000000000 +05:30
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags:
+- cumulus
+- linux
+- ospf
+- unnumbered
+meta:
+  publicize_linkedin_url: https://www.linkedin.com/updates?discuss=&scope=72550999&stype=M&topic=6315964069362929665&type=U&a=k3J1
+  _rest_api_published: '1'
+  _rest_api_client_id: "-1"
+  _wpas_skip_18169689: '1'
+  _wpas_skip_18195285: '1'
+  _publicize_job_id: '9454282056'
+  _publicize_done_18395822: '1'
+  _wpas_done_18169689: '1'
+  _publicize_done_external: a:1:{s:7:"twitter";a:1:{i:18195285;s:59:"https://twitter.com/Mh84ibrShakir/status/910198387282022400";}}
+  _publicize_done_18419479: '1'
+  _wpas_done_18195285: '1'
+  publicize_twitter_user: Mh84ibrShakir
+author:
+  login: shak1r
+  email: shakir@techie.com
+  display_name: shakir
+  first_name: ''
+  last_name: ''
+permalink: "/2017/09/19/ospf-unnumbered-with-ecpm-cumulus-linux/"
+---
+<p><img src="{{ site.baseurl }}/assets/topology1.png" class="alignnone size-full wp-image-339" height="167" alt="topology" width="314" /></p>
+<p>configuration can be done by directly editing the /etc/frr/frr.conf or /etc/frr/ospfd.conf file, and the /etc/network/interfaces file - no tabs/auto-fills here, right commands/statements will have to be ensured</p>
+<p>the cumulus vendor specific nclu way also exists, which acts like a shortcut to configure the files mentioned above. with the nclu way, the configuration has to be committed with the net commit statement</p>
+<p>the 3rd way of configuring is by using the vtysh method, which shows the exact content present in the frr.conf file, like the cisco syntax and the tab key could be used to auto-fill statements<img src="{{ site.baseurl }}/assets/hostname_loopback1.png" class="alignnone size-full wp-image-350" height="424" alt="hostname_loopback" width="844" /><img src="{{ site.baseurl }}/assets/unnumbered_interfaces1.png" class="alignnone size-full wp-image-351" height="501" alt="unnumbered_interfaces" width="846" /><img src="{{ site.baseurl }}/assets/daemons_frr_routerid_nw_passive1.png" class="alignnone wp-image-352 size-full" height="392" alt="daemons_frr_routerid_nw_passive" width="764" /><img src="{{ site.baseurl }}/assets/ospf1.png" class="alignnone wp-image-353 size-full" height="700" alt="ospf" width="912" /><img src="{{ site.baseurl }}/assets/neighbor-e1505844434721.png" class="alignnone size-full wp-image-354" height="185" alt="neighbor" width="1268" /><img src="{{ site.baseurl }}/assets/route1.png" class="alignnone wp-image-355 size-full" height="470" alt="route" width="724" /></p>
+<p>packet capture<img src="{{ site.baseurl }}/assets/tcpdump.png" class="alignnone size-full wp-image-358" height="553" alt="tcpdump" width="1228" />--end-of-document--</p>

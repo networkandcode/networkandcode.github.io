@@ -1,0 +1,43 @@
+---
+layout: post
+title: Try OpenStack on CITC
+date: 2018-06-22 15:47:21.000000000 +05:30
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags:
+- cumulus
+- openstack
+meta:
+  _wpas_skip_18195285: '1'
+  _wpas_skip_18169689: '1'
+  _rest_api_published: '1'
+  _rest_api_client_id: "-1"
+  _publicize_job_id: '19232593777'
+  timeline_notification: '1529662645'
+author:
+  login: shak1r
+  email: shakir@techie.com
+  display_name: shakir
+  first_name: ''
+  last_name: ''
+permalink: "/2018/06/22/try-openstack-on-citc-check-the-user-list/"
+---
+<p style="margin:0;font-family:Calibri;font-size:11pt;">A variant of the 'Cumulus in the cloud' platform (CITC) http://citc.cumulusnetworks.com provides one of the best and free options to try/learn OpenStack, they have a predefined Spine/Leaf datacenter topology setup on this platform, from where a registered user, can have free access to the Cumulus spine/leaf switches, OOB management server, and other servers connecting to the leaf switches. The topology is self explanatory, you can click on any node to gain SSH access to that node, and you can click on the Horizon link to access the OpenStack Horizon Dashboard(GUI). All the nodes can also be accessed over SSH from the central OOB management server.</p>
+<p style="margin:0;font-family:Calibri;font-size:11pt;">OpenStack, I think is built using the servers connected to the leaf switches, as I found the OpenStack credentials in the admin-openrc file on server1. We will try to operate and check the user list on OpenStack over CLI on server01, and through the OpenStack Horizon dashboard (GUI).</p>
+<p style="margin:0;font-family:Calibri;font-size:11pt;">Once logged it to server01, we need to source certain parameters usually stored in an openrc file, and</p>
+<p style="margin:0;font-family:Calibri;font-size:11pt;">then start issuing the OpenStack commands.</p>
+<p style="margin:0;font-family:Calibri;font-size:11pt;">Let's check the <span style="color:#0070c0;">list of OpenStack users</span>, note that nova, glance, etc. refer to predefined usernames created by default during the OpenStack installation, for the respective services, where as the usernames admin and demo, are used by operators.</p>
+<p style="margin:0;font-family:Calibri;font-size:11pt;"><img src="{{ site.baseurl }}/assets/1.png" class="alignnone wp-image-543 size-full" height="307" alt="1" width="516" /></p>
+<p style="margin:0;font-family:Calibri;font-size:11pt;">So what are we sourcing from the admin-openrc file - few important authentication parameters, that would let us login to OpenStack and perform permitted actions</p>
+<p><img src="{{ site.baseurl }}/assets/2.png" class="alignnone wp-image-544 size-full" height="146" alt="2" width="411" /></p>
+<p>if we don’t source this way, it may be tedious to type all such options in the CLI along with  the main command, in this case:</p>
+<p>openstack --os-auth-url <a href="http://controller:35357/v3">http://controller:35357/v3</a> --os-user-domain-name</p>
+<p>default --os-project-name admin --os-username admin --os-password</p>
+<p>admin --os-identity-api-version 3 user list</p>
+<p>GUI way, to check the user list</p>
+<p><img src="{{ site.baseurl }}/assets/3.png" class="alignnone wp-image-545 size-full" height="447" alt="3" width="479" /><img src="{{ site.baseurl }}/assets/4.png" class="alignnone wp-image-546 size-full" height="584" alt="4" width="499" /></p>
+<p>--end-of-post--</p>

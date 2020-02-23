@@ -1,0 +1,159 @@
+---
+layout: post
+title: Play with Ansible on Linux (Cumulus)
+date: 2018-09-17 17:58:38.000000000 +05:30
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags:
+- Ansible
+- cumulus
+- linux
+meta:
+  _publicize_done_external: a:1:{s:7:"twitter";a:1:{i:18195285;s:60:"https://twitter.com/Mh84ibrShakir/status/1041665235097141248";}}
+  _rest_api_published: '1'
+  _rest_api_client_id: "-1"
+  _publicize_job_id: '22235934730'
+  timeline_notification: '1537187319'
+  publicize_linkedin_url: www.linkedin.com/updates?topic=6447430922852761600
+  _publicize_done_18395822: '1'
+  _wpas_done_18169689: '1'
+  _publicize_done_18419479: '1'
+  _wpas_done_18195285: '1'
+  publicize_twitter_user: Mh84ibrShakir
+author:
+  login: shak1r
+  email: shakir@techie.com
+  display_name: shakir
+  first_name: ''
+  last_name: ''
+permalink: "/2018/09/17/play-with-ansible-on-linux-cumulus/"
+---
+<p>We will perform certain tasks to get some grip on Ansible, this is run on the <a href="http://citc.cumulusnetworks.com/demo" target="_blank" rel="noopener">CITC </a>platform (Black slate) offered by Cumulus Linux</p>
+<p>They have a 2 tier Clos topology, with 2 spines(01,02) and 4 leaves(01-04) and access to all the devices is achieved from the central OOB management server</p>
+<p>Let's login to that server first, and modify the /etc/ansible/hosts file where we can keep all the inventory info that needs to be managed</p>
+<p><em><span style="color:#cc99ff;">cumulus@oob-mgmt-server:~$ cat /etc/ansible/hosts</span></em><br />
+<em><span style="color:#cc99ff;">[spines]</span></em><br />
+<em><span style="color:#cc99ff;">spine01</span></em><br />
+<em><span style="color:#cc99ff;">spine02</span></em></p>
+<p><em><span style="color:#cc99ff;">[leaves]</span></em><br />
+<em><span style="color:#cc99ff;">leaf01</span></em><br />
+<em><span style="color:#cc99ff;">leaf02</span></em><br />
+<em><span style="color:#cc99ff;">leaf03</span></em><br />
+<em><span style="color:#cc99ff;">leaf04</span></em></p>
+<p>Here, [spines] and [leaves] refer to the group names under which respective device names are mentioned, We have used the hostnames here instead of IPs as the DNS entries are already available.</p>
+<p>Let's run an Ansible ad-hoc command to get the 'OS Version' details from the spine nodes</p>
+<p><em><span style="color:#cc99ff;">cumulus@oob-mgmt-server:~$ ansible spines -m command -a </span><span style="color:#cc99ff;">"uname -v"</span></em><br />
+<em><span style="color:#cc99ff;">spine02 | SUCCESS | rc=0 &gt;&gt;</span></em><br />
+<em><span style="color:#cc99ff;">#1 SMP Debian 4.1.33-1+cl3u14 (2018-07-05)</span></em></p>
+<p><em><span style="color:#cc99ff;">spine01 | SUCCESS | rc=0 &gt;&gt;</span></em><br />
+<em><span style="color:#cc99ff;">#1 SMP Debian 4.1.33-1+cl3u14 (2018-07-05)</span></em></p>
+<p>In the command above, -m means module and we are using the 'command' module which is optional as it's the default module, -a for ad-hoc, uname -v is the linux command to get the OS version</p>
+<p>Let's try the same command this time on the leaf nodes with out the -m flag</p>
+<p><span style="color:#cc99ff;">cumulus@oob-mgmt-server:~$ ansible leaves -a "uname -v"</span><br />
+<span style="color:#cc99ff;">leaf02 | SUCCESS | rc=0 &gt;&gt;</span><br />
+<span style="color:#cc99ff;">#1 SMP Debian 4.1.33-1+cl3u14 (2018-07-05)</span></p>
+<p><span style="color:#cc99ff;">leaf04 | SUCCESS | rc=0 &gt;&gt;</span><br />
+<span style="color:#cc99ff;">#1 SMP Debian 4.1.33-1+cl3u14 (2018-07-05)</span></p>
+<p><span style="color:#cc99ff;">leaf03 | SUCCESS | rc=0 &gt;&gt;</span><br />
+<span style="color:#cc99ff;">#1 SMP Debian 4.1.33-1+cl3u14 (2018-07-05)</span></p>
+<p><span style="color:#cc99ff;">leaf01 | SUCCESS | rc=0 &gt;&gt;</span><br />
+<span style="color:#cc99ff;">#1 SMP Debian 4.1.33-1+cl3u14 (2018-07-05)</span></p>
+<p>there is a shell module which also like the command module with extra functionalities such as piping output, grep. We'll use -m shell this time on all the nodes, by specifying 'all', the following command would not work if we use -m command.</p>
+<p><em><span style="color:#cc99ff;">cumulus@oob-mgmt-server:~$ ansible all -m shell -a "ip addr | grep 192.168"</span></em><br />
+<em><span style="color:#cc99ff;">leaf02 | SUCCESS | rc=0 &gt;&gt;</span></em><br />
+<em><span style="color:#cc99ff;">inet 192.168.0.12/16 brd 192.168.255.255 scope global eth0</span></em></p>
+<p><em><span style="color:#cc99ff;">spine01 | SUCCESS | rc=0 &gt;&gt;</span></em><br />
+<em><span style="color:#cc99ff;">inet 192.168.0.21/16 brd 192.168.255.255 scope global eth0</span></em></p>
+<p><em><span style="color:#cc99ff;">leaf01 | SUCCESS | rc=0 &gt;&gt;</span></em><br />
+<em><span style="color:#cc99ff;">inet 192.168.0.11/16 brd 192.168.255.255 scope global eth0</span></em></p>
+<p><em><span style="color:#cc99ff;">leaf04 | SUCCESS | rc=0 &gt;&gt;</span></em><br />
+<em><span style="color:#cc99ff;">inet 192.168.0.14/16 brd 192.168.255.255 scope global eth0</span></em></p>
+<p><em><span style="color:#cc99ff;">leaf03 | SUCCESS | rc=0 &gt;&gt;</span></em><br />
+<em><span style="color:#cc99ff;">inet 192.168.0.13/16 brd 192.168.255.255 scope global eth0</span></em></p>
+<p><em><span style="color:#cc99ff;">spine02 | SUCCESS | rc=0 &gt;&gt;</span></em><br />
+<em><span style="color:#cc99ff;">inet 192.168.0.22/16 brd 192.168.255.255 scope global eth0</span></em></p>
+<p>We will start using a playbook instead of executing commands in adhoc fashion, let's write a playbook in yaml format, which begins with three hyphens ---</p>
+<p><em><span style="color:#cc99ff;">cumulus@oob-mgmt-server:~$ cat enableOspf.yaml</span></em><br />
+<em><span style="color:#cc99ff;">---</span></em><br />
+<em><span style="color:#cc99ff;">- hosts: all</span></em><br />
+<em><span style="color:#cc99ff;">  tasks:</span></em><br />
+<em><span style="color:#cc99ff;">  - name: Enable OSPF</span></em><br />
+<em><span style="color:#cc99ff;">    become: yes</span></em><br />
+<em><span style="color:#cc99ff;">    command: "sed 's/ospfd=no/ospfd=yes/' /etc/frr/daemo</span></em><br />
+<em><span style="color:#cc99ff;">ns"</span></em></p>
+<p>this play book would be executed against all hosts , as it says hosts: all</p>
+<p>we can have multiple tasks, however the only task that we are doing here is to enable OSPF, which is indicated by - name, this name filed is optional and is only used for user's convenience, become: yes implies this command requires sudo/root privileges on the remote system, command: is equivalent to the module '-m command' that we used in adhoc mode</p>
+<p>what the sed command does, by default ospfd (ospf daemon is disabled), in order to enable that we need to replace the appropriate line on the /etc/frr/daemons file which contains ospfd=no to ospfd=yes.</p>
+<p>let's run this playbook</p>
+<p><em><span style="color:#cc99ff;">cumulus@oob-mgmt-server:~$ ansible-playbook enableOspf.y</span><span style="color:#cc99ff;">aml</span></em></p>
+<p><em><span style="color:#cc99ff;">PLAY [all] *********************************************</span></em></p>
+<p><em><span style="color:#cc99ff;">TASK [Gathering Facts] *********************************</span></em><br />
+<em><span style="color:#cc99ff;">message.</span></em></p>
+<p><em><span style="color:#cc99ff;">changed: [spine02]</span></em><br />
+<em><span style="color:#cc99ff;">changed: [spine01]</span></em><br />
+<em><span style="color:#cc99ff;">changed: [leaf01]</span></em><br />
+<em><span style="color:#cc99ff;">changed: [leaf02]</span></em><br />
+<em><span style="color:#cc99ff;">changed: [leaf04]</span></em><br />
+<em><span style="color:#cc99ff;">changed: [leaf03]</span></em></p>
+<p><em><span style="color:#cc99ff;">PLAY RECAP *********************************************</span><span style="color:#cc99ff;">************************</span></em><br />
+<em><span style="color:#cc99ff;">leaf01 : ok=2 changed=1 unreac</span><span style="color:#cc99ff;">hable=0 failed=0</span></em><br />
+<em><span style="color:#cc99ff;">leaf02 : ok=2 changed=1 unreac</span><span style="color:#cc99ff;">hable=0 failed=0</span></em><br />
+<em><span style="color:#cc99ff;">leaf03 : ok=2 changed=1 unreac</span><span style="color:#cc99ff;">hable=0 failed=0</span></em><br />
+<em><span style="color:#cc99ff;">leaf04 : ok=2 changed=1 unreac</span><span style="color:#cc99ff;">hable=0 failed=0</span></em><br />
+<em><span style="color:#cc99ff;">spine01 : ok=2 changed=1 unreac</span><span style="color:#cc99ff;">hable=0 failed=0</span></em><br />
+<em><span style="color:#cc99ff;">spine02 : ok=2 changed=1 unreac</span><span style="color:#cc99ff;">hable=0 failed=0</span></em></p>
+<p>Let's try to enable all the switch ports on all the nodes, which are disabled by default, the interface information could be gathered for all the nodes one by using the 'netq show interface ' command on the mgmt server or by using 'net show interface all' on each node</p>
+<p>the playbook for enabling the interfaces is as follows</p>
+<p><em><span style="color:#cc99ff;">cumulus@oob-mgmt-server:~$ cat enableInterfaces.yaml</span></em><br />
+<em><span style="color:#cc99ff;">---</span></em><br />
+<em><span style="color:#cc99ff;">- hosts: spines</span></em><br />
+<em><span style="color:#cc99ff;">  tasks:</span></em><br />
+<em><span style="color:#cc99ff;">  - name: Enable switch ports on spines</span></em><br />
+<em><span style="color:#cc99ff;">    become: yes</span></em><br />
+<em><span style="color:#cc99ff;">    command: "ip link set {{ item }} down"</span></em><br />
+<em><span style="color:#cc99ff;">    with_items: [swp1, swp2, swp3, swp4, swp31, swp32]</span></em></p>
+<p><em><span style="color:#cc99ff;">- hosts: leaves</span></em><br />
+<em><span style="color:#cc99ff;">  tasks:</span></em><br />
+<em><span style="color:#cc99ff;">  - name: Enable switch ports on leaves</span></em><br />
+<em><span style="color:#cc99ff;">    become: yes</span></em><br />
+<em><span style="color:#cc99ff;">    command: "ip link set {{ item }} down"</span></em><br />
+<em><span style="color:#cc99ff;">    with_items: [swp1, swp2, swp44, swp45, swp46, swp47, swp48, swp49, swp50, swp51, swp52]</span></em></p>
+<p>We have two set of hosts and one task for each set, {{ item }} is a variable that would loop through each of the values on the list specified by with_items, the interface list on spines and leaves are different in this setup, hence the array would look different</p>
+<p><em><span style="color:#cc99ff;">cumulus@oob-mgmt-server:~$ ansible-playbook enableInterf</span><span style="color:#cc99ff;">aces.yaml</span></em></p>
+<p><em><span style="color:#cc99ff;">PLAY [spines] ******************************************</span></em><br />
+<em><span style="color:#cc99ff;">************************</span></em></p>
+<p><em><span style="color:#cc99ff;">TASK [Gathering Facts] *********************************</span></em><br />
+<em><span style="color:#cc99ff;">************************</span></em><br />
+<em><span style="color:#cc99ff;">ok: [spine01]</span></em><br />
+<em><span style="color:#cc99ff;">ok: [spine02]</span></em></p>
+<p><em><span style="color:#cc99ff;">TASK [Enable switch ports on spines] *******************</span></em><br />
+<em><span style="color:#cc99ff;">************************</span></em><br />
+<em><span style="color:#cc99ff;">changed: [spine01] =&gt; (item=swp1)</span></em><br />
+<em><span style="color:#cc99ff;">changed: [spine02] =&gt; (item=swp2)</span></em><br />
+<em><span style="color:#cc99ff;">changed: [spine02] =&gt; (item=swp3)</span></em><br />
+<em><span style="color:#cc99ff;">changed: [spine01] =&gt; (item=swp3)</span></em><br />
+<em><span style="color:#cc99ff;">changed: [spine02] =&gt; (item=swp4)</span></em><br />
+<em><span style="color:#cc99ff;">changed: [spine01] =&gt; (item=swp4)</span></em><br />
+<em><span style="color:#cc99ff;">changed: [spine02] =&gt; (item=swp31)</span></em><br />
+<em><span style="color:#cc99ff;">changed: [spine01] =&gt; (item=swp31)</span></em><br />
+<em><span style="color:#cc99ff;">changed: [spine02] =&gt; (item=swp32)</span></em><br />
+<em><span style="color:#cc99ff;">changed: [spine01] =&gt; (item=swp32)</span></em></p>
+<p><em><span style="color:#cc99ff;">PLAY [leaves] ******************************************</span></em><br />
+<em><span style="color:#cc99ff;">************************</span></em></p>
+<p><em><span style="color:#cc99ff;">TASK [Gathering Facts] *********************************</span></em><br />
+<em><span style="color:#cc99ff;">ok: [leaf02]</span></em><br />
+<em><span style="color:#cc99ff;">ok: [leaf03]</span></em><br />
+<em><span style="color:#cc99ff;">ok: [leaf04]</span></em><br />
+<em><span style="color:#cc99ff;">ok: [leaf01]</span></em></p>
+<p><em><span style="color:#cc99ff;">TASK [Enable switch ports on leaves] *******************</span></em><br />
+<em><span style="color:#cc99ff;">************************</span></em><br />
+<em><span style="color:#cc99ff;">changed: [leaf01] =&gt; (item=swp1)</span></em><br />
+<em><span style="color:#cc99ff;">changed: [leaf02] =&gt; (item=swp1)</span></em></p>
+<p>/* truncated output */</p>
+<p>we'll keep a separate post to try the nclu module (-m nclu), which is cumulus specific</p>
+<p>Thank you</p>
+<p>--end-of-post--</p>

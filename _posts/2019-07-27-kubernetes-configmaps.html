@@ -1,0 +1,72 @@
+---
+layout: post
+title: Kubernetes > ConfigMaps
+date: 2019-07-27 21:08:52.000000000 +05:30
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags:
+- kubernetes
+meta:
+  _publicize_job_id: '33334335031'
+  timeline_notification: '1564241936'
+  _rest_api_client_id: "-1"
+  _rest_api_published: '1'
+author:
+  login: shak1r
+  email: shakir@techie.com
+  display_name: shakir
+  first_name: ''
+  last_name: ''
+permalink: "/2019/07/27/kubernetes-configmaps/"
+---
+<p>ConfigMaps are Kubernetes objects that are dictionaries or maps holding a set of key-value pairs. For example, if there is a Pod and it needs to have some pre configured environment variables for the container, we can keep the Pod configuration/manifest simple by keeping all the environment variable related information separately as a ConfigMap, and we would then relate the Pod with the ConfigMap so that the Pod takes it's configuration from the ConfigMap. Likewise configMaps can also be used to store data as volumes in containers, similar to environment variables, we shall see both the cases.</p></p>
+<p>ConfigMaps can also be thought of like 'Secrets' which are again Kubernetes objects holding key value pairs, however the difference is that Secrets contain encrypted data and are more secure, where as ConfigMaps contain unencrypted data and are often used to store data that is not that sensitive.</p></p>
+<p>Let’s check the list of configmap(s) aka cm in the default namespace, in a newly launched Kubernetes cluster. There shouldn’t be any.</p>
+<p><img src="{{ site.baseurl }}/assets/null.png" width="368" height="50" alt="" title="" /></p></p>
+<p>Let’s check the list of configmaps in all the namespaces. There should be one in the kube-public namespace and a few in the kube-system namespace.</p>
+<p><img src="{{ site.baseurl }}/assets/null-1.png" width="601" height="196" alt="" title="" /></p></p>
+<p>Before creating a ConfigMap, let’s check the apiVersion value for it</p>
+<p><img src="{{ site.baseurl }}/assets/null-2.png" width="588" height="53" alt="" title="" /></p></p>
+<p>Let’s define a ConfigMap configuration as follows, with 3 key value pairs.</p>
+<p><img src="{{ site.baseurl }}/assets/null-3.png" width="601" height="280" alt="" title="" /></p></p>
+<p>To create the ConfigMap</p>
+<p><img src="{{ site.baseurl }}/assets/null-4.png" width="556" height="53" alt="" title="" /></p></p>
+<p>To check the ConfigMap, it shows DATA 3 because we have created 3 key value pairs.</p>
+<p><img src="{{ site.baseurl }}/assets/null-5.png" width="446" height="81" alt="" title="" /></p></p>
+<p>To view more details about the ConfigMap, it shows all the key value value pairs under the Data section.</p></p>
+<p><img src="{{ site.baseurl }}/assets/null-6.png" width="488" height="484" alt="" title="" /></p></p>
+<p>Let’s define a Pod where we can use this ConfigMap, to import environment variables into the container.</p>
+<p><img src="{{ site.baseurl }}/assets/null-7.png" width="601" height="352" alt="" title="" /></p>
+<p>To create the Pod.</p>
+<p><img src="{{ site.baseurl }}/assets/null-8.png" width="597" height="56" alt="" title="" /></p></p>
+<p>To check the Pod’s status.</p>
+<p><img src="{{ site.baseurl }}/assets/null-9.png" width="524" height="76" alt="" title="" /></p></p>
+<p>To login to the container and to print all it’s environment variables, there should be few predefined environment variables, in addition to what we imported (those with prefix liked) from the ConfigMap. Note that printenv is the command to print all the environment variables.</p>
+<p><img src="{{ site.baseurl }}/assets/null-10.png" width="601" height="313" alt="" title="" /></p></p>
+<p>To filter just the environment variables what we imported from the ConfigMap. Note that grep is a utility to filter output using search patterns.</p>
+<p><img src="{{ site.baseurl }}/assets/null-11.png" width="601" height="85" alt="" title="" /></p></p>
+<p>We are done with case1, where in we were able to import environment variables into the container using a ConfigMap. Let’s now focus on case2, to import data onto a volume attached to the container, from the ConfigMap.</p></p>
+<p>We shall use the same ConfigMap cm17 for this case. Let’s define a new Pod configuration as follows.</p>
+<p><img src="{{ site.baseurl }}/assets/null-12.png" width="601" height="288" alt="" title="" /></p></p>
+<p>To create the Pod</p>
+<p><img src="{{ site.baseurl }}/assets/null-13.png" width="592" height="52" alt="" title="" /></p></p>
+<p>To check the Pod’s status</p>
+<p><img src="{{ site.baseurl }}/assets/null-14.png" width="501" height="56" alt="" title="" /></p></p>
+<p>To login to the container</p>
+<p><img src="{{ site.baseurl }}/assets/null-15.png" width="554" height="28" alt="" title="" /></p></p>
+<p>Let’s view the contents inside the /tmp/apache directory. Note that this directory was specified as the mountPath in the container. We should see 3 files, each corresponding to a key value pair, the file’s name would be the key, and the file’s content would be the value.</p>
+<p><img src="{{ site.baseurl }}/assets/null-16.png" width="565" height="54" alt="" title="" /></p></p>
+<p>To see the contents of the files we can use the cat command, note that printf ‘\n’ is used to print a newline character (one extra line), so that the output looks good, and that semicolon ‘;’ is used to separate one command from another, it’s used to give multiple commands at once. We should now be able to see the corresponding values inside each file.</p>
+<p><img src="{{ site.baseurl }}/assets/null-17.png" width="601" height="148" alt="" title="" /></p></p>
+<p>Let’s do the clean up now,</p>
+<p>To exit out of the container</p>
+<p><img src="{{ site.baseurl }}/assets/null-18.png" width="444" height="76" alt="" title="" /></p></p>
+<p>To delete the Pods we created</p>
+<p><img src="{{ site.baseurl }}/assets/null-19.png" width="508" height="82" alt="" title="" /></p></p>
+<p>To delete the ConfigMap</p>
+<p><img src="{{ site.baseurl }}/assets/null-20.png" width="468" height="50" alt="" title="" /></p></p>
+<p>--end-of-post--</p>

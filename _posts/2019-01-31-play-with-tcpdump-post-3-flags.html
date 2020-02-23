@@ -1,0 +1,238 @@
+---
+layout: post
+title: play with tcp(dump) ~ post 3 (flags)
+date: 2019-01-31 16:35:47.000000000 +05:30
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags:
+- tcp
+- tcpdump
+meta:
+  _oembed_8c798ef87153489e50c814e222962830: "{{unknown}}"
+  _oembed_08dbc6e68f4d50cd0a8f1dfe016ca348: "{{unknown}}"
+  _oembed_cb934444851515fcff2643943df59d24: "{{unknown}}"
+  timeline_notification: '1548932750'
+  _rest_api_published: '1'
+  _rest_api_client_id: "-1"
+  _wpas_skip_18169689: '1'
+  _wpas_skip_18195285: '1'
+  _publicize_job_id: '27126641296'
+  _oembed_f3b3f7491b9f25f07e4f3c92f923dbda: "{{unknown}}"
+  _oembed_a9ce6ffcd722d12f6943a1dd13f24802: "{{unknown}}"
+  _oembed_408027e72c82e0b26ef9ddd86adf9e73: "{{unknown}}"
+  _oembed_73788485e7415a26f6cc320eeb1a5077: "{{unknown}}"
+author:
+  login: shak1r
+  email: shakir@techie.com
+  display_name: shakir
+  first_name: ''
+  last_name: ''
+permalink: "/2019/01/31/play-with-tcpdump-post-3-flags/"
+---
+<p>We shall have a look at flags in this post. A TCP segment would have a TCP header and a payload, let's have a look at the contents of a typical TCP header, and see where flags are placed</p>
+<hr />
+<p>Source Port (16b) + Dest. Port (16b) + Seq.no.(32b) + Ack. no.(32b) + Header length(4b) + <span style="color:#3366ff;">Flags(12b)</span> + Window size(16b) + Checksum(16b) + Urgent pointer(16b, typically 0s) + Options(variable, if present then as multiples of 32b)</p>
+<hr />
+<p>Note: Flags(12b) = Reserved(3b) + 9b</p>
+<p>The payload length is variable, payloads are not present in TCP acknowledgements</p>
+<p>This time, we shall login to a cumulus switch instead of a server<br />
+cumulus@oob-mgmt-server:~$ ssh leaf01</p>
+<p>Welcome to Cumulus VX (TM)</p>
+<p>Cumulus VX (TM) is a community supported virtual applian<br />
+ce designed for<br />
+experiencing, testing and prototyping Cumulus Networks'<br />
+latest technology.<br />
+For any questions or technical support, visit our commun<br />
+ity site at:<br />
+http://community.cumulusnetworks.com</p>
+<p>The registered trademark Linux (R) is used pursuant to a<br />
+sublicense from LMI,<br />
+the exclusive licensee of Linus Torvalds, owner of the m<br />
+ark on a world-wide<br />
+basis.<br />
+Last login: Thu Jan 31 04:25:38 2019 from 192.168.0.254<br />
+cumulus@leaf01:mgmt-vrf:~$</p>
+<p><span style="color:#3366ff;">To check the list of interfaces that could be listened by tcpdump</span><br />
+cumulus@leaf01:mgmt-vrf:~$ sudo tcpdump -D | grep Up<br />
+1.eth0 [Up, Running]<br />
+2.mgmt [Up, Running]<br />
+3.swp1 [Up, Running]<br />
+4.swp2 [Up, Running]<br />
+5.swp44 [Up, Running]<br />
+6.swp51 [Up, Running]<br />
+7.swp52 [Up, Running]<br />
+8.any (Pseudo-device that captures on all interfaces) [U<br />
+p, Running]<br />
+9.lo [Up, Running, Loopback]</p>
+<p><span style="color:#3366ff;">Let's capture some traffic associated with facebook.com</span>(I have opened a second session and issued <span style="color:#3366ff;">wget</span> facebook.com there)<br />
+cumulus@leaf01:mgmt-vrf:~$ sudo tcpdump <span style="color:#3366ff;">host</span> facebook.co<br />
+m -vv -w fb.cap<br />
+tcpdump: listening on eth0, link-type EN10MB (Ethernet),<br />
+capture size 262144 bytes<br />
+^C27 packets captured<br />
+31 packets received by filter<br />
+0 packets dropped by kernel</p>
+<p>the -vv flag in the command above, refers to verbose(with more detail than a single -v), we can give more vs such as -vvv for much more detailed output</p>
+<p><span style="color:#3366ff;">To read the captured information</span><br />
+cumulus@leaf01:mgmt-vrf:~$ sudo tcpdump -r fb.cap<br />
+reading from file fb.cap, link-type EN10MB (Ethernet)<br />
+07:17:36.004027 IP 192.168.0.11.49506 &gt; edge-star-mini-s<br />
+hv-01-ort2.facebook.com.http: <span style="color:#3366ff;">Flags [S]</span>, seq 2216692295,<br />
+win 29200, options [mss 1460,sackOK,TS val 10168606 ecr<br />
+0,nop,wscale 8], length 0<br />
+07:17:36.018152 IP edge-star-mini-shv-01-ort2.facebook.c<br />
+om.http &gt; 192.168.0.11.49506: <span style="color:#3366ff;">Flags [S.]</span>, seq 661084731,<br />
+ack 2216692296, win 27960, options [mss 1340,sackOK,TS<br />
+val 1782309311 ecr 10168606,nop,wscale 8], length 0<br />
+07:17:36.018285 IP 192.168.0.11.49506 &gt; edge-star-mini-s<br />
+hv-01-ort2.facebook.com.http: <span style="color:#3366ff;">Flags [.]</span>, ack 1, win 115,<br />
+options [nop,nop,TS val 10168620 ecr 1782309311], lengt<br />
+h 0<br />
+07:17:36.029357 IP 192.168.0.11.49506 &gt; edge-star-mini-s<br />
+hv-01-ort2.facebook.com.http: <span style="color:#3366ff;">Flags [P.]</span>, seq 1:111, ack<br />
+1, win 115, options [nop,nop,TS val 10168631 ecr 178230<br />
+9311], length 110: HTTP: GET / HTTP/1.1<br />
+07:17:36.042293 IP edge-star-mini-shv-01-ort2.facebook.c<br />
+om.http &gt; 192.168.0.11.49506: <span style="color:#3366ff;">Flags [.]</span>, ack 111, win 11<br />
+0, options [nop,nop,TS val 1782309335 ecr 10168631], len<br />
+gth 0<br />
+07:17:36.063512 IP edge-star-mini-shv-01-ort2.facebook.c<br />
+om.http &gt; 192.168.0.11.49506: <span style="color:#3366ff;">Flags [P.]</span>, seq 1:280, ack<br />
+111, win 110, options [nop,nop,TS val 1782309356 ecr 10<br />
+168631], length 279: HTTP: HTTP/1.1 302 Found<br />
+07:17:36.063615 IP 192.168.0.11.49506 &gt; edge-star-mini-s<br />
+hv-01-ort2.facebook.com.http: <span style="color:#3366ff;">Flags [.]</span>, ack 280, win 11<br />
+9, options [nop,nop,TS val 10168665 ecr 1782309356], len<br />
+gth 0<br />
+07:17:36.115393 IP 192.168.0.11.41070 &gt; edge-star-mini-s<br />
+hv-01-ort2.facebook.com.https: <span style="color:#3366ff;">Flags [S]</span>, seq 2727098825<br />
+, win 29200, options [mss 1460,sackOK,TS val 10168717 ec<br />
+r 0,nop,wscale 8], length 0<br />
+07:17:36.128956 IP edge-star-mini-shv-01-ort2.facebook.c<br />
+om.https &gt; 192.168.0.11.41070: <span style="color:#3366ff;">Flags [S.]</span>, seq 145541563<br />
+0, ack 2727098826, win 27960, options [mss 1340,sackOK,T<br />
+S val 3026271862 ecr 10168717,nop,wscale 8], length 0<br />
+07:17:36.129173 IP 192.168.0.11.41070 &gt; edge-star-mini-s<br />
+hv-01-ort2.facebook.com.https: <span style="color:#3366ff;">Flags [.]</span>, ack 1, win 115<br />
+, options [nop,nop,TS val 10168731 ecr 3026271862], leng<br />
+th 0<br />
+07:17:36.140935 IP 192.168.0.11.41070 &gt; edge-star-mini-s<br />
+hv-01-ort2.facebook.com.https: <span style="color:#3366ff;">Flags [P.]</span>, seq 1:524, ac<br />
+k 1, win 115, options [nop,nop,TS val 10168742 ecr 30262<br />
+71862], length 523<br />
+07:17:36.154935 IP edge-star-mini-shv-01-ort2.facebook.c<br />
+om.https &gt; 192.168.0.11.41070: <span style="color:#3366ff;">Flags [.]</span>, ack 524, win 1<br />
+14, options [nop,nop,TS val 3026271887 ecr 10168742], le<br />
+ngth 0<br />
+07:17:36.155120 IP edge-star-mini-shv-01-ort2.facebook.c<br />
+om.https &gt; 192.168.0.11.41070: <span style="color:#3366ff;">Flags [P.]</span>, seq 1:3043, a<br />
+ck 524, win 114, options [nop,nop,TS val 3026271888 ecr<br />
+10168742], length 3042<br />
+07:17:36.155368 IP 192.168.0.11.41070 &gt; edge-star-mini-s<br />
+hv-01-ort2.facebook.com.https: <span style="color:#3366ff;">Flags [.]</span>, ack 3043, win<br />
+138, options [nop,nop,TS val 10168757 ecr 3026271888], l<br />
+ength 0<br />
+07:17:36.158338 IP 192.168.0.11.41070 &gt; edge-star-mini-s<br />
+hv-01-ort2.facebook.com.https: <span style="color:#3366ff;">Flags [P.]</span>, seq 524:650,<br />
+ack 3043, win 138, options [nop,nop,TS val 10168760 ecr<br />
+3026271888], length 126<br />
+07:17:36.171835 IP edge-star-mini-shv-01-ort2.facebook.c<br />
+om.https &gt; 192.168.0.11.41070: <span style="color:#3366ff;">Flags [P.]</span>, seq 3043:3301<br />
+, ack 650, win 114, options [nop,nop,TS val 3026271905 e<br />
+cr 10168760], length 258<br />
+07:17:36.175206 IP 192.168.0.11.41070 &gt; edge-star-mini-s<br />
+hv-01-ort2.facebook.com.https: <span style="color:#3366ff;">Flags [P.]</span>, seq 650:789,<br />
+ack 3301, win 149, options [nop,nop,TS val 10168777 ecr<br />
+3026271905], length 139<br />
+07:17:36.208573 IP edge-star-mini-shv-01-ort2.facebook.c<br />
+om.https &gt; 192.168.0.11.41070: <span style="color:#3366ff;">Flags [P.]</span>, seq 3301:3679<br />
+, ack 789, win 118, options [nop,nop,TS val 3026271942 e<br />
+cr 10168777], length 378<br />
+07:17:36.219034 IP 192.168.0.11.49506 &gt; edge-star-mini-s<br />
+hv-01-ort2.facebook.com.http: <span style="color:#3366ff;">Flags [F.]</span>, seq 111, ack 2<br />
+80, win 119, options [nop,nop,TS val 10168821 ecr 178230<br />
+9356], length 0<br />
+07:17:36.232944 IP edge-star-mini-shv-01-ort2.facebook.c<br />
+om.http &gt; 192.168.0.11.49506: <span style="color:#3366ff;">Flags [F.]</span>, seq 280, ack 1<br />
+12, win 110, options [nop,nop,TS val 1782309525 ecr 1016<br />
+8821], length 0<br />
+07:17:36.233044 IP 192.168.0.11.49506 &gt; edge-star-mini-s<br />
+hv-01-ort2.facebook.com.http: <span style="color:#3366ff;">Flags [.]</span>, ack 281, win 11<br />
+9, options [nop,nop,TS val 10168835 ecr 1782309525], len<br />
+gth 0<br />
+07:17:36.247949 IP 192.168.0.11.41070 &gt; edge-star-mini-s<br />
+hv-01-ort2.facebook.com.https: <span style="color:#3366ff;">Flags [.]</span>, ack 3679, win<br />
+159, options [nop,nop,TS val 10168850 ecr 3026271942], l<br />
+ength 0<br />
+07:17:36.573929 IP 192.168.0.11.41070 &gt; edge-star-mini-s<br />
+hv-01-ort2.facebook.com.https: <span style="color:#3366ff;">Flags [F.]</span>, seq 789, ack<br />
+3679, win 159, options [nop,nop,TS val 10169175 ecr 3026<br />
+271942], length 0<br />
+07:17:36.586611 IP edge-star-mini-shv-01-ort2.facebook.c<br />
+om.https &gt; 192.168.0.11.41070: <span style="color:#3366ff;">Flags [P.]</span>, seq 3679:3710<br />
+, ack 790, win 118, options [nop,nop,TS val 3026272320 e<br />
+cr 10169175], length 31<br />
+07:17:36.587001 IP 192.168.0.11.41070 &gt; edge-star-mini-s<br />
+hv-01-ort2.facebook.com.https: <span style="color:#3366ff;">Flags [R]</span>, seq 2727099615<br />
+, win 0, length 0<br />
+07:17:36.587211 IP edge-star-mini-shv-01-ort2.facebook.c<br />
+om.https &gt; 192.168.0.11.41070: <span style="color:#3366ff;">Flags [F.]</span>, seq 3710, ack<br />
+790, win 118, options [nop,nop,TS val 3026272320 ecr 10<br />
+169175], length 0<br />
+07:17:36.587260 IP 192.168.0.11.41070 &gt; edge-star-mini-s<br />
+hv-01-ort2.facebook.com.https: <span style="color:#3366ff;">Flags [R]</span>, seq 2727099615<br />
+, win 0, length 0</p>
+<p>Let's explore the flags in sequence</p>
+<p>From our capture<br />
+192.168.0.11.49506 &gt; edge-star-mini-shv-01-ort2.facebook.com.http: <span style="color:#3366ff;">Flags [S]<br />
+S represents SYN flag<br />
+</span>edge-star-mini-shv-01-ort2.facebook.com.http &gt; 192.168.0.11.49506: <span style="color:#3366ff;">Flags [S.]<br />
+. represents ACK, so this is a SYN+ACK packet</span><br />
+192.168.0.11.49506 &gt; edge-star-mini-shv-01-ort2.facebook.com.http: <span style="color:#3366ff;">Flags [.]<br />
+Ack from client to server, 3-way HandShake is completed here for http<br />
+</span>192.168.0.11.49506 &gt; edge-star-mini-shv-01-ort2.facebook.com.http: <span style="color:#3366ff;">Flags [P.]<br />
+Push + Ack<br />
+</span>edge-star-mini-shv-01-ort2.facebook.com.http &gt; 192.168.0.11.49506: <span style="color:#3366ff;">Flags [.]<br />
+</span>edge-star-mini-shv-01-ort2.facebook.com.http &gt; 192.168.0.11.49506: <span style="color:#3366ff;">Flags [P.]<br />
+</span>192.168.0.11.49506 &gt; edge-star-mini-shv-01-ort2.facebook.com.http: <span style="color:#3366ff;">Flags [.]<br />
+</span>192.168.0.11.41070 &gt; edge-star-mini-shv-01-ort2.facebook.com.https: <span style="color:#3366ff;">Flags [S]<br />
+3-way handshake starts for HTTPS<br />
+</span>edge-star-mini-shv-01-ort2.facebook.com.https &gt; 192.168.0.11.41070: <span style="color:#3366ff;">Flags [S.]<br />
+</span>192.168.0.11.41070 &gt; edge-star-mini-shv-01-ort2.facebook.com.https: <span style="color:#3366ff;">Flags [.]<br />
+3-way handshake ends for HTTPS<br />
+</span>192.168.0.11.41070 &gt; edge-star-mini-shv-01-ort2.facebook.com.https: <span style="color:#3366ff;">Flags [P.]<br />
+</span>edge-star-mini-shv-01-ort2.facebook.com.https &gt; 192.168.0.11.41070: <span style="color:#3366ff;">Flags [.]<br />
+</span>edge-star-mini-shv-01-ort2.facebook.com.https &gt; 192.168.0.11.41070: <span style="color:#3366ff;">Flags [P.]<br />
+</span>192.168.0.11.41070 &gt; edge-star-mini-shv-01-ort2.facebook.com.https: <span style="color:#3366ff;">Flags [.]<br />
+</span>192.168.0.11.41070 &gt; edge-star-mini-shv-01-ort2.facebook.com.https: <span style="color:#3366ff;">Flags [P.]<br />
+</span>edge-star-mini-shv-01-ort2.facebook.com.https &gt; 192.168.0.11.41070: <span style="color:#3366ff;">Flags [P.]<br />
+</span>192.168.0.11.41070 &gt; edge-star-mini-shv-01-ort2.facebook.com.https: <span style="color:#3366ff;">Flags [P.]<br />
+</span>edge-star-mini-shv-01-ort2.facebook.com.https &gt; 192.168.0.11.41070: <span style="color:#3366ff;">Flags [P.]<br />
+</span>192.168.0.11.49506 &gt; edge-star-mini-shv-01-ort2.facebook.com.http: <span style="color:#3366ff;">Flags [F.]<br />
+Fin + Ack, client to server, http<br />
+</span>edge-star-mini-shv-01-ort2.facebook.com.http &gt; 192.168.0.11.49506: <span style="color:#3366ff;">Flags [F.]<br />
+</span>192.168.0.11.49506 &gt; edge-star-mini-shv-01-ort2.facebook.com.http: <span style="color:#3366ff;">Flags [.]<br />
+</span>192.168.0.11.41070 &gt; edge-star-mini-shv-01-ort2.facebook.com.https: <span style="color:#3366ff;">Flags [.]<br />
+</span>192.168.0.11.41070 &gt; edge-star-mini-shv-01-ort2.facebook.com.https: <span style="color:#3366ff;">Flags [F.]<br />
+Fin + Ack, client to server, https<br />
+</span>edge-star-mini-shv-01-ort2.facebook.com.https &gt; 192.168.0.11.41070: <span style="color:#3366ff;">Flags [P.]<br />
+</span>192.168.0.11.41070 &gt; edge-star-mini-shv-01-ort2.facebook.com.https: <span style="color:#3366ff;">Flags [R]<br />
+Reset, from client to server, https<br />
+</span>edge-star-mini-shv-01-ort2.facebook.com.https &gt; 192.168.0.11.41070: <span style="color:#3366ff;">Flags [F.]<br />
+</span>192.168.0.11.41070 &gt; edge-star-mini-shv-01-ort2.facebook.com.https: <span style="color:#3366ff;">Flags [R]</span></p>
+<p>Let's see the Hex values for these flags<br />
+The contents of the Flags field is as follows:<br />
+Flags (12b) = Reserved(3b) + Nonce + CWR + ECN-Echo + Urgent + Ack(.) + (P)ush + (R)eset + (S)yn + (F)in.,<br />
+!Mnemonic to remember the last 6 bits: <span style="color:#3366ff;">'Unskilled Attackers Pester Real Security Folks'</span></p>
+<p>So [S] = 000 0 - 0 0 0 0 - 0 0 1 0 = 0x 0 0 2 = 2 (in decimal)<br />
+[S.] = 000 0 - 0 0 0 1 - 0 0 1 0 = 0x 0 1 2 = 18<br />
+[.] = 000 0 - 0 0 0 1 - 0 0 0 0 = 0x 0 1 0 = 16<br />
+[P.] = 000 0 + 0 0 0 1 + 1 0 0 0 = 0x 0 1 8 = 24<br />
+[F.] = 000 0 + 0 0 0 1 + 0 0 0 1 = 0x 0 1 1 = 17<br />
+[R] = 000 0 + 0 0 0 0 + 0 1 0 0 = 0x 0 0 4 = 4</p>
+<p>Note: 0x denotes Hexadecimal notation</p>
+<p>--end-of-post--</p>

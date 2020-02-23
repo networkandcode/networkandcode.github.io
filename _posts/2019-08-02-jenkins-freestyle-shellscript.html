@@ -1,0 +1,109 @@
+---
+layout: post
+title: Jenkins > Freestyle > Shellscript
+date: 2019-08-02 07:54:58.000000000 +05:30
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags:
+- jenkins
+meta:
+  _publicize_job_id: '33545480007'
+  timeline_notification: '1564712702'
+author:
+  login: shak1r
+  email: shakir@techie.com
+  display_name: shakir
+  first_name: ''
+  last_name: ''
+permalink: "/2019/08/02/jenkins-freestyle-shellscript/"
+---
+<ul>
+<li>We can use Jenkins to run custom shell commands</li>
+<li>Here, we are using a standalone installation of Jenkins on Ubuntu 19.04</li>
+<li>Let's say we want to install nginx on the same machine</li>
+<li>To check if nginx is already installed</li>
+</ul>
+<p>networkandcode@jenkins-practice:~$ apt-cache policy nginx</p>
+<p>nginx:</p>
+<p>Installed: (none)</p>
+<p>Candidate: 1.15.9-0ubuntu1</p>
+<p>Version table:</p>
+<p>1.15.9-0ubuntu1 500</p>
+<p>500 http://us-central1.gce.archive.ubuntu.com/ubuntu disco/main amd64 Packages</p>
+<p>networkandcode@jenkins-practice:~$ which nginx</p>
+<p>networkandcode@jenkins-practice:~$</p>
+<p> </p>
+<ul>
+<li>Two things confirm nginx is not present:
+<ul>
+<li>The Installed: (none) in the first command</li>
+<li>no output in the 'which' command</li>
+</ul>
+</li>
+<li>The 'which' command is also useful for this check, if we have installed an application directly with out the use of apt</li>
+<li>Let's create a directory to keep shell scripts, under the .jenkins directory</li>
+</ul>
+<p>networkandcode@jenkins-practice:~$ mkdir ~/.jenkins/shellscripts</p>
+<p> </p>
+<ul>
+<li>Let's create a shell script containing a single command to install nginx</li>
+</ul>
+<p>networkandcode@jenkins-practice:~$ cat &gt; ~/.jenkins/shellscripts/install-nginx.sh</p>
+<p>apt install nginx -y</p>
+<p>^C</p>
+<p> </p>
+<ul>
+<li>To give executable permission, so that script can be run</li>
+</ul>
+<p>networkandcode@jenkins-practice:~$ chmod +x ~/.jenkins/shellscripts/install-nginx.sh</p>
+<p> </p>
+<ul>
+<li>Let's create a new job on Jenkins</li>
+<li>Note Jobs and Projects mean the same in Jenkins</li>
+<li>On the Jenkin's dashboard select New Item &gt; Name it for example 'job1-install-nginx' &gt; Freestyle project &gt; Ok</li>
+<li>Then, General &gt; Advanced &gt; Use custom work space &gt; Directory &gt; shellscripts</li>
+<li>Then, General &gt; Build &gt; Add build step &gt; Execute shell &gt; ./install-nginx.sh</li>
+<li>Save</li>
+<li>The Job is now created</li>
+<li>Let's build it a.k.a run the shell script</li>
+<li>Click 'Build now' on the left panel of the page</li>
+<li>Build 1 is scheduled to run</li>
+<li>But there was a red circle near #1 (Build 1) when I clicked it and further on Console Output, I saw the following error</li>
+</ul>
+<p>E: Could not open lock file /var/lib/dpkg/lock-frontend - open (13: Permission denied)</p>
+<p>E: Unable to acquire the dpkg frontend lock (/var/lib/dpkg/lock-frontend), are you root?</p>
+<p> </p>
+<ul>
+<li>I should now edit the file to put sudo as a prefix to the command</li>
+<li>It should now look like:</li>
+</ul>
+<p>networkandcode@jenkins-practice:~$ cat ~/.jenkins/shellscripts/install-nginx.sh</p>
+<p>sudo apt install nginx -y</p>
+<p> </p>
+<ul>
+<li>Let's run the build again</li>
+<li>Cick Back to Project and see that you are at the right project - click Build Now</li>
+<li>Build 2 is now successful as there was blue circle near #2</li>
+<li>Let's verify the installation on nginx on the linux terminal, like we did before</li>
+</ul>
+<p>networkandcode@jenkins-practice:~$ apt-cache policy nginx</p>
+<p>nginx:</p>
+<p>Installed: 1.15.9-0ubuntu1</p>
+<p>Candidate: 1.15.9-0ubuntu1</p>
+<p>Version table:</p>
+<p>*** 1.15.9-0ubuntu1 500</p>
+<p>500 http://us-central1.gce.archive.ubuntu.com/ubuntu disco/main amd64 Packages</p>
+<p>100 /var/lib/dpkg/status</p>
+<p>networkandcode@jenkins-practice:~$ which nginx</p>
+<p>/usr/sbin/nginx</p>
+<p> </p>
+<ul>
+<li>So the job and hence the installation is successful</li>
+</ul>
+<p>--end-of-post--</p>
+<p><!-- wp:paragraph --></p>
+<p><!-- /wp:paragraph --></p>

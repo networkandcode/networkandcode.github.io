@@ -1,0 +1,93 @@
+---
+layout: post
+title: "(e)bgp unnumbered with linux"
+date: 2018-01-05 17:55:38.000000000 +05:30
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags:
+- bgp
+- cumulus
+- linux
+- unnumbered
+meta:
+  _oembed_81f77c3e18b3e4adbf356fb90e3effba: "{{unknown}}"
+  _oembed_e821723d2bbc0aa75d71c7cb94271562: "{{unknown}}"
+  _oembed_0f1ea29111c78069c99924cfbcdaef27: "{{unknown}}"
+  _oembed_9ef48df9a432f0d9001170f11e653a58: "{{unknown}}"
+  switch_like_status: '1'
+  _rest_api_published: '1'
+  _rest_api_client_id: "-1"
+  _wpas_skip_18169689: '1'
+  _wpas_skip_18195285: '1'
+  _publicize_job_id: '13239088200'
+  _oembed_78346dd8d699a50752ca33b614fd88df: "{{unknown}}"
+  _oembed_06ec9d9553005c3c21eb97197ce41920: "{{unknown}}"
+  _oembed_104b6fb4f42029955debf11cce141344: "{{unknown}}"
+  _oembed_526e973634ec8b44a7f8a80b1b2b3177: "{{unknown}}"
+  _oembed_987728285ddd6a03570f9042a0fbe818: "{{unknown}}"
+  _oembed_3c80fc1f13c89e1230eef2632ad20d7e: "{{unknown}}"
+  _oembed_549b25def42410df5783b54203756cfc: "{{unknown}}"
+  _oembed_339e37f1f3d39e7729c1813d3cb8eb11: "{{unknown}}"
+  _oembed_e0003c369cd8f148bb357558aef30c91: "{{unknown}}"
+  _oembed_df1801379f9d5d62453e4cac9428fb90: "{{unknown}}"
+  _oembed_3b18c3cbe018c9b8200a882f6e5e801c: "{{unknown}}"
+  _oembed_9d0f04fec372294ee2f250f429bee15f: "{{unknown}}"
+  _oembed_85415f0a87da0f99db4f51571451e613: "{{unknown}}"
+  _oembed_354971b0eb78304de65ac259e91c36ef: "{{unknown}}"
+author:
+  login: shak1r
+  email: shakir@techie.com
+  display_name: shakir
+  first_name: ''
+  last_name: ''
+permalink: "/2018/01/05/ebgp-unnumbered-with-linux/"
+---
+<p>overview</p>
+<p>clos 2 tier topology with 2 spines and 2 leaves</p>
+<p><img class="alignnone wp-image-456 size-full" src="{{ site.baseurl }}/assets/bgp-unnumbered.png" alt="bgp unnumbered.png" width="299" height="317" /></p>
+<p>there is an 802.3ad lacp lag / bond between leaf1 and leaf2</p>
+<p>private asns are used, which is normal in the datacenter, both the spines would have the same asn</p>
+<p>unnumbered peering is actually achieved by the readily available link local ipv6 addresses, avoiding the need of explicitly configuring ip addresses on the interfaces</p>
+<p>.....</p>
+<p>ip addressing</p>
+<p>loopback lo: spine1 - 192.168.1.11/32, spine2 - 12/32, leaf1 - 21/32, leaf2 - 22/32</p>
+<p>vlan 100: leaf1 - 192.168.100.21/24, leaf2 - 22/24, host1 - 31/24, host2 - 32/24</p>
+<p>.....</p>
+<p>nclu configuration</p>
+<p>example: leaf1</p>
+<p>net add hostname leaf1</p>
+<p>net add loopback lo ip address 192.168.1.21/32</p>
+<p>net add vlan 100 ip address 192.168.100.21/24    #connection to the host</p>
+<p>net add interface swp5 bridge access 100</p>
+<p>net add bond leaf1_leaf2 bond slaves swp3-4    #name of the bond is leaf1_leaf2</p>
+<p>net add bgp autonomous-system 65501<br />
+net add bgp router-id 192.168.1.21<br />
+net add bgp neighbor swp1-2,leaf1_leaf2 remote-as external    #this is the unnumbered config, no ips, only interfaces</p>
+<p>net add bgp network 192.168.1.21/32    #to advertise the loopback</p>
+<p>net add bgp network 192.168.100.21/24    #to advertise vlan 100</p>
+<p>net commit</p>
+<p>.....</p>
+<p>configuration on host</p>
+<p>example: host2</p>
+<p>cat /etc/network/interfaces</p>
+<p>auto eth0<br />
+iface eth0 inet static<br />
+address 192.168.100.32<br />
+netmask 255.255.255.0<br />
+gateway 192.168.100.22</p>
+<p>.....</p>
+<p>verification:</p>
+<p>net show bgp {ip}<br />
+net show bgp summary<br />
+net show bgp neighbor<br />
+net show route {ip}<br />
+ip neighbor    #169.254.0.1 is reserved for bgp unnumbered</p>
+<p>.....</p>
+<p>reference</p>
+<p>https://cumulusnetworks.com</p>
+<p>https://tools.ietf.org/html/rfc5549</p>
+<p>--end-of-post--</p>

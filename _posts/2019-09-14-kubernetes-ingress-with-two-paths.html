@@ -1,0 +1,39 @@
+---
+layout: post
+title: Kubernetes > Ingress with two paths
+date: 2019-09-14 13:09:49.000000000 +05:30
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags: []
+meta:
+  _rest_api_published: '1'
+  _rest_api_client_id: '11'
+  _publicize_job_id: '35271305486'
+  timeline_notification: '1568446794'
+author:
+  login: shak1r
+  email: shakir@techie.com
+  display_name: shakir
+  first_name: ''
+  last_name: ''
+permalink: "/2019/09/14/kubernetes-ingress-with-two-paths/"
+---
+<p>Prerequisites: Service, Ingress</p></p>
+<p>Let’s define and launch two deployments that would create 4 replicas of nginx and 4 replicas of helloworld image</p></p>
+<p><img src="{{ site.baseurl }}/assets/null.png" width="601" height="398" alt="" title="" /></p>
+<p><img src="{{ site.baseurl }}/assets/null-1.png" width="601" height="381" alt="" title="" /></p></p>
+<p>Let’s expose these deployments using NodePort services one for each<br />
+<img src="{{ site.baseurl }}/assets/null-2.png" width="601" height="325" alt="" title="" /><img src="{{ site.baseurl }}/assets/null-3.png" width="601" height="284" alt="" title="" /></p></p>
+<p>We could know check the services’ status and create an Ingress object with two http paths one for each service, these are defined at spec &gt; rules of the Ingress manifest<br />
+<img src="{{ site.baseurl }}/assets/null-4.png" width="601" height="338" alt="" title="" /></p></p>
+<p>There are two URL Paths here, so when someone access the public IP of the Ingress object, they should land on the nginx home page, as the filtering path is /*. Similarly when the public ingress IP is accessed in the form /v2/, they should land on the v2 homepage of the hello app, note that this path (/v2) should already be existing in the container which can be checked by curling one of the Pod IPs like curl /v2/, however here we don’t have to  be concerned about that as the hello app v2 comes with the /v2 path. Please note that there should be a ‘/’ after v2</p></p>
+<p>Let’s create the Ingress object, and check it’s status<img src="{{ site.baseurl }}/assets/null-5.png" width="601" height="124" alt="" title="" /></p></p>
+<p>We should now be able to access the nginx and hello app applications, please enter the public IP on the browser</p></p>
+<p>nginx at <img src="{{ site.baseurl }}/assets/null-6.png" width="601" height="180" alt="" title="" /></p>
+<p>Hello app at /v2/</p>
+<p><img src="{{ site.baseurl }}/assets/null-7.png" width="529" height="140" alt="" title="" /></p></p>
+<p>--end-of-post--</p>

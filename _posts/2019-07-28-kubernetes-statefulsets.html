@@ -1,0 +1,60 @@
+---
+layout: post
+title: Kubernetes > Sticky identity with StatefulSets
+date: 2019-07-28 13:08:00.000000000 +05:30
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags: []
+meta:
+  timeline_notification: '1564299485'
+  _rest_api_published: '1'
+  _rest_api_client_id: '11'
+  _publicize_job_id: '33354934431'
+author:
+  login: shak1r
+  email: shakir@techie.com
+  display_name: shakir
+  first_name: ''
+  last_name: ''
+permalink: "/2019/07/28/kubernetes-statefulsets/"
+---
+<p>StatefulSet(s) AKA sts are controller objects in Kubernetes. Let’s check the apiVersion and kind values for this object.</p>
+<p><img src="{{ site.baseurl }}/assets/null-21.png" width="601" height="140" alt="" title="" /></p>
+<p>We need to first create a headless service and then associate that with the stateful set.</p>
+<p>Headless service is nothing but a service AKA svc without a ClusterIP. It’s ClusterIP has to be specified as None. Let’s define a headless service configuration.</p>
+<p><img src="{{ site.baseurl }}/assets/null-22.png" width="601" height="229" alt="" title="" /></p>
+<p>Let’s create the service</p>
+<p><img src="{{ site.baseurl }}/assets/null-23.png" width="566" height="56" alt="" title="" /></p>
+<p>To check the service’s status, there shouldn’t be a ClusterIP as it’s a headless service</p>
+<p><img src="{{ site.baseurl }}/assets/null-24.png" width="601" height="94" alt="" title="" /></p>
+<p>However there shouldn’t be any endpoints for the service yet, as the Pods have not yet started. Endpoint(s) AKA ep are nothing but Pod IPs and Ports mapped with the service. Endpoints are also Kubernetes objects and they hold the same name as the service, hence the Endpoint name in this case is also svc27</p>
+<p><img src="{{ site.baseurl }}/assets/null-25.png" width="444" height="110" alt="" title="" /></p>
+<p>Let’s define an sts configuration, and map the created service here</p>
+<p><img src="{{ site.baseurl }}/assets/null-26.png" width="601" height="412" alt="" title="" /></p>
+<p>To create the StatefulSet</p>
+<p><img src="{{ site.baseurl }}/assets/null-27.png" width="562" height="88" alt="" title="" /></p>
+<p>Let’s check sts27’s status, it shows READY 3/3, which says all the 3 Pods are running</p>
+<p><img src="{{ site.baseurl }}/assets/null-28.png" width="454" height="112" alt="" title="" /></p>
+<p>The service should now have endpoints as the Pods are created, there are 3 endpoints i.e. 3 Pods, however there are no ports specified in the endpoints because we have not mentioned any ports in the service configuration</p>
+<p><img src="{{ site.baseurl }}/assets/null-29.png" width="508" height="97" alt="" title="" /></p>
+<p>Let’s check these 3 Pods now, they have ordered names, the first pod has suffix -0, second one with suffix -1 and third one with suffix -2. Hence the names would start with 0 and go in ascending order. The numbers 0, 1, 2 are called ordinal indexes</p>
+<p><img src="{{ site.baseurl }}/assets/null-30.png" width="501" height="168" alt="" title="" /></p>
+<p>If we delete any of the Pod, a new Pod will be created with the same name. Let’s try deleting the first pod sts27-0, we should see that the StatefulSet should create another Pod with the same name</p>
+<p><img src="{{ site.baseurl }}/assets/null-31.png" width="518" height="213" alt="" title="" /></p>
+<p>Also note that the containers inside the Pods would also have the same hostnames as the Pod names. Let’s login to the container and check it’s hostname. Note that ‘hostname’ is the command to check the hostname of the container, however it’s hostname can also seen from the prompt, the prompt ‘root@sts27-0:’ tells the hostname is sts27-0</p>
+<p><img src="{{ site.baseurl }}/assets/null-32.png" width="549" height="112" alt="" title="" /></p>
+<p>The Pods will have DNS names with the format StatefulSet.Service, for example the Pod sts27-2 would have the DNS name as sts27-2.svc27. We can use the nslookup utility to check DNS names and corresponding IPs. We will do this from within the container sts27-0</p>
+<p><img src="{{ site.baseurl }}/assets/null-33.png" width="508" height="46" alt="" title="" /></p>
+<p>If nslookup is not working, it can be installed as follows</p>
+<p><img src="{{ site.baseurl }}/assets/null-34.png" width="561" height="24" alt="" title="" /></p>
+<p><img src="{{ site.baseurl }}/assets/null-35.png" width="601" height="24" alt="" title="" /></p>
+<p>Let’s now try to check the DNS entry for one of the Pods’ IP</p>
+<p><img src="{{ site.baseurl }}/assets/null-36.png" width="601" height="37" alt="" title="" /></p>
+<p>So the complete DNS name of the Pod has this format StatefulSet.Service.default.svc.cluster.local</p>
+<p>As we are aware however the same DNS name also has a shorter alias which takes the form StatefulSet.Service for example sts27-2.svc27<img src="{{ site.baseurl }}/assets/null-37.png" width="601" height="125" alt="" title="" /></p>
+<p>As we are aware that the Pod’s name doesn’t change even when restarted, thus the domain name is also not going to change and is going to be stable, however the Pod IPs might change</p>
+<p>--end-of-post--</p>

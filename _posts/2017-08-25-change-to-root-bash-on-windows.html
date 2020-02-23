@@ -1,0 +1,42 @@
+---
+layout: post
+title: change to root - bash on windows
+date: 2017-08-25 09:27:04.000000000 +05:30
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags:
+- linux
+meta:
+  _rest_api_published: '1'
+  _rest_api_client_id: "-1"
+  _publicize_job_id: '8612540700'
+  switch_like_status: '1'
+author:
+  login: shak1r
+  email: shakir@techie.com
+  display_name: shakir
+  first_name: ''
+  last_name: ''
+permalink: "/2017/08/25/change-to-root-bash-on-windows/"
+---
+<p>#root password isn't set up yet</p>
+<p>user@pc:/mnt/c/Windows/System32$ su - root<br />
+Password:<br />
+su: Authentication failure</p>
+<p>..</p>
+<p>#setup a root password</p>
+<p>user@pc:/mnt/c/Windows/System32$ sudo passwd root<br />
+user: unable to resolve host pc<br />
+Enter new UNIX password:<br />
+Retype new UNIX password:<br />
+passwd: password updated successfully</p>
+<p>..</p>
+<p>#login as root<br />
+user@pc:/mnt/c/Windows/System32$ su - root<br />
+Password:</p>
+<p>root@pc:~#</p>
+<p>--end-of-document--</p>

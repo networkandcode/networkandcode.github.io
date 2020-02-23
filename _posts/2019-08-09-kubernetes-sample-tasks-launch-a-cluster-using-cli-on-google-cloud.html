@@ -1,0 +1,375 @@
+---
+layout: post
+title: Kubernetes > Sample tasks > Launch a cluster using CLI on Google Cloud
+date: 2019-08-09 12:11:04.000000000 +05:30
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags: []
+meta:
+  _rest_api_published: '1'
+  timeline_notification: '1565332867'
+  _rest_api_client_id: "-1"
+  _publicize_job_id: '33845624634'
+author:
+  login: shak1r
+  email: shakir@techie.com
+  display_name: shakir
+  first_name: ''
+  last_name: ''
+permalink: "/2019/08/09/kubernetes-sample-tasks-launch-a-cluster-using-cli-on-google-cloud/"
+---
+<p><!-- wp:paragraph --></p>
+<p>OS on all the instances: Ubuntu 1904</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Task: Create a Kubernetes cluster using VMs, not GKE</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>We would execute commands from a controller instance, this can be your own machine or a VM on your machine or on Google cloud or some other cloud, however I have this on the same project in GCP, where k8s instances would be launched too</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>If you prefer to launch the controller instance on gcloud, the procedure is as follows</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Click on <img src="{{ site.baseurl }}/assets/null-6.png" width="24" height="20" alt="" title="" />at the top right corner of the Google cloud dashboard</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:table --></p>
+<figure class="wp-block-table">
+<table>
+<tbody>
+<tr>
+<td>
+<p>shakir@cloudshell:~ gcloud config set compute/region us-central1<br />
+shakir@cloudshell:~ gcloud config set compute/zone us-central1-a<br />
+shakir@cloudshell:~ gcloud compute instances create controller --image-family ubuntu-1904 --image-project ubuntu-os-cloud</p>
+</td>
+</tr>
+</tbody>
+</table>
+</figure>
+<p><!-- /wp:table --></p>
+<p><!-- wp:paragraph --></p>
+<p>Install gcloud on the controller instance</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:table --></p>
+<figure class="wp-block-table">
+<table>
+<tbody>
+<tr>
+<td>
+<p>shakir@controller:~ cat &gt; install-gcloud.sh &lt;&lt;EOF<br />
+# Add the Cloud SDK distribution URI as a package source<br />
+echo "deb http://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list<br />
+# Import the Google Cloud Platform public key<br />
+curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -<br />
+# Update the package list and install the Cloud SDK<br />
+sudo apt-get update &amp;&amp; sudo apt-get install google-cloud-sdk -y</p>
+<p>EOF</p></p>
+<p>shakir@controller:~ chmod +x install-gcloud.sh</p>
+<p>shakir@controller:~ ./install-gcloud.sh</p>
+</td>
+</tr>
+</tbody>
+</table>
+</figure>
+<p><!-- /wp:table --></p>
+<p><!-- wp:paragraph --></p>
+<p>To login to google cloud, and to set region and zone</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:table --></p>
+<figure class="wp-block-table">
+<table>
+<tbody>
+<tr>
+<td>
+<p>shakir@controller:~ gcloud auth login<br />
+shakir@controller:~ gcloud config set compute/region us-central1<br />
+shakir@controller:~ gcloud config set compute/zone us-central1-a</p>
+</td>
+</tr>
+</tbody>
+</table>
+</figure>
+<p><!-- /wp:table --></p>
+<p><!-- wp:paragraph --></p>
+<p>To create a kubernetes master instance and 3 node instances, all with ubuntu 1904</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:table --></p>
+<figure class="wp-block-table">
+<table>
+<tbody>
+<tr>
+<td>
+<p>shakir@controller:~ gcloud compute instances create k8s-master --image-family ubuntu-1904 --image-project ubuntu-os-cloud<br />
+shakir@controller:~ gcloud compute instances create k8s-node1 --image-family ubuntu-1904 --image-project ubuntu-os-cloud<br />
+shakir@controller:~ gcloud compute instances create k8s-node2 --image-family ubuntu-1904 --image-project ubuntu-os-cloud<br />
+shakir@controller:~ gcloud compute instances create k8s-node3 --image-family ubuntu-1904 --image-project ubuntu-os-cloud</p>
+</td>
+</tr>
+</tbody>
+</table>
+</figure>
+<p><!-- /wp:table --></p>
+<p><!-- wp:paragraph --></p>
+<p>Install Docker on Master and Nodes</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:table --></p>
+<figure class="wp-block-table">
+<table>
+<tbody>
+<tr>
+<td>
+<p>shakir@controller:~ nano install-docker.sh</p>
+<p>sudo su</p>
+<p>groupadd docker</p>
+<p>usermod -aG docker $USER</p>
+<p># Install Docker CE</p>
+<p>## Set up the repository:</p>
+<p>### Install packages to allow apt to use a repository over HTTPS</p>
+<p>apt-get update &amp;&amp; apt-get install apt-transport-https ca-certificates curl software-properties-common -y</p>
+<p>### Add Docker’s official GPG key</p>
+<p>curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -</p>
+<p>### Add Docker apt repository.</p>
+<p>add-apt-repository \</p>
+<p>"deb [arch=amd64] https://download.docker.com/linux/ubuntu \</p>
+<p>$(lsb_release -cs) \</p>
+<p>stable"</p>
+<p>## Install Docker CE.</p>
+<p>apt-get update &amp;&amp; apt-get install docker-ce=18.06.2~ce~3-0~ubuntu -y</p>
+<p># Setup daemon.</p>
+<p>cat &gt; /etc/docker/daemon.json &lt;&lt;EOF</p>
+<p>{</p>
+<p>"exec-opts": ["native.cgroupdriver=systemd"],</p>
+<p>"log-driver": "json-file",</p>
+<p>"log-opts": {</p>
+<p>"max-size": "100m"</p>
+<p>},</p>
+<p>"storage-driver": "overlay2"</p>
+<p>}</p>
+<p>EOF</p>
+<p>mkdir -p /etc/systemd/system/docker.service.d</p>
+<p># Restart docker.</p>
+<p>systemctl daemon-reload</p>
+<p>systemctl restart docker
+<p><span style="font-size:inherit;font-family:inherit;font-weight:inherit;background-color:rgb(255,255,255);">shakir@controller:~ cat install-docker.sh | gcloud compute ssh k8s-master</span></p>
+<p>
+<p>shakir@controller:~ cat install-docker.sh | gcloud compute ssh k8s-node1</p>
+<p>shakir@controller:~ cat install-docker.sh | gcloud compute ssh k8s-node2</p>
+<p>shakir@controller:~ cat install-docker.sh | gcloud compute ssh k8s-node3</p>
+</td>
+</tr>
+</tbody>
+</table>
+</figure>
+<p><!-- /wp:table --></p>
+<p><!-- wp:paragraph --></p>
+<p>Add the user to docker group, so as to execute docker commands without sudo</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:table --></p>
+<figure class="wp-block-table">
+<table>
+<tbody>
+<tr>
+<td>
+<p>shakir@controller:~ echo "sudo usermod -aG docker $USER" | gcloud compute ssh k8s-node1<br />
+shakir@controller:~ echo "sudo usermod -aG docker $USER" | gcloud compute ssh k8s-node1<br />
+shakir@controller:~ echo "sudo usermod -aG docker $USER" | gcloud compute ssh k8s-node1</p>
+</td>
+</tr>
+</tbody>
+</table>
+</figure>
+<p><!-- /wp:table --></p>
+<p><!-- wp:paragraph --></p>
+<p>Install kubeadm, kubectl on master</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:table --></p>
+<figure class="wp-block-table">
+<table>
+<tbody>
+<tr>
+<td>
+<p>shakir@controller:~ cat install-kubeadm-ctl.sh<br />
+sudo apt-get update &amp;&amp; sudo apt-get install -y apt-transport-https curl<br />
+sudo curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -<br />
+sudo sh -c "cat &gt; /etc/apt/sources.list.d/kubernetes.list" &lt;&lt;EOF<br />
+deb https://apt.kubernetes.io/ kubernetes-xenial main<br />
+EOF<br />
+sudo apt-get update<br />
+sudo apt-get install -y kubeadm kubectl<br />
+sudo apt-mark hold kubeadm kubectl</p></p>
+<p>shakir@controller:~ cat install-kubeadm-ctl.sh | gcloud compute ssh k8s-master</p>
+</td>
+</tr>
+</tbody>
+</table>
+</figure>
+<p><!-- /wp:table --></p>
+<p><!-- wp:paragraph --></p>
+<p>Install kubeadm and kubelet on nodes</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:table --></p>
+<figure class="wp-block-table">
+<table>
+<tbody>
+<tr>
+<td>
+<p>shakir@controller:~ cat install-kubeadm-let.sh<br />
+sudo apt-get update &amp;&amp; sudo apt-get install -y apt-transport-https curl<br />
+sudo curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -<br />
+sudo sh -c "cat &gt; /etc/apt/sources.list.d/kubernetes.list" &lt;&lt;EOF<br />
+deb https://apt.kubernetes.io/ kubernetes-xenial main<br />
+EOF<br />
+sudo apt-get update<br />
+sudo apt-get install -y kubeadm kubelet<br />
+sudo apt-mark hold kubeadm kubelet</p></p>
+<p>shakir@controller:~ cat install-kubeadm-let.sh | gcloud compute ssh k8s-node1</p>
+<p>shakir@controller:~ cat install-kubeadm-let.sh | gcloud compute ssh k8s-node2</p>
+<p>shakir@controller:~ cat install-kubeadm-let.sh | gcloud compute ssh k8s-node3</p>
+</td>
+</tr>
+</tbody>
+</table>
+</figure>
+<p><!-- /wp:table --></p>
+<p><!-- wp:paragraph --></p>
+<p>We need at least 2 CPUs on master, let’s change it</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:table --></p>
+<figure class="wp-block-table">
+<table>
+<tbody>
+<tr>
+<td>
+<p>shakir@controller:~ gcloud compute instances k8s-master stop<br />
+shakir@controller:~ gcloud compute instances set-machine-type k8s-master --custom-cpu=2 --custom-memory=4<br />
+shakir@controller:~ gcloud compute instances stop k8s-master<br />
+shakir@controller:~ gcloud compute instances start k8s-master</p>
+</td>
+</tr>
+</tbody>
+</table>
+</figure>
+<p><!-- /wp:table --></p>
+<p><!-- wp:paragraph --></p>
+<p>Initialize the control plane a.k.a master</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:table --></p>
+<figure class="wp-block-table">
+<table>
+<tbody>
+<tr>
+<td>
+<p>shakir@controller:~ echo "sudo kubeadm init --pod-network-cidr=192.168.0.0/16" | gcloud compute ssh k8s-master</p>
+</td>
+</tr>
+</tbody>
+</table>
+</figure>
+<p><!-- /wp:table --></p>
+<p><!-- wp:paragraph --></p>
+<p>Note down the final two lines of the output, that has the token information</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:table --></p>
+<figure class="wp-block-table">
+<table>
+<tbody>
+<tr>
+<td>
+<p>kubeadm join 10.128.0.4:6443 --token wznnx1.zkjl7tjgvc7tj5xw \<br />
+    --discovery-token-ca-cert-hash sha256:bebca8ab84f7f8545e30b3334d0d77793afbf032b05a9e6a8c4fb80fb367b9a1</p>
+</td>
+</tr>
+</tbody>
+</table>
+</figure>
+<p><!-- /wp:table --></p>
+<p><!-- wp:paragraph --></p>
+<p>Setup kubeconfig on the master</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:table --></p>
+<figure class="wp-block-table">
+<table>
+<tbody>
+<tr>
+<td>
+<p>shakir@controller:~ cat setup-kubeconfig.sh<br />
+mkdir -p $HOME/.kube<br />
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config<br />
+sudo chown $(id -u):$(id -g) $HOME/.kube/config</p></p>
+<p>shakir@controller:~ cat setup-kubeconfig.sh | gcloud compute ssh k8s-master</p>
+</td>
+</tr>
+</tbody>
+</table>
+</figure>
+<p><!-- /wp:table --></p>
+<p><!-- wp:paragraph --></p>
+<p>Setup Pod networking, here we have chosen Calico</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:table --></p>
+<figure class="wp-block-table">
+<table>
+<tbody>
+<tr>
+<td>
+<p>shakir@controller:~ cat setup-pod-networking.sh<br />
+kubectl apply -f https://docs.projectcalico.org/v3.3/getting-started/kubernetes/installation/hosted/rbac-kdd.yaml<br />
+kubectl apply -f https://docs.projectcalico.org/v3.3/getting-started/kubernetes/installation/hosted/kubernetes-datastore/calico-networking/1.7/calico.yaml</p>
+<p>shakir@controller:~ cat setup-pod-networking.sh | gcloud compute ssh k8s-master</p>
+</td>
+</tr>
+</tbody>
+</table>
+</figure>
+<p><!-- /wp:table --></p>
+<p><!-- wp:paragraph --></p>
+<p>Setup the cluster, this step refers to the token copied few steps back</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:table --></p>
+<figure class="wp-block-table">
+<table>
+<tbody>
+<tr>
+<td>
+<p>shakir@controller:~ cat join-nodes-to-cluster.sh<br />
+sudo kubeadm join 10.128.0.4:6443 --token wznnx1.zkjl7tjgvc7tj5xw \<br />
+    --discovery-token-ca-cert-hash sha256:bebca8ab84f7f8545e30b3334d0d77793afbf032b05a9e6a8c4fb80fb367b9a1</p>
+<p>shakir@controller:~ cat join-nodes-to-cluster.sh | gcloud compute ssh k8s-node1<br />
+shakir@controller:~ cat join-nodes-to-cluster.sh | gcloud compute ssh k8s-node2<br />
+shakir@controller:~ cat join-nodes-to-cluster.sh | gcloud compute ssh k8s-node3</p>
+</td>
+</tr>
+</tbody>
+</table>
+</figure>
+<p><!-- /wp:table --></p>
+<p><!-- wp:paragraph --></p>
+<p>SSH into the master and start working</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:table --></p>
+<figure class="wp-block-table">
+<table>
+<tbody>
+<tr>
+<td>
+<p>shakir@controller:~ gcloud compute ssh k8s-master<br />
+shakir@k8s-master:~ kubectl get nodes<br />
+NAME         STATUS   ROLES    AGE    VERSION<br />
+k8s-master   Ready    master   140m   v1.15.2<br />
+k8s-node1    Ready       119m   v1.15.2<br />
+k8s-node2    Ready       119m   v1.15.2<br />
+k8s-node3    Ready       119m   v1.15.2</p>
+</td>
+</tr>
+</tbody>
+</table>
+</figure>
+<p><!-- /wp:table --></p>
+<p><!-- wp:paragraph --></p>
+<p>--end-of-post--</p>
+<p><!-- /wp:paragraph --></p>

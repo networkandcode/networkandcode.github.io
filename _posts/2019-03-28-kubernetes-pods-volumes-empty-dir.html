@@ -1,0 +1,157 @@
+---
+layout: post
+title: Kubernetes > Pods > Volumes > Empty Dir
+date: 2019-03-28 19:45:11.000000000 +05:30
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags:
+- kubernetes
+meta:
+  timeline_notification: '1553782515'
+  _rest_api_published: '1'
+  _rest_api_client_id: "-1"
+  _wpas_skip_18195285: '1'
+  _publicize_job_id: '29137405604'
+author:
+  login: shak1r
+  email: shakir@techie.com
+  display_name: shakir
+  first_name: ''
+  last_name: ''
+permalink: "/2019/03/28/kubernetes-pods-volumes-empty-dir/"
+---
+<p><span style="font-weight:400;">emptyDir is a non persistent volume type, it will persist during container crashes or restarts but not during Pod restarts. When a container crashes, kubelet will restart it. When the Pod ceases to exist, the volume will cease to exist, too.</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight:400;">Pod definitions: </span></p>
+<p><span style="font-weight:400;">spec.volumes to determine what volumes to provide for the Pod, . spec.containers.volumeMounts to determine where to mount those volumes in the Container.</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight:400;">Let’s start with a zero Pod cluster</span></p>
+<p><span style="font-weight:400;">networkandcode@cloudshell:~ (kubernetes-cka-224606)$ kubectl get pods</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">No resources found.</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight:400;">Let’s define a Pod with emptyDir Volume</span></p>
+<p><span style="font-weight:400;">networkandcode@cloudshell:~ (kubernetes-cka-224606)$ cat podWithEmptyDir.yaml</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">---</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">apiVersion: v1</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">kind: Pod</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">metadata:</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">  name: apache-pod</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">spec:</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">  containers:</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">  - name: apache-container</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">    image: httpd</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">    </span><span style="font-weight:400;">volumeMounts:</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">    - </span><span style="font-weight:400;">name: apache-volume</span><span style="font-weight:400;">  #matches with the name of the volume in .spec.volumes</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">      </span><span style="font-weight:400;">mountPath: /tmp/apache/</span><span style="font-weight:400;">  # this is the path where the emptyDir volume will be mounted</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">  </span><span style="font-weight:400;">volumes:</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">  - </span><span style="font-weight:400;">name: apache-volume</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">    </span><span style="font-weight:400;">emptyDir: {}</span><span style="font-weight:400;">  # comes into existence when the Pod is launched</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">…</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight:400;">To create the Pod</span></p>
+<p><span style="font-weight:400;">networkandcode@cloudshell:~ (kubernetes-cka-224606)$ kubectl create -f podWithEmptyD</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">ir.yaml</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">pod "apache-pod" created</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight:400;">The Pod is now running</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">networkandcode@cloudshell:~ (kubernetes-cka-224606)$ kubectl get pods</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">NAME         READY STATUS    RESTARTS AGE</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">apache-pod   1/1 Running   0 8s</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight:400;">To login to the apache-pod and to launch bash prompt</span></p>
+<p><span style="font-weight:400;">networkandcode@cloudshell:~ (kubernetes-cka-224606)$ kubectl exec -it apache-pod --</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;"> /bin/bash</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight:400;">We are now at the bash prompt of the Apache-Pod</span></p>
+<p><span style="font-weight:400;">root@apache-pod:/usr/local/apache2#</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight:400;">The mount path we specified in the Pod definition should exist</span></p>
+<p><span style="font-weight:400;">root@apache-pod:/usr/local/apache2# ls /tmp/apache</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">root@apache-pod:/usr/local/apache2# cd /tmp/apache</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight:400;">Let’s create a sample text in this directory</span></p>
+<p><span style="font-weight:400;">root@apache-pod:/tmp/apache# echo "Sample Text" &gt; test.txt</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">root@apache-pod:/tmp/apache# cat test.txt</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">Sample Text</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight:400;">To list the running process in this Pod</span></p>
+<p><span style="font-weight:400;">root@apache-pod:/usr/local/apache2# ps aux</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">bash: ps: command not found</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight:400;">Since ps is not working, we need to install procps</span></p>
+<p><span style="font-weight:400;">root@apache-pod:/usr/local/apache2# apt update &amp;&amp; apt install procps -y</span></p>
+<p><span style="font-weight:400;">…</span></p>
+<p><span style="font-weight:400;">update-alternatives: warning: skip creation of /usr/share/man/man1/w.1.gz because a</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">ssociated file /usr/share/man/man1/w.procps.1.gz (of link group w) doesn't exist</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">Processing triggers for libc-bin (2.24-11+deb9u3) …</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight:400;">root@apache-pod:/usr/local/apache2# ps aux</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">USER         PID %CPU %MEM    VSZ RSS TTY  STAT START TIME COMMAND</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">root           1 0.0 0.1 79480  4584 ? Ss 05:17   0:00 httpd -DFOREGROU</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">daemon         7 0.0 0.0 368680  3644 ? Sl 05:17   0:00 httpd -DFOREGROU</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">daemon         8 0.0 0.0 368680  3644 ? Sl 05:17   0:00 httpd -DFOREGROU</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">daemon         9 0.0 0.0 368680  3644 ? Sl 05:17   0:00 httpd -DFOREGROU</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">root          91 0.0 0.0 18140  3228 ? Ss 05:18   0:00 /bin/bash</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">root         715 0.0 0.0  36640 2864 ?      R+ 05:23 0:00 ps aux</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight:400;">The process with PID 1 refers to the container itself</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight:400;">To kill the container</span></p>
+<p><span style="font-weight:400;">root@apache-pod:/tmp/apache# kill 1</span></p>
+<p><span style="font-weight:400;">root@apache-pod:/tmp/apache# command terminated with exit code 137</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight:400;">We are back to the master now</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">networkandcode@cloudshell:~ (kubernetes-cka-224606)$</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight:400;">The container that we killed is restarted automatically and hence the Pod is running</span></p>
+<p><span style="font-weight:400;">networkandcode@cloudshell:~ (kubernetes-cka-224606)$ kubectl get pods</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">NAME         READY STATUS    RESTARTS AGE</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">apache-pod   1/1 Running   1 12m</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight:400;">To repeat logging to the Pod again and to check if the file we created earlier exists</span></p>
+<p><span style="font-weight:400;">networkandcode@cloudshell:~ (kubernetes-cka-224606)$ kubectl exec -it apache-pod --</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;"> /bin/bash</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">root@apache-pod:/usr/local/apache2# cat /tmp/apache/test.txt</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">Sample Text</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight:400;">This means emptyDir is persistent across container lifetimes</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight:400;">Let’s exit out of the Podroot@apache-pod:/usr/local/apache2# exit</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">exit</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">networkandcode@cloudshell:~ (kubernetes-cka-224606)$</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight:400;">To delete the Pod</span></p>
+<p><span style="font-weight:400;">networkandcode@cloudshell:~ (kubernetes-cka-224606)$ kubectl delete po/apache-pod</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">pod "apache-pod" deleted</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight:400;">There are zero Pods now</span></p>
+<p><span style="font-weight:400;">networkandcode@cloudshell:~ (kubernetes-cka-224606)$ kubectl delete po/apache-pod</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">pod "apache-pod" deleted</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight:400;">To launch the Pod again</span></p>
+<p><span style="font-weight:400;">networkandcode@cloudshell:~ (kubernetes-cka-224606)$ kubectl apply -f podWithEmptyD</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">ir.yaml</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">pod "apache-pod" created</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">networkandcode@cloudshell:~ (kubernetes-cka-224606)$ kubectl get pods</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">NAME         READY STATUS    RESTARTS AGE</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">apache-pod   1/1 Running   0 12s</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight:400;">Let’s login to the Pod again and check the contents of the path where the emptyDir is mounted</span></p>
+<p><span style="font-weight:400;">networkandcode@cloudshell:~ (kubernetes-cka-224606)$ kubectl exec -it apache-pod --</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;"> /bin/bash</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">root@apache-pod:/usr/local/apache2# ls /tmp/apache/</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">root@apache-pod:/usr/local/apache2#</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight:400;">The text file is no longer present, hence, its evident that emptyDir volumes are not persistent across Pod restarts</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight:400;">root@apache-pod:/usr/local/apache2# exit</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">exit</span><span style="font-weight:400;"></p>
+<p></span></p>
+<p><span style="font-weight:400;">networkandcode@cloudshell:~ (kubernetes-cka-224606)$ kubectl delete pods --all</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">pod "apache-pod" deleted</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight:400;">--end-of-post--</span></p>

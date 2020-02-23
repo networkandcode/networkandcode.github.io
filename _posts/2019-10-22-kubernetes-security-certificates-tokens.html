@@ -1,0 +1,93 @@
+---
+layout: post
+title: Kubernetes > Security > Certificates & Tokens
+date: 2019-10-22 10:30:46.000000000 +05:30
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags:
+- kubernetes
+meta:
+  _wp_old_date: '2019-08-31'
+  _publicize_job_id: '36600712428'
+  timeline_notification: '1571720450'
+author:
+  login: shak1r
+  email: shakir@techie.com
+  display_name: shakir
+  first_name: ''
+  last_name: ''
+permalink: "/2019/10/22/kubernetes-security-certificates-tokens/"
+---
+<p>The Kubernetes API server listens to HTTP(S) requests on port 443 by default. HTTPS stands for Hyper Text Transfer Protocol over SSL, and SSL stands for Secure Sockets Layer. So HTTPS is the secure form of HTTP which is the protocol of the web. All that you access over the web using your favorite browser is through HTTP(S). Port 443 is the default port of HTTPS where as 80 is the default port of HTTP.</p>
+<p>In order to enable HTTPS communication, we have to install TLS certificates. TLS stands for Transport Layer Security. The Kubernetes API server's root certificate is stored in the kubeconfig. If we have used kubeadm to launch the cluster, then the kubeconfig is usually located at</p>
+<pre><code>
+networkandcode@k8s-master:~ sudo cat /etc/kubernetes/admin.conf
+apiVersion: v1
+clusters:
+- cluster:
+    certificate-authority-data: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUN5RENDQWJDZ0F3SUJBZ0lCQURBTkJna3Foa2lHOXcwQkFRc0ZBREFWT--TRUNCATED--
+    server: https://10.128.0.4:6443
+  name: kubernetes
+contexts:
+- context:
+    cluster: kubernetes
+    user: kubernetes-admin
+  name: kubernetes-admin@kubernetes
+current-context: kubernetes-admin@kubernetes
+kind: Config
+preferences: {}
+users:
+- name: kubernetes-admin
+  user:
+    client-certificate-data: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUM4akNDQWRxZ0F3SUJBZ0lJRzlLUWZ2S0tjNXN3RFFZSktvWklodmNOQ--TRUNCATED--
+    client-key-data: LS0tLS1CRUdJTiBSU0EgUFJJVkFURSBLRVktLS0tLQpNSUlFcFFJQkFBS0NBUUVBcWZCTm9qUlF0c3piajhWNG9KZWRQSXN0V--TRUNCATED--
+</code></pre>
+<p>However we copy this config to ~/.kube/config while launching the cluster so that other programs or components like kubectl could use this kubeconfig. Note that .kube is a hidden directory. We could view the same configuration with the following command</p>
+<pre><code>
+networkandcode@k8s-master:~ sudo cat ~/.kube/config
+</code></pre>
+<p>The configuration we saw above has a single username 'kubernetes-admin', so any program or client that uses this kubeconfig would use the username 'kubernetes-admin' while getting authenticated through HTTP(S) by the Kubernetes API server. The authentication request would contain extra information such as certificates, tokens, along with the username. The server would throw back HTTP status code 401 if there is an authentication issue. Once authenticated successfully, that program or client (for example kubectl) would be able to perform subsequent actions on the Kubernetes API server based on the authorization level configured for the username 'kubernetes-admin'. Although the username is used for authorizing requests, the username itself isn't stored as a Kubernetes object.</p>
+<p>Just like the default kubernetes-admin user, we could configure multiple users, with different levels of authorization.</p>
+<p>Authentication based on an X509 client certificate could be enabled by passing the --client-ca-file option to the kube-apiserver. X509 is a widely accepted standard that defines the format of public key certificates</p>
+<pre><code>
+networkandcode@k8s-master:~ sudo cat /etc/kubernetes/manifests/kube-apiserver.yaml | grep client-ca-file
+    - --client-ca-file=/etc/kubernetes/pki/ca.crt
+    - --requestheader-client-ca-file=/etc/kubernetes/pki/front-proxy-ca.crt
+</code></pre>
+<p>The above command output shows the client certificate is at /etc/kubernetes/pki/ca.crt. This certificate file would contain information such as certificate authorities which could be used to validate the certificate, the common name(CN), Organization fields(O) and so on. Once the certificate is validated, the CN will be treated as the username, and the Organization fields would be used to decide group memberships</p>
+<p>Let's view the certificate. Note that we can't see the username, group information etc. in clear text as it's encoded</p>
+<pre><code>
+networkandcode@k8s-master:~ cat /etc/kubernetes/pki/front-proxy-ca.crt
+-----BEGIN CERTIFICATE-----
+MIIC0DCCAbigAwIBAgIBADANBgkqhkiG9w0BAQsFADAZMRcwFQYDVQQDEw5mcm9u
+--TRUNCATED--
+WVQuRw==
+-----END CERTIFICATE-----
+</code></pre>
+<p>Token based authentication could be bootstrapped(automated) by passing --enable-bootstrap-token option to kube-apiserver. This would make kubernetes dynamically manage bearer tokens for authentication.</p>
+<pre><code>
+networkandcode@k8s-master:~ sudo cat /etc/kubernetes/manifests/kube-apiserver.yaml | grep token
+    - --enable-bootstrap-token-auth=true
+</code></pre>
+<p>We should also enable token cleaner in the controller-manager</p>
+<pre><code>
+networkandcode@k8s-master:~ sudo cat /etc/kubernetes/manifests/kube-controller-manager.yaml | grep controllers=
+    - --controllers=*,bootstrapsigner,tokencleaner
+</code></pre>
+<p>These dynamically generated tokens would be available as secrets in the kube-system namespace</p>
+<pre><code>
+networkandcode@k8s-master:~ kubectl get secrets -n kube-system
+NAME                                             TYPE                                  DATA   AGE
+attachdetach-controller-token-rp2z4              kubernetes.io/service-account-token   3      22d
+bootstrap-signer-token-cqzcm                     kubernetes.io/service-account-token   3      22d
+calico-node-token-f59m6                          kubernetes.io/service-account-token   3      22d
+--TRUNCATED--
+</code></pre>
+<p>Let's check one of the secrets, it should have a token in the Data section<br />networkandcode@k8s-master:~ kubectl describe secrets token-cleaner-token-vngdv -n kube-system<br />Name: token-cleaner-token-vngdv<br />Namespace: kube-system<br />Labels:<br />Annotations: kubernetes.io/service-account.name: token-cleaner<br />kubernetes.io/service-account.uid: 5ed9ac52-9b75-40ee-b46a-3f5f5fc774dd<br />Type: kubernetes.io/service-account-token<br />Data<br />====<br />ca.crt: 1025 bytes<br />namespace: 11 bytes<br />token: eyJhbGciOiJSUzI1NiIsImtpZCI6IiJ9.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiw--TRUNCATED--</p>
+<p><!-- wp:paragraph --></p>
+<p>--end-of-post--</p>
+<p><!-- /wp:paragraph --></p>

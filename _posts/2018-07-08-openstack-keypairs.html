@@ -1,0 +1,86 @@
+---
+layout: post
+title: OpenStack | KeyPairs
+date: 2018-07-08 18:28:27.000000000 +05:30
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags:
+- openstack
+meta:
+  _wpas_skip_18195285: '1'
+  _wpas_skip_18169689: '1'
+  timeline_notification: '1531054710'
+  _rest_api_published: '1'
+  _rest_api_client_id: "-1"
+  _publicize_job_id: '19792037679'
+author:
+  login: shak1r
+  email: shakir@techie.com
+  display_name: shakir
+  first_name: ''
+  last_name: ''
+permalink: "/2018/07/08/openstack-keypairs/"
+---
+<p>KeyPairs are used to login to a remote system with out entering username/passwords each time</p>
+<p><em>command syntax: openstack keypair &lt;action/operation&gt; &lt;--flags values&gt; &lt;keypair-name&gt;</em></p>
+<p>#to check the list of keypairs</p>
+<p>cumulus@server01:~$ <span style="color:#3366ff;">openstack keypair list</span></p>
+<p>#lets generate a new keypair, here '&gt;' refers to redirection, here we are redirecting the output to a file named firstKeyPair.pem, instead of printing it on the terminal</p>
+<p>cumulus@server01:~$ <span style="color:#3366ff;">openstack keypair create firstKeyPair &gt; firstKeyPair.pem</span></p>
+<p>#let's set the permission on this file, to allow access only to the current linux user<br />
+cumulus@server01:~$ <span style="color:#3366ff;">chmod 400 firstKeyPair.pem</span></p>
+<p>#let's view the contents of this file<br />
+cumulus@server01:~$ <span style="color:#3366ff;">cat firstKeyPair.pem</span><br />
+-----BEGIN RSA PRIVATE KEY-----<br />
+MIIEpAIBAAKCAQEAvzu5tl+UL2SxZ9cv4qVhuAurdWOF97LpVhHxa1sQBvxGn5bS<br />
+GCjhQA2ehQq0kebJSy1DX5u1wlXHRak+bJgF2I4mA+vX88DwKlEu2w7ZDNd08hVk<br />
+SMBIQCLozoqjAwnofYbm04vk4aVgNpdgYOHdGBY42veyxLjZDNTMGpCP6LbDPqTf<br />
+STlbcwZ61YszboDocxgIeggbTeVPTjkaXGd9tOqduN+2ep0Q/zMwTZWjYXTlb/AB<br />
+h9z1/R8u/rYBgUYACtJ7lIpS1LtvX2R+gWi1y9PINokp+rjCqBTiQniZhzHE9lxL<br />
+UnyhQWFlVAE06yGIvnnVEtodoEvIO2aTKnF5bwIDAQABAoIBAG8HHCHYiE6j5aRm<br />
+eXTblEqo69lx+PwBMhw4urQb4MhNfCt4A27nfTAVOC4CMyhqmAA/vVgrLXIxH0tA<br />
+oe+mq+45SbUJHw50vHu1OsEQc9BS36EV7m2WxdwG6KfSMia3f/Yxdp7oH/EqdRv8<br />
+84YMXLN5Y3UuTuqMb+hVPFNID2WKhexQhZWWVBg2O/HyJfcPj91bMumZ99VqOYDE<br />
+ygWMP1WrTxX4yL2Lg4p1lz4bXUQC+AE5JyZOugEa0Pg0b7JTAHPr+qaQTKg0Bfzo<br />
+cIEf4VMVPJLVn/281gm/7fqQi6SQ/VBCxZ51oV/Z9EyvSiA9Tg4poug6W9/uNZWT<br />
+dumkq8ECgYEA5LbXJnW1rpfz0TQvZcXo6xrMCfs1cHkj5rcbwO4VWgVVAk3bdDa3<br />
+8Zqu4renRf6NVep66v2WHpwPaQx/70oAjV4Y01rpynr8vKtov/TYtlx9Scsnor7y<br />
+nW0jVhpiyYee+t1uQDv4759+59a6wUZ3fmzKWsDM+aehjCFzZIBffX8CgYEA1gwu<br />
+Nynm/vXjcczcdOGfkpQ4/hKoZ+e6YNwg3pbLbPe7JOqDTi9cBptehUui9jJXH8Ex<br />
+sq/cL+g8H6Z4tLEVZDQMkatS3rUpBqKb3GkrsaOw+WE0+E7xdjRSy7FAflOWmSm8<br />
+XVl592DQ7dsetfUbnshQwQTmUb8j3dttKE4/3BECgYAlonCEw5nBwP89zXh/JrHM<br />
+/fvVKKECgOyHaloGxSZ+SaJTXrxdwyNBflKIu++qdNiM6qiPQmsRXlyqzIPAvEya<br />
+9oDfRnZx+wrbgNkbvQ5r84wqOGOtQ/5oKS1HXdAjmU1vukAKEdREmdooDA1vAElp<br />
+ZD1n8ZHJAuxyQo7aWsVbwQKBgQDCYstxw3cJYkrM5WvsJZ6iIkPj0RPpUNO89QxQ<br />
+uQdDDXOCYgse7PmY8m6ThQ4YobznlK7KhNTlGPXJFIiYKB2yI2aqv7kBkeoRIYmE<br />
+UGqi53Jn93SAcEjuvTPX0kAsuUKSFAoBiKmwE9eJuy4XtuH/gBF+STHVWU18RLLM<br />
+IMvz0QKBgQDUs7UASRbkAZaakDCai2M78PcNAVkFJXIiQ+D5cbtmKF12jB84yjPj<br />
+3Wg6zTSI/Xt+TjVcswdfSbZOGXwK7HwSgKOS8AUHD+MH0FVt2hIpade1o4JAm0ne<br />
++rE9HAUcL7kH1GQLHvOSrEl8TfphlcJ2fVhsM2Bk0wwnwQP1hjA/oQ==<br />
+-----END RSA PRIVATE KEY-----</p>
+<p>#lets check the openstack keypair list</p>
+<p>cumulus@server01:~$ <span style="color:#3366ff;">openstack keypair list</span><br />
++--------------+-------------------------------------------------+<br />
+| Name | Fingerprint |<br />
++--------------+-------------------------------------------------+<br />
+| firstKeyPair | 48:2f:50:e9:e4:df:be:09:f9:7e:3d:95:54:1d:c0:f5 |<br />
++--------------+-------------------------------------------------+</p>
+<p>#to view more details about the keypair</p>
+<p>cumulus@server01:~$ <span style="color:#3366ff;">openstack keypair show firstKeyPair</span><br />
++-------------+-------------------------------------------------+<br />
+| Field | Value |<br />
++-------------+-------------------------------------------------+<br />
+| created_at | 2018-07-08T12:50:50.000000 |<br />
+| deleted | False |<br />
+| deleted_at | None |<br />
+| fingerprint | 48:2f:50:e9:e4:df:be:09:f9:7e:3d:95:54:1d:c0:f5 |<br />
+| id | 1 |<br />
+| name | firstKeyPair |<br />
+| updated_at | None |<br />
+| user_id | 17b0c21a5161488e85891464c77edfac |<br />
++-------------+-------------------------------------------------+</p>
+<p>--end-of-post--</p>

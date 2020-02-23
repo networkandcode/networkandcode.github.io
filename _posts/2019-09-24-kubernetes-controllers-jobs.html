@@ -1,0 +1,130 @@
+---
+layout: post
+title: Kubernetes > Controllers > Jobs
+date: 2019-09-24 08:29:59.000000000 +05:30
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags: []
+meta:
+  timeline_notification: '1569294003'
+  _publicize_job_id: '35611505836'
+author:
+  login: shak1r
+  email: shakir@techie.com
+  display_name: shakir
+  first_name: ''
+  last_name: ''
+permalink: "/2019/09/24/kubernetes-controllers-jobs/"
+---
+<p><!-- wp:paragraph --></p>
+<p>Prerequisite: Understanding of Controller objects</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Jobs are categorized as controller objects. They don't need a label selection mechanism to select Pods. They are designed to execute set of Pods to perform a specific task and then terminate. Let's look at our sample manifest and then explain it</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:syntaxhighlighter/code --></p>
+<pre class="wp-block-syntaxhighlighter-code">networkandcode@cloudshell:~ cat ex33-job.yaml
+---
+kind: Job
+apiVersion: batch/v1
+metadata:
+  name: job33
+spec:
+  completions: 9  # default is 1
+  parallelism: 3  # default is 1
+  template:  # the Pod template follows
+    spec:
+      containers:
+      - name: ctr33
+        image: ubuntu
+        command:
+        - "/bin/bash"
+        - "-c"
+        - "echo Hi!; echo The hostname is ; hostname; echo The date/time is; date"
+      restartPolicy: Never  # default is 'Always' which isn't supported by Job
+      # supported restart polices are 'Never', 'OnFailure'
+...</pre>
+<p><!-- /wp:syntaxhighlighter/code --></p>
+<p><!-- wp:paragraph --></p>
+<p>The apiVersion and kind sections hold the default keywords, which can also be checked by using 'kubectl explain jobs'. We have given this Job the name job33</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>spec &gt; completions: 9, means this Job will launch 9 Pods,  we don't have the replicas section here like other controllers. spec &gt; parallelism: 3 indicates up to 3 Pods run at the same time, this is like multiprocessing to fasten Job execution, however the actual parallelism can vary from desired parallelism based on factors such as CPU throttle, node availability etc.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Rest of the manifest is similar to that of other controllers, where we specify the Pod's configuration, here we are launching an Ubuntu container and are executing commands in bash to print  the Host name, Date etc.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>A key point to note is that Jobs do not support the default container restartPolicy 'Always', hence we have to either change it to 'Never' as in this example or 'OnFailure'</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Let's launch the job</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:code --></p>
+<pre class="wp-block-code"><code>networkandcode@cloudshell:~ kubectl create -f ex33-job.yaml
+job.batch/job33 created</code></pre>
+<p><!-- /wp:code --></p>
+<p><!-- wp:paragraph --></p>
+<p>We shall see the job's live status, you should press 'Ctrl c' to exit from the command</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:code --></p>
+<pre class="wp-block-code"><code>networkandcode@cloudshell:~ kubectl get jobs --watch
+NAME    COMPLETIONS   DURATION   AGE
+job33   6/9           6s         6s
+job33   7/9   7s    7s
+job33   8/9   8s    8s
+job33   9/9   8s    8s
+^Cnetworkandcode@cloudshell:~</code></pre>
+<p><!-- /wp:code --></p>
+<p><!-- wp:paragraph --></p>
+<p>The list of Pods that were launched by this job can be checked as follows</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:code --></p>
+<pre class="wp-block-code"><code>networkandcode@cloudshell:~ kubectl get pods --selector=job-name=job33
+NAME          READY   STATUS      RESTARTS   AGE
+job33-9s5c9   0/1     Completed   0          119s
+job33-cn9hn   0/1     Completed   0          119s
+job33-ddxvq   0/1     Completed   0          119s
+job33-f44x2   0/1     Completed   0          117s
+job33-fpzpf   0/1     Completed   0          115s
+job33-gg9wm   0/1     Completed   0          113s
+job33-k4wbr   0/1     Completed   0          116s
+job33-rzttf   0/1     Completed   0          113s
+job33-zl52q   0/1     Completed   0          116s</code></pre>
+<p><!-- /wp:code --></p>
+<p><!-- wp:paragraph --></p>
+<p>Let's check the log of the first two Pods, it should display the output of the commands passed to the container</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:code --></p>
+<pre class="wp-block-code"><code>networkandcode@cloudshell:~ kubectl logs job33-9s5c9
+Hi!
+This hostname is
+job33-9s5c9
+The date/time is
+Tue Sep 24 02:48:12 UTC 2019
+
+networkandcode@cloudshell:~ kubectl logs job33-cn9hn
+Hi!
+This hostname is
+job33-cn9hn
+The date/time is
+Tue Sep 24 02:48:12 UTC 2019</code></pre>
+<p><!-- /wp:code --></p>
+<p><!-- wp:paragraph --></p>
+<p>Cleanup, deleting the Job would delete the associated Pods</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:code --></p>
+<pre class="wp-block-code"><code>networkandcode@cloudshell:~ kubectl delete job job33
+job.batch "job33" deleted
+networkandcode@cloudshell:~ kubectl get jobs
+No resources found.
+networkandcode@cloudshell:~ kubectl get pods
+No resources found.</code></pre>
+<p><!-- /wp:code --></p>
+<p><!-- wp:paragraph --></p>
+<p>--end-of-post--</p>
+<p><!-- /wp:paragraph --></p>

@@ -1,0 +1,41 @@
+---
+layout: post
+title: cumulus linux > netq > topology & inventory check
+date: 2017-09-11 12:35:32.000000000 +05:30
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags:
+- cumulus
+- linux
+- netq
+meta:
+  _publicize_done_external: a:1:{s:7:"twitter";a:1:{i:18195285;s:59:"https://twitter.com/Mh84ibrShakir/status/907138048365907968";}}
+  _rest_api_published: '1'
+  _rest_api_client_id: "-1"
+  _publicize_job_id: '9166425645'
+  publicize_linkedin_url: https://www.linkedin.com/updates?discuss=&scope=72550999&stype=M&topic=6312903728177430528&type=U&a=4M88
+  _publicize_done_18395822: '1'
+  _wpas_done_18169689: '1'
+  _publicize_done_18419479: '1'
+  _wpas_done_18195285: '1'
+  publicize_twitter_user: Mh84ibrShakir
+author:
+  login: shak1r
+  email: shakir@techie.com
+  display_name: shakir
+  first_name: ''
+  last_name: ''
+permalink: "/2017/09/11/cumulus-linux-netq-topology-inventory-check/"
+---
+<p>netq can monitor the complete network from a dedicated server or from any node in the network, with the same syntax/command</p>
+<p>note: spine and leaf refer to a network switch, with a spine being on top of the hierarchy like a core/distribution switch, leaf at the bottom like an access/edge switch, | more is used to truncate output</p>
+<p>to get the complete topology of the network, with each row representing a link<img src="{{ site.baseurl }}/assets/lldp_all_1.png" class="alignnone size-full wp-image-292" height="567" alt="lldp_all_1" width="975" /></p>
+<p>to find the links between spine02 and leaf01<img src="{{ site.baseurl }}/assets/lldp_two_devices.png" class="alignnone size-full wp-image-297" height="123" alt="lldp_two_devices" width="975" /></p>
+<p>this shows spine02 swp1 is connected to leaf01 swp52</p>
+<p>to check the lldp information only of hosts whose names begin with the letter l using wildcard (in this case all the leaf switches)<img src="{{ site.baseurl }}/assets/lldp_wildcard.png" class="alignnone size-full wp-image-303" height="618" alt="lldp_wildcard" width="975" />however, the lldp command doesn’t show the exact connectivity of the out of band management ports – eth0, it could be at times partially correct</p>
+<p>for a brief check on the complete inventory<img src="{{ site.baseurl }}/assets/inventory_brief.png" class="alignnone wp-image-309 size-full" height="394" alt="inventory_brief" width="932" />to see the versions of operating system installed<img src="{{ site.baseurl }}/assets/inventory_os.png" class="alignnone wp-image-310 size-full" height="395" alt="inventory_os" width="720" /></p>
+<p>--end-of--document--</p>

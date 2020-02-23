@@ -1,0 +1,46 @@
+---
+layout: post
+title: run python2/3 from the windows cli
+date: 2017-09-01 12:25:45.000000000 +05:30
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags:
+- python
+meta:
+  _rest_api_published: '1'
+  _rest_api_client_id: "-1"
+  _publicize_job_id: '8842566615'
+  switch_like_status: '1'
+author:
+  login: shak1r
+  email: shakir@techie.com
+  display_name: shakir
+  first_name: ''
+  last_name: ''
+permalink: "/2017/09/01/run-python23-from-the-windows-cli/"
+---
+<p>default behavior:</p>
+<p>dos</p>
+<p><img src="{{ site.baseurl }}/assets/1.png" class="alignnone size-full wp-image-177" height="54" alt="1" width="502" /></p>
+<p>powershell<img src="{{ site.baseurl }}/assets/2.png" class="alignnone size-full wp-image-178" height="103" alt="2" width="803" /></p>
+<p>python can only be run from the cli by navigating to the folder where it is installed, the goal here is to run it from any directory</p>
+<p>..</p>
+<p>open ‘python’ and check the installation path for each version<img src="{{ site.baseurl }}/assets/3.png" class="alignnone size-full wp-image-179" height="326" alt="3" width="287" /></p>
+<p>python2:</p>
+<p><img src="{{ site.baseurl }}/assets/5.png" class="alignnone size-full wp-image-181" height="96" alt="5" width="771" /></p>
+<p>here, the windows title itself shows the installation path, so running the sys commands is only optional</p>
+<p>python3:</p>
+<p><img src="{{ site.baseurl }}/assets/4.png" class="alignnone wp-image-180 size-full" height="79" alt="4" width="608" /></p>
+<p>the installation paths for both versions 2&amp;3 are now known, copy those – it has two backward slashes, a single slash is only required</p>
+<p>now it’s time to alter the ‘PATH’ system variable<img src="{{ site.baseurl }}/assets/6.png" class="alignnone wp-image-182 size-full" height="567" alt="6" width="361" /><img src="{{ site.baseurl }}/assets/7.png" class="alignnone size-full wp-image-183" height="406" alt="7" width="387" /><img src="{{ site.baseurl }}/assets/8.png" class="alignnone size-full wp-image-184" height="230" alt="8" width="586" /></p>
+<p>the copied entries (installation paths) to be added here<img src="{{ site.baseurl }}/assets/9.png" class="alignnone size-full wp-image-185" height="77" alt="9" width="516" /></p>
+<p>one entry for python2, and the second one for python3</p>
+<p>after this is saved, the command prompt can now call python directly<img src="{{ site.baseurl }}/assets/10.png" class="alignnone size-full wp-image-186" height="74" alt="10" width="776" /><img src="{{ site.baseurl }}/assets/11.png" class="alignnone wp-image-187 size-full" height="53" alt="11" width="676" /></p>
+<p>but since both python2 and python3 have the same .exe file which is python, the .exe file for python3 could be renamed to differentiate between python2&amp;3</p>
+<p><img src="{{ site.baseurl }}/assets/12.png" class="alignnone size-full wp-image-188" height="310" alt="12" width="358" /></p>
+<p><img src="{{ site.baseurl }}/assets/13.png" class="alignnone size-full wp-image-189" height="61" alt="13" width="756" /><img src="{{ site.baseurl }}/assets/14.png" class="alignnone size-full wp-image-190" height="54" alt="14" width="661" /></p>
+<p>--end-of-document--</p>

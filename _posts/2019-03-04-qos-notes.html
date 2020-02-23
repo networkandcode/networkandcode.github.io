@@ -1,0 +1,180 @@
+---
+layout: post
+title: QoS Refresher
+date: 2019-03-04 19:58:26.000000000 +05:30
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags:
+- cos
+- qos
+meta:
+  _publicize_job_id: '28261656388'
+  _rest_api_published: '1'
+  _rest_api_client_id: "-1"
+  timeline_notification: '1551709710'
+  _wpas_skip_18195285: '1'
+author:
+  login: shak1r
+  email: shakir@techie.com
+  display_name: shakir
+  first_name: ''
+  last_name: ''
+permalink: "/2019/03/04/qos-notes/"
+---
+<p><span style="font-weight:400;color:#3366ff;">packetsIn----&gt;ingressPort-g0/0----QoS enabled Router----egressPort-g0/1----&gt;packetsOut</span></p>
+<p><span style="font-weight:400;">Let’s say packets reach at the ingressPort-g0/0</span></p>
+<p><span style="font-weight:400;">The first thing the router should do, is to classify the incoming packet(s), this classification could be based on headers such as the Ethernet header, IPv4 Header, IPv6 header, MPLS header etc.</span></p>
+<p><span style="font-weight:400;">While it’s possible to classify traffic based on various fields in the headers, there are certain special fields on each header, specifically for the purpose of achieving QoS, such as TCI on Ethernet 802.1Q trunk frames, EXP on MPLS, ToS on IPv4, Traffic class on IPv6 headers.</span></p>
+<p><span style="font-weight:400;">More on Ethernet PRI</span></p>
+<p><span style="font-weight:400;">With IEEE 802.1Q(Trunk), all Ethernet Frames, except those carrying  native VLAN the QoS marking is carried in the Tag Control Information filed (4Bytes)</span></p>
+<p><span style="font-weight:400;">Tag control information(4B) = PRI + CFI + VLAN ID</span></p>
+<p><span style="font-weight:400;">PRI(priority) = CoS bits = 000(0, lowest priority) to 111(7, highest priority)</span></p>
+<p><span style="font-weight:400;">However only 0 to 5 could be used as 6 &amp; 7 are reserved for network control traffic like routing protocols. So 5 stands for highest priority, for instance all packets come out of a Cisco IP Phone with CoS value 5</span></p>
+<p><span style="font-weight:400;">Rest of this post, we will focus on IPv4/IPv6, particularly IPv4</span></p>
+<p><span style="font-weight:400;">Here, the names of the QoS fields are different, however the content is similar</span></p>
+<p><span style="font-weight:400;">ToS(Type of Service) / Traffic Class is a 1 Byte(8 bits)  field</span></p>
+<p><span style="font-weight:400;">It could take these forms:</span></p>
+<p><span style="font-weight:400;">In older implementations ToS = IP precedence(first 3 bits) + 000 (3 0s) + xx (last 2 bits)</span></p>
+<p><span style="font-weight:400;">In newer implementations ToS = DSCP (first 6 bits) + xx (last 2 bits, each x can be 0 or 1)</span></p>
+<p><span style="font-weight:400;">DSCP stands for Differential Services (DiffServ) Code Point, and the respective implementation of QoS is termed as DiffServ QoS, there is another type of QoS called the IntServ(Integrated Services) QoS which is not so efficient, and is implemented usually with RSVP, where the bandwidth reservation is strict as the unused/shared bandwidth is not used by other sessions until the session that reserved it is not terminated.</span></p>
+<p><span style="font-weight:400;">IP precedence is similar to the Ethernet PRI / CoS marking, hence it can use the maximum or highest priority value of 5 (note QoS values such as PRI/CoS, IP precedence, DSCP are also called as markings).</span></p>
+<p><span style="font-weight:400;">We shall focus on DSCP, which is used predominantly these days. As DSCP is 6 bits in length, it provides up to 64 QoS markings, out of these, 21 markings are predefined and named by IETF, QoS markings are also mapped with names called as PHB(Per Hop Behaviour) names. </span></p>
+<hr />
+<p><span style="font-weight:400;"><span style="color:#3366ff;">The 21 standard PHB names</span> and their corresponding markings are as follows:</span></p>
+<ol>
+<li style="font-weight:400;"><span style="font-weight:400;">Default = 000 00 0 = 0 (Decimal) = IP Precedence 0 = No QoS really = Best Effort</span></li>
+<li style="font-weight:400;"><span style="font-weight:400;">Class selector (CS) 1 = 001 00 0 = IP Precedence 1 (CS marking are named based on the first 3 digits only, since last 3 digits are 0 just like precedence, hence, Class selector is generally used on a router when the router at the other end is old and supports only IP precedence)</span></li>
+<li style="font-weight:400;"><span style="font-weight:400;">Class selector (CS) 2 = 010 00 0 = IP Precedence 2</span></li>
+<li style="font-weight:400;"><span style="font-weight:400;">Class selector (CS) 3 = 011 00 0 = IP Precedence 3</span></li>
+<li style="font-weight:400;"><span style="font-weight:400;">Class selector (CS) 4 = 100 00 0 = IP Precedence 4</span></li>
+<li style="font-weight:400;"><span style="font-weight:400;">Class selector (CS) 5 = 101 00 0 = IP Precedence 5</span></li>
+<li style="font-weight:400;"><span style="font-weight:400;">Class selector (CS) 6 = 110 00 0 = IP Precedence 6</span></li>
+<li style="font-weight:400;"><span style="font-weight:400;">Class selector (CS) 7 = 111 00 0 = IP Precedence 7</span></li>
+<li style="font-weight:400;"><span style="font-weight:400;">Assured Forwarding (AF) 11 = 001 01 0  (AF11, AF21, AF31, AF41 have low drop probability, this is denoted by the 2nd decimal digit which is 1)</span></li>
+<li style="font-weight:400;"><span style="font-weight:400;">Assured Forwarding (AF) 21 = 010 01 0</span></li>
+<li style="font-weight:400;"><span style="font-weight:400;"> Assured Forwarding (AF) 31 = 011 01 0</span></li>
+<li style="font-weight:400;"><span style="font-weight:400;">Assured Forwarding (AF) 41 = 100 01 0</span></li>
+<li style="font-weight:400;"><span style="font-weight:400;">Assured Forwarding (AF) 12 = 001 01 0 (AF12, AF22, AF32, AF42 have medium drop probability, this is denoted by the 2nd decimal digit which is 2)</span></li>
+<li style="font-weight:400;"><span style="font-weight:400;">Assured Forwarding (AF) 22 = 010 10 0</span></li>
+<li style="font-weight:400;"><span style="font-weight:400;">Assured Forwarding (AF) 32 = 011 10 0</span></li>
+<li style="font-weight:400;"><span style="font-weight:400;">Assured Forwarding (AF) 42 = 100 10 0</span></li>
+<li style="font-weight:400;"><span style="font-weight:400;">Assured Forwarding (AF) 13 = 001 11 0 (AF13, AF23, AF33, AF43 have high drop probability which means it has the highest probability of getting dropped first from the queue, this is denoted by the 2nd decimal digit which is 3)</span></li>
+<li style="font-weight:400;"><span style="font-weight:400;">Assured Forwarding (AF) 23 = 010 11 0</span></li>
+<li style="font-weight:400;"><span style="font-weight:400;">Assured Forwarding (AF) 33 = 011 11 0</span></li>
+<li style="font-weight:400;"><span style="font-weight:400;">Assured Forwarding (AF) 43 = 100 11 0</span></li>
+<li style="font-weight:400;"><span style="font-weight:400;">Expedited Forwarding (EF) = 101 11 0 = 46 (Overall decimal value) = typically for voice traffic</span></li>
+</ol>
+<hr />
+<p><span style="font-weight:400;"><span style="color:#3366ff;">The loss probability</span> is purely dependent on the second digit on the AF name (1 - low probability, 2 - medium probability, 3 - high probability), the first decimal digit (first 3 binary digits which are the IP precedence equivalent) has no influence on the drop probability. For e.g. two IP packets tagged with classes AF11 and AF31 will have equal drop probabilities. Where as in the case of two packets with classes or PHB names AF21 and AF22, the second packet will have medium drop probability and is hence more probable to get dropped from the queue than the first packet which has low drop probability.</span></p>
+<p><span style="font-weight:400;">The decimal values are not mentioned above, for classes other than EF, as they are easy to relate and remember the binary way.</span></p>
+<p><span style="font-weight:400;">All of the 21 standard QoS markings have the last binary digit as 0, if it’s 1 then it’s user defined. If an old router which supports only IP precedence receives a packet with DSCP value, it will consider only the first 3 digits and ignores the last 3 digits. Similarly if a DSCP supporting router receives a packet with IP precedence, it will consider it as one of the Class selector values as the last 3 digits are all 0s for Class selector markings.</span></p>
+<p><span style="font-weight:400;">AF names are calculated by splitting the binary into 3 (3 bits + 2 bits + 1 bit)</span></p>
+<p><span style="font-weight:400;">Example AF name calculation</span></p>
+<p><span style="font-weight:400;">AF 13 = 001(1)  11(3) 0 = 001 11 0</span></p>
+<p><span style="font-weight:400;">Finally based on the incoming packets’ header values particularly the DSCP value, it can be classified on the local router, in Cisco routers a default class ‘class-default’ is already created, which is used for tagging unclassified traffic, so if we don’t set the class for an incoming packet, it will automatically be tagged with ‘class-defaut’, again there is no much QoS here as packets belonging to this class will be sent out in a FIFO (first in first out) fashion from the queue.</span></p>
+<p><span style="font-weight:400;">In addition to this default class, Cisco recommends configuration of up to 11 more classes on a single router, these 11 classes could be either user defined or one among the 21 IETF predefined classes.</span></p>
+<p><span style="font-weight:400;">However incoming packets can also be classified based on other header values instead of the DSCP marking, for instance when the packets come from devices like PCs or Servers, the DSCP value may not be set.</span></p>
+<hr />
+<p><span style="font-weight:400;">To <span style="color:#3366ff;">classify</span> incoming traffic, i.e. to give it a class name based on it’s headers</span></p>
+<p><span style="font-weight:400;">class-map match-any CLASS-EMAIL    # class-map is used to identify traffic based on the IP header</span></p>
+<p><span style="font-weight:400;">  match protocol pop3  # NBAR, needs CEF(Cisco Express Forwarding) to be enabled</span></p>
+<p><span style="font-weight:400;">  match protocol imap</span></p>
+<p><span style="font-weight:400;">  match protocol exchange</span></p>
+<p><span style="font-weight:400;">  match protocol smtp</span></p>
+<p><span style="font-weight:400;">class-map CLASS-VOICE</span></p>
+<p><span style="font-weight:400;">  match protocol rtp audio  # coz streaming video also uses rtp</span></p>
+<p><span style="font-weight:400;">class-map match-any CLASS-WEB</span></p>
+<p><span style="font-weight:400;">  match protocol http</span></p>
+<p><span style="font-weight:400;">  match protocol secure-http</span></p>
+<p><span style="font-weight:400;">class-map CLASS-TORRENT</span></p>
+<p><span style="font-weight:400;">  match protocol bittorrent</span></p>
+<p><span style="font-weight:400;">Verify: show class-map  # shows class-default as well created by Cisco, which can't be deleted</span></p>
+<p><span style="font-weight:400;">To mark identified traffic:  # DSCP marking can only be applied for the incoming traffic, before it’s sent out of the router</span></p>
+<p><span style="font-weight:400;">policy-map POLICY-EMAIL</span></p>
+<p><span style="font-weight:400;">  class CLASS-EMAIL</span></p>
+<p><span style="font-weight:400;">    set dscp af13</span></p>
+<p><span style="font-weight:400;">show policy-map</span></p>
+<p><span style="font-weight:400;">int g0/0</span></p>
+<p><span style="font-weight:400;">  service-policy input POLICY-EMAIL</span></p>
+<p><span style="font-weight:400;">show policy-map interface gig 0/0</span></p>
+<p><span style="font-weight:400;">NBAR(network based application recognition) is an inbuilt tool in Cisco that can help identifying traffic with just the application or protocol names instead of the TCP header values</span></p>
+<p><span style="font-weight:400;">We have seen how to mark classified packets with a DSCP value before they are sent out of an Egress interface</span></p>
+<hr />
+<p><span style="font-weight:400;">Let’s see how to apply <span style="color:#3366ff;">policing</span> to classified traffic, Policing is another QoS mechanism which is used to enforce maximum bandwidth and is applied on the ingress side, i.e. packets that are received by the router. Policing is configured in Bytes and could be applied on both inbound and outbound directions.</span></p>
+<p><span style="font-weight:400;">Command-reference:</span></p>
+<p><span style="font-weight:400;">policy-map POLICY-TORRENT</span></p>
+<p><span style="font-weight:400;">  class CLASS-TORRENT</span></p>
+<p><span style="font-weight:400;">    police 128000  # don’t exceed 128000 Bytes ~ 1Mb else drop</span></p>
+<p><span style="font-weight:400;">int g0/0</span></p>
+<p><span style="font-weight:400;">  service-policy input POLICY-TORRENT</span></p>
+<p><span style="font-weight:400;">int g0/1</span></p>
+<p><span style="font-weight:400;">  service-policy output POLICY-TORRENT</span></p>
+<hr />
+<p><span style="font-weight:400;">There would be a big bucket/queue space in the router, with multiple queues, one queue for each DSCP marking which was done after classification, this prevents overflow of packets which is probable when there is a single queue for all types/classes of packets. There would be one queue for each kind of traffic based on the marking, for instance the queue containing voice traffic may not become full, even when queues containing best effort traffic may become full.  Queuing is based on the previous DSCP marking. Examples of Queuing algorithms are CBWFQ class based weighted fair queuing(Old) and LLQ, low latency queuing.</span></p>
+<p><span style="font-weight:400;">With CBWFQ, there are multiple queues each with a guaranteed bandwidth even during congestion, however can get more when there is no other consumption. </span></p>
+<p><span style="font-weight:400;">Example: bulk data queue &gt;= 1 Mbps at least 1Mb even at times of congestion, critical data queue &gt;= 3Mbps, network control queue &gt;= 1Mbps, call signaling queue &gt;= 1Mbps.</span></p>
+<p><span style="font-weight:400;">With LLQ, it’s the other way round, we can specify the maximum bandwidth available during congestion. </span></p>
+<p><span style="font-weight:400;">Example: priority queue &lt;= 3Mbps, not more than 3Mb during congestion, hence this is doing policing.</span></p>
+<p><span style="font-weight:400;">policy-map POLICY-VOICE</span></p>
+<p><span style="font-weight:400;">  class CLASS-VOICE</span></p>
+<p><span style="font-weight:400;">    priority 256  # Kbps</span></p>
+<p><span style="font-weight:400;">    #Congestion avoidance(RED) doesn't work with priority, works only with bandwidth, however for Voice traffic we don’t need as voice is inside UDP and there isn’t anything like UDP slow start to avoid congestion</span></p>
+<hr />
+<p><span style="font-weight:400;color:#3366ff;">Causes of congestion: </span></p>
+<ul>
+<li style="font-weight:400;"><span style="font-weight:400;">A router may receive traffic on an 1G traffic and could send it out on a 10M link.</span></li>
+<li style="font-weight:400;"><span style="font-weight:400;">Multiple links into the switch, and only one link out of the switch =&gt; congestion can even happen on high speed networks, mostly from LAN to WAN</span></li>
+</ul>
+<p><span style="font-weight:400;">Congestion Avoidance is a mechanism by which we can configure a minimum bandwidth that needs to be allowed for the classified traffic even during congestion, however when there is no congestion it can used more bandwidth. Congestion Avoidance prevents the queues from over filling. WRED(Weighted RED) / RED keeps an eye on the queue, once a threshold is reached RED randomly throws a packet away, sacrifice some of  the packets / flows for the good of the many, so that all the packets do not have to undergo TCP slow start. With TCP windowing - the window size is doubled after each acknowledgement, after congestion it would take a slow start and increases the window size gradually. The default congestion avoidance algorithm used is RED(Random Early Detection) and it works based on IP Precedence by default.</span></p>
+<p><span style="font-weight:400;">ECN:  # Explicit congestion Notification</span></p>
+<p><span style="font-weight:400;">      - Last two bits of the ToS Byte = ECT(7th bit), CE(8th bit) = 00 to 11</span></p>
+<p><span style="font-weight:400;">      - ECT = ECN capable transport</span></p>
+<p><span style="font-weight:400;">      - CE = Congestion Experienced</span></p>
+<p><span style="font-weight:400;">      - these two bits will be marked by the received router in the packet that's going back to the originating router</span></p>
+<p><span style="font-weight:400;">      - it's gonna politely say i am getting congested can you slow down, else there would be a way of dropping packets and going back to TCP slow start</span></p>
+<p><span style="font-weight:400;">Parameters for configuring Congestion Avoidance: MPD, Min. Threshold, Max. Threshold</span></p>
+<p><span style="font-weight:400;">Min./Max. Threshold indicates the probability by which the packet can get dropped. There are three types of dropping: No dropping, Random dropping, Full dropping. Cisco IOS has set default values set for Min. Threshold, Max. Threshold, MPD. By default, MPD Mark probability denominator(bottom part of a fraction) = 5 =&gt; 1/5 = 20%. With WRED, there are different default RED profiles(Min., Max Threshold. MPD) for different markings.</span></p>
+<p><span style="font-weight:400;">policy-map POLICY-WEB</span></p>
+<p><span style="font-weight:400;">  class CLASS-WEB</span></p>
+<p><span style="font-weight:400;">    bandwidth 512  # unit of measurement is Kbps, at least 512 and more when available</span></p>
+<p><span style="font-weight:400;">    random-detect dscp-based # RED, IP precedence by default, we need dscp though</span></p>
+<p><span style="font-weight:400;">    random-detect ecn</span></p>
+<p><span style="font-weight:400;">int g0/0</span></p>
+<p><span style="font-weight:400;">  service-policy input POLICY-WEB</span></p>
+<hr />
+<p><span style="font-weight:400;"><span style="color:#3366ff;">Shaping</span> is also a traffic conditioner similar to Policing, sets a speed limit, but not so strict, If there is no enough bandwidth, it would let the packet wait for sometime before retransmission when there is enough bandwidth. Shaping is only applied in the outbound direction.</span></p>
+<p><span style="font-weight:400;">For a specified Police rate if you choose a larger burst size then your Tc increases. Maximum value for Tc is  125ms (maximum 8 Intervals per second).</span></p>
+<p><span style="font-weight:400;">Speed limit is termed CIR which is average rate over a period of second. For example, if the interface speed is 100 M, we can set speed limit of 50 M, if the line speed is 128Kbps, CIR could be 64Kbps etc.</span></p>
+<p><span style="font-weight:400;">CIR(Committed Information Rate) = Bc(committed burst) / Tc(time interval)</span></p>
+<p><span style="font-weight:400;">Example:</span></p>
+<p><span style="font-weight:400;">Burst size (Bc) is in bytes for example 16,000 bytes or 128,000 bits</span></p>
+<p><span style="font-weight:400;">16,000 bytes = 128,000 bits = 128 Kb = 1/8 * CIR</span></p>
+<p><span style="font-weight:400;">CIR = 1024 Kb = 1Mb</span></p>
+<p><span style="font-weight:400;">Shaping uses bits, for example it could be sending 8000 bits if the time interval is 125ms(8 intervals per second), considering 64Kbps BW for frame relay.</span></p>
+<p><span style="font-weight:400;">Shaping can either be configured as bandwidth or a percentage of the line rate of the interface.</span></p>
+<p><span style="font-weight:400;">We can configure port shaping on network interfaces, aggregated Ethernet interfaces (also known as link aggregation groups (LAGs)), and loopback interfaces.</span></p>
+<p><span style="font-weight:400;">Juno’s command </span></p>
+<p><span style="font-weight:400;">user@R1# set class-of-service interfaces ge-2/0/8 shaping-rate 160k</span></p>
+<p><span style="font-weight:400;">If we configure a fixed shaping rate, we can configure an optional burst size in bytes. If we configure the shaping rate as a percentage, the burst-size option is not allowed.</span></p>
+<p><span style="font-weight:400;">[edit]</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">user@R1# set class-of-service traffic-control-profiles output shaping-rate 160k</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">user@R1# set class-of-service traffic-control-profiles output shaping-rate burst-size 30k</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">user@R1# set class-of-service interfaces ge-2/0/8 output-traffic-control-profile output</span></p>
+<hr />
+<p><span style="font-weight:400;"><span style="color:#3366ff;">Compression</span>(lossy, lossless compression) - compress the packet size, but send the same amount of information.. RTP(real transport protocol, voice L4 protocol) header.</span></p>
+<p><span style="font-weight:400;">Compression is primarily used for voice packets. The size of the voice packet would only be depending on the codec, voice payload could be 20B but on top of that we have got the IP header, UDP header(L4), RTP header(L4) =&gt; 40B header, header is twice the size of the payload, so we can turn on RTP header compression. Router looks for the packets, if there is a lots of commonality on a group of packets such as IP, Port no, RTP payload type etc. it copies common information and makes a much much smaller header its gonna be either 2(no udp checksum, generally on cisco gear) or 4B, multiple voice calls (CVI session context identifier to identify separate voice conversations), when the packets cross the router it’s going to glue back all the common header information it has cached.</span></p>
+<hr />
+<p><span style="font-weight:400;"><span style="color:#3366ff;">Queuing and scheduling</span> is the star of the QoS realm. These two mechanisms are required is situations where there is congestion, for instance when there is lots of incoming traffic and the egress port couldn’t handle sending it out. One way to artificially impose congestion is by setting a shaping rate at the egress interface to a limit lower than its maximum line speed. </span></p>
+<p><span style="font-weight:400;">Queuing and scheduling emphasise the principle of benefiting some at the expense of others. The most common mechanism in this category is PB-DWRR (Priority based deficit weighted round robin, other examples are FIFO, FQ, PQ, WFQ, WRR, DWRR). By applying queuing and scheduling to an interface, the traffic that has to traverse through the interface is mapped to each queue based on the class of service. </span></p>
+<p><span style="font-weight:400;">There are two important factors - buffering(for queuing) and bandwidth(for scheduling), buffering is the length of the queue specifying how much memory is available to store packets. Packets need not be stored in their entirety in a queue, sometimes only notifications representing the packets are stored in queues. The buffer value can either represent as the duration in time(milliseconds) for which the packet notifications are accepted in the queue, or the absolute no. of packet notifications that can reside in the queue at the same time. Scheduler are used to service the queues and is responsible for the rate at which the packets are retransmitted from the queues. Bandwidth is used by the Scheduling mechanism to decide how much bandwidth is allocated to each queue. The bandwidth parameter can either be the interface speed or the shaping rate, if a shaper is applied after scheduling. The leftover traffic in the outbound direction is either throttled or back-pressured into memory during congestion. This leftover traffic is then partitioned across the actual queues.</span></p>
+<p><span style="font-weight:400;">In a queue, packets can get dropped from the tail when the queue is full, or when from the head when the packets are aged, i.e. they have remained in the queue for a longer time than the maximum time specified.</span></p>
+<p><span style="font-weight:400;">Entire packets(old, simpler) can be queued or packets can be split into fixed cells (cellification, example 64 Bytes each). Cellification makes router’s memory management easy. There is a special called the notification (cookie), which could contain header values such as DSCP that represents the entire packet. </span></p>
+<hr />
+<p><span style="font-weight:400;"><span style="color:#3366ff;">Link efficiency</span> is a QoS mechanism which is useful with low bandwidth legacy circuits such as Frame Relay, for efficient use of WAN BW. Link fragmentation and interleaving (LFI) is an example of Link efficiency algorithm. At times, small payloads may not reach on time when there are huge payloads ahead of them. Practically, a voice packet would have a bad quality if delay &gt; 150ms, and is worst if delay &gt; 200 ms. If we have a 56K link and if we wanted to send a 1500B packet, it would take 214 ms, so voice packet quality would be destroyed even before it exits the wan link. LFI could burst the 1500B packet and as a result the small packet(e.g. voice) can get out quickly, major downside is every data fragment would have its own header, so it would increase the overall bw too.</span></p>
+<p><span style="font-weight:400;">Cisco’s recommendation is to use LFI for voice packets when the BW available is 768 Kbps or above.</span></p>
+<p><span style="font-weight:400;">--end-of-post---</span></p>
+<p>&nbsp;</p>

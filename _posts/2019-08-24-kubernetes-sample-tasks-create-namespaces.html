@@ -1,0 +1,53 @@
+---
+layout: post
+title: Kubernetes > Sample tasks > Create namespaces
+date: 2019-08-24 19:47:40.000000000 +05:30
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags: []
+meta:
+  timeline_notification: '1566656264'
+  _rest_api_published: '1'
+  _rest_api_client_id: "-1"
+  _publicize_job_id: '34498858804'
+author:
+  login: shak1r
+  email: shakir@techie.com
+  display_name: shakir
+  first_name: ''
+  last_name: ''
+permalink: "/2019/08/24/kubernetes-sample-tasks-create-namespaces/"
+---
+<p>Task to create two NameSpaces Staging and Production</p>
+<pre><code>
+networkandcode@k8s-master:~ ls
+README.md  create-namespaces.yaml
+
+networkandcode@k8s-master:~ cat README.md ; cat create-namespaces.yaml
+Create NameSpaces
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: staging
+...
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: production
+...
+
+networkandcode@k8s-master:~ kubectl create -f create-namespaces.yaml
+</code></pre>
+<p>Verify</p>
+<pre><code>
+networkandcode@k8s-master:~ kubectl get ns | grep -E '(staging|prod)'
+production        Active   45h
+staging           Active   45h
+</code></pre>
+<p>--end-of-post--</p>

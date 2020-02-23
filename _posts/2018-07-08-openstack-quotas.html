@@ -1,0 +1,88 @@
+---
+layout: post
+title: OpenStack | Quotas
+date: 2018-07-08 12:52:37.000000000 +05:30
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags:
+- openstack
+meta:
+  _wpas_skip_18195285: '1'
+  _wpas_skip_18169689: '1'
+  _publicize_job_id: '19784887110'
+  timeline_notification: '1531034560'
+  _rest_api_published: '1'
+  _rest_api_client_id: "-1"
+author:
+  login: shak1r
+  email: shakir@techie.com
+  display_name: shakir
+  first_name: ''
+  last_name: ''
+permalink: "/2018/07/08/openstack-quotas/"
+---
+<p>command syntax: <em>openstack quota &lt;action/operation&gt; &lt;--flags&gt; &lt;values&gt; &lt;project-uuid&gt;</em></p>
+<p>As the name suggests, Quotas refer to the limit on the no. of resources that can be utilized by a project</p>
+<p>cumulus@server01:~$ openstack project list<br />
++----------------------------------+--------------+<br />
+| ID | Name |<br />
++----------------------------------+--------------+<br />
+| <span style="color:#3366ff;">23595ea6e5ed4201914e3831c12820ae</span> | firstProject |<br />
+| 857b18af8e4540ab94d2f41b220a91b3 | service |<br />
+| 9a4ce13914f0444789153f632722a42a | admin |<br />
+| b9cf72612b7041c5a72e483551d07e93 | demo |<br />
++----------------------------------+--------------+</p>
+<p>#to check the quotas associated with the project 'firstProject'</p>
+<p>cumulus@server01:~$ <span style="color:#3366ff;">openstack quota show 23595ea6e5ed4201914e3831c12820ae</span><br />
++----------------------+----------------------------------+<br />
+| Field | Value |<br />
++----------------------+----------------------------------+<br />
+| cores | 20 |<br />
+| fixed-ips | -1 |<br />
+| floating-ips | 50 |<br />
+| health_monitors | None |<br />
+| injected-file-size | 10240 |<br />
+| injected-files | 5 |<br />
+| injected-path-size | 255 |<br />
+<span style="color:#3366ff;">| instances | 10 |</span><br />
+| key-pairs | 100 |<br />
+| l7_policies | None |<br />
+| listeners | None |<br />
+| load_balancers | None |<br />
+| location | None |<br />
+| name | None |<br />
+| networks | 100 |<br />
+| pools | None |<br />
+| ports | 500 |<br />
+| project | 23595ea6e5ed4201914e3831c12820ae |<br />
+| project_name | firstProject |<br />
+| properties | 128 |<br />
+| ram | 51200 |<br />
+| rbac_policies | 10 |<br />
+| routers | 10 |<br />
+| secgroup-rules | 100 |<br />
+| secgroups | 10 |<br />
+| server-group-members | 10 |<br />
+| server-groups | 10 |<br />
+| subnet_pools | -1 |<br />
+| subnets | 100 |<br />
++----------------------+----------------------------------+<br />
+cumulus@server01:~$</p>
+<p>let's filter the quota for instances</p>
+<p>cumulus@server01:~$ <span style="color:#3366ff;">openstack quota show 23595ea6e5ed4201914e3831c12820ae | grep instances</span><br />
+| instances | 10 |<br />
+cumulus@server01:~$</p>
+<p>#lets change the quota for maximum no. of 'instances' from 10 to 20</p>
+<p>cumulus@server01:~$ <span style="color:#3366ff;">openstack quota set --instances 20 23595ea6e5ed4201914e3831c12820ae</span></p>
+<p>let's verify the change we made</p>
+<p>cumulus@server01:~$ <span style="color:#3366ff;">openstack quota show 23595ea6e5ed4201914e3831c12820ae | grep instances</span><br />
+| instances | 20 |<br />
+cumulus@server01:~$</p>
+<p>--end-of-post--</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>

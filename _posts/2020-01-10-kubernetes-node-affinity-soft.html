@@ -1,0 +1,118 @@
+---
+layout: post
+title: kubernetes > node affinity > soft
+date: 2020-01-10 08:19:11.000000000 +05:30
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags: []
+meta:
+  _publicize_job_id: '39369677861'
+  timeline_notification: '1578624557'
+author:
+  login: shak1r
+  email: shakir@techie.com
+  display_name: shakir
+  first_name: ''
+  last_name: ''
+permalink: "/2020/01/10/kubernetes-node-affinity-soft/"
+---
+<p><!-- wp:jetpack/markdown {"source":"The Node Affinity feature we are going to see here helps the Pod(s) to prefer launching on Node(s) of choice, the associated section in the Pod manifest is ```spec.affinity.nodeAffinity.preferredDuringSchedulingIgnoredDuringExecution```\n\nIt's good to some have understanding of Deployments to make better use of this post\n\nWe have a cluster of 3 nodes\n```\nnetworkandcode@k8s-master-0:~$ kubectl get no\nNAME           STATUS   ROLES    AGE   VERSION\nk8s-master-0   Ready    master   2d    v1.16.3\nk8s-node-0     Ready       2d    v1.16.3\nk8s-node-1     Ready       2d    v1.16.3\nk8s-node-2     Ready       2d    v1.16.3\n```\n\nLet's check the existing labels on the instances\n```\nnetworkandcode@k8s-master-0:~$ kubectl get nodes \u002d\u002dshow-labels\nNAME           STATUS   ROLES    AGE     VERSION   LABELS\nk8s-master-0   Ready    master   2d18h   v1.16.3   beta.kubernetes.io\/arch=amd64,beta.kubernetes.io\/os=linux,kubernetes.io\/arch=amd64,kubernetes.io\/hostname=k8s-master-0,kubernetes.io\/os=linux,node-role.kubernetes.io\/master=\nk8s-node-0     Ready       2d18h   v1.16.3   beta.kubernetes.io\/arch=amd64,beta.kubernetes.io\/os=linux,kubernetes.io\/arch=amd64,kubernetes.io\/hostname=k8s-node-0,kubernetes.io\/os=linux\nk8s-node-1     Ready       2d18h   v1.16.3   beta.kubernetes.io\/arch=amd64,beta.kubernetes.io\/os=linux,kubernetes.io\/arch=amd64,kubernetes.io\/hostname=k8s-node-1,kubernetes.io\/os=linux\nk8s-node-2     Ready       2d18h   v1.16.3   beta.kubernetes.io\/arch=amd64,beta.kubernetes.io\/os=linux,kubernetes.io\/arch=amd64,kubernetes.io\/hostname=k8s-node-2,kubernetes.io\/os=linux\n```\nLet's go with the kubernetes.io\/hostname label for our exercise, as it is unique for each instance. We are now going to define a deployment with 20 replicas\n```\nnetworkandcode@k8s-master-0:~$ cat ex35-deploy-node-affinity-soft.yaml \n\u002d\u002d-\napiVersion: apps\/v1\nkind: Deployment\nmetadata:\n  name: deploy35\nspec:\n  selector:\n    matchLabels:\n      tag: label35\n  replicas: 20\n  template:\n    metadata:\n      labels:\n        tag: label35\n    spec:\n      affinity:\n        # nodeAffinity configuration starts here\n        nodeAffinity:\n          preferredDuringSchedulingIgnoredDuringExecution:\n          - weight: 1\n            preference:\n              matchExpressions:\n              - key: kubernetes.io\/hostname\n                operator: In\n                values: \n                - k8s-node-0\n        # nodeAffinity configuration ends here\n      containers:\n      - name: ctr35\n        image: nginx\n...\n```\nThe weight parameter in the manifest above is associated with the preference section, and it ranges from 1 to 100, higher number denoting higher preference, we could have a list of such preferences and associated weights, so while the Pod gets scheduled it could prefer one among the list based on the weight. However here we only have a single preference section with associated weight 1. The weight is going to be considered in some artithmetic calculation, when there are multiple matchExpressions too. Our case is simple though as we only have a single target node i.e., node-0. The Pods of this Deployment are going to prefer k8s-node-0 based on a match expression we have set.\n\nLet's launch the deployment\n```\nnetworkandcode@k8s-master-0:~$ kubectl create -f ex35-deploy-node-affinity-soft.yaml \ndeployment.apps\/deploy35 created\n```\n\nWe see the Pods are launched on all the nodes\n```\nnetworkandcode@k8s-master-0:~$ kubectl get po -o wide \nNAME                        READY   STATUS    RESTARTS   AGE   IP               NODE         NOMINATED NODE   READINESS GATES\ndeploy35-6df945f555-6kdlx   1\/1     Running   0          24m   192.168.140.65   k8s-node-2              \ndeploy35-6df945f555-8fs55   1\/1     Running   0          24m   192.168.11.200   k8s-node-0              \ndeploy35-6df945f555-9ks96   1\/1     Running   0          24m   192.168.11.205   k8s-node-0              \ndeploy35-6df945f555-9pzvs   1\/1     Running   0          24m   192.168.11.203   k8s-node-0              \ndeploy35-6df945f555-c6ssc   1\/1     Running   0          24m   192.168.109.69   k8s-node-1              \ndeploy35-6df945f555-crx2f   1\/1     Running   0          24m   192.168.140.67   k8s-node-2              \ndeploy35-6df945f555-ddqjv   1\/1     Running   0          24m   192.168.11.204   k8s-node-0              \ndeploy35-6df945f555-j6wcm   1\/1     Running   0          24m   192.168.109.65   k8s-node-1              \ndeploy35-6df945f555-jlrbk   1\/1     Running   0          24m   192.168.11.196   k8s-node-0              \ndeploy35-6df945f555-knhq9   1\/1     Running   0          24m   192.168.11.198   k8s-node-0              \ndeploy35-6df945f555-n8f6r   1\/1     Running   0          24m   192.168.11.199   k8s-node-0              \ndeploy35-6df945f555-pnqsv   1\/1     Running   0          24m   192.168.140.66   k8s-node-2              \ndeploy35-6df945f555-qctx6   1\/1     Running   0          24m   192.168.140.68   k8s-node-2              \ndeploy35-6df945f555-qp7qk   1\/1     Running   0          24m   192.168.11.197   k8s-node-0              \ndeploy35-6df945f555-rq55k   1\/1     Running   0          24m   192.168.11.201   k8s-node-0              \ndeploy35-6df945f555-rr8v2   1\/1     Running   0          24m   192.168.11.202   k8s-node-0              \ndeploy35-6df945f555-szwvf   1\/1     Running   0          24m   192.168.109.66   k8s-node-1              \ndeploy35-6df945f555-vc4sv   1\/1     Running   0          24m   192.168.109.67   k8s-node-1              \ndeploy35-6df945f555-vlcj6   1\/1     Running   0          24m   192.168.140.69   k8s-node-2              \ndeploy35-6df945f555-zg6wt   1\/1     Running   0          24m   192.168.109.68   k8s-node-1              \n```\n\nLet's check the count of Pods launched on node-0\n```\nnetworkandcode@k8s-master-0:~$ kubectl get po -o wide | grep node-0 | wc\n     10      90    1170\n```\nSo there are 10 Pods as the first output of wc, on the left refers to the no. of lines, so in this case most of the Pods, i.e., 50% of 20 Pods in the Deployment have been launched on node-0 as it was preferred, and rest of the Pods were launched on nodes 1 and 2. This is how soft preference i.e., ```spec.affinity.nodeAffinity.preferredDuringSchedulingIgnoredDuringExecution``` works.\n\nReference: https:\/\/kubernetes.io\/docs\/reference\/generated\/kubernetes-api\/v1.15\/#preferredschedulingterm-v1-core\n\nCleanup\n```\nnetworkandcode@k8s-master-0:~$ kubectl delete deploy deploy35\ndeployment.apps \u0022deploy35\u0022 deleted\n```\n\n\u002d\u002dend-of-post\u002d\u002d"} --></p>
+<div class="wp-block-jetpack-markdown">
+<p>The Node Affinity feature we are going to see here helps the Pod(s) to prefer launching on Node(s) of choice, the associated section in the Pod manifest is <code>spec.affinity.nodeAffinity.preferredDuringSchedulingIgnoredDuringExecution</code></p>
+<p>It's good to some have understanding of Deployments to make better use of this post</p>
+<p>We have a cluster of 3 nodes</p>
+<pre><code>networkandcode@k8s-master-0:~$ kubectl get no
+NAME           STATUS   ROLES    AGE   VERSION
+k8s-master-0   Ready    master   2d    v1.16.3
+k8s-node-0     Ready    &lt;none&gt;   2d    v1.16.3
+k8s-node-1     Ready    &lt;none&gt;   2d    v1.16.3
+k8s-node-2     Ready    &lt;none&gt;   2d    v1.16.3
+</code></pre>
+<p>Let's check the existing labels on the instances</p>
+<pre><code>networkandcode@k8s-master-0:~$ kubectl get nodes --show-labels
+NAME           STATUS   ROLES    AGE     VERSION   LABELS
+k8s-master-0   Ready    master   2d18h   v1.16.3   beta.kubernetes.io/arch=amd64,beta.kubernetes.io/os=linux,kubernetes.io/arch=amd64,kubernetes.io/hostname=k8s-master-0,kubernetes.io/os=linux,node-role.kubernetes.io/master=
+k8s-node-0     Ready    &lt;none&gt;   2d18h   v1.16.3   beta.kubernetes.io/arch=amd64,beta.kubernetes.io/os=linux,kubernetes.io/arch=amd64,kubernetes.io/hostname=k8s-node-0,kubernetes.io/os=linux
+k8s-node-1     Ready    &lt;none&gt;   2d18h   v1.16.3   beta.kubernetes.io/arch=amd64,beta.kubernetes.io/os=linux,kubernetes.io/arch=amd64,kubernetes.io/hostname=k8s-node-1,kubernetes.io/os=linux
+k8s-node-2     Ready    &lt;none&gt;   2d18h   v1.16.3   beta.kubernetes.io/arch=amd64,beta.kubernetes.io/os=linux,kubernetes.io/arch=amd64,kubernetes.io/hostname=k8s-node-2,kubernetes.io/os=linux
+</code></pre>
+<p>Let's go with the kubernetes.io/hostname label for our exercise, as it is unique for each instance. We are now going to define a deployment with 20 replicas</p>
+<pre><code>networkandcode@k8s-master-0:~$ cat ex35-deploy-node-affinity-soft.yaml 
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deploy35
+spec:
+  selector:
+    matchLabels:
+      tag: label35
+  replicas: 20
+  template:
+    metadata:
+      labels:
+        tag: label35
+    spec:
+      affinity:
+        # nodeAffinity configuration starts here
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 1
+            preference:
+              matchExpressions:
+              - key: kubernetes.io/hostname
+                operator: In
+                values: 
+                - k8s-node-0
+        # nodeAffinity configuration ends here
+      containers:
+      - name: ctr35
+        image: nginx
+...
+</code></pre>
+<p>The weight parameter in the manifest above is associated with the preference section, and it ranges from 1 to 100, higher number denoting higher preference, we could have a list of such preferences and associated weights, so while the Pod gets scheduled it could prefer one among the list based on the weight. However here we only have a single preference section with associated weight 1. The weight is going to be considered in some artithmetic calculation, when there are multiple matchExpressions too. Our case is simple though as we only have a single target node i.e., node-0. The Pods of this Deployment are going to prefer k8s-node-0 based on a match expression we have set.</p>
+<p>Let's launch the deployment</p>
+<pre><code>networkandcode@k8s-master-0:~$ kubectl create -f ex35-deploy-node-affinity-soft.yaml 
+deployment.apps/deploy35 created
+</code></pre>
+<p>We see the Pods are launched on all the nodes</p>
+<pre><code>networkandcode@k8s-master-0:~$ kubectl get po -o wide 
+NAME                        READY   STATUS    RESTARTS   AGE   IP               NODE         NOMINATED NODE   READINESS GATES
+deploy35-6df945f555-6kdlx   1/1     Running   0          24m   192.168.140.65   k8s-node-2   &lt;none&gt;           &lt;none&gt;
+deploy35-6df945f555-8fs55   1/1     Running   0          24m   192.168.11.200   k8s-node-0   &lt;none&gt;           &lt;none&gt;
+deploy35-6df945f555-9ks96   1/1     Running   0          24m   192.168.11.205   k8s-node-0   &lt;none&gt;           &lt;none&gt;
+deploy35-6df945f555-9pzvs   1/1     Running   0          24m   192.168.11.203   k8s-node-0   &lt;none&gt;           &lt;none&gt;
+deploy35-6df945f555-c6ssc   1/1     Running   0          24m   192.168.109.69   k8s-node-1   &lt;none&gt;           &lt;none&gt;
+deploy35-6df945f555-crx2f   1/1     Running   0          24m   192.168.140.67   k8s-node-2   &lt;none&gt;           &lt;none&gt;
+deploy35-6df945f555-ddqjv   1/1     Running   0          24m   192.168.11.204   k8s-node-0   &lt;none&gt;           &lt;none&gt;
+deploy35-6df945f555-j6wcm   1/1     Running   0          24m   192.168.109.65   k8s-node-1   &lt;none&gt;           &lt;none&gt;
+deploy35-6df945f555-jlrbk   1/1     Running   0          24m   192.168.11.196   k8s-node-0   &lt;none&gt;           &lt;none&gt;
+deploy35-6df945f555-knhq9   1/1     Running   0          24m   192.168.11.198   k8s-node-0   &lt;none&gt;           &lt;none&gt;
+deploy35-6df945f555-n8f6r   1/1     Running   0          24m   192.168.11.199   k8s-node-0   &lt;none&gt;           &lt;none&gt;
+deploy35-6df945f555-pnqsv   1/1     Running   0          24m   192.168.140.66   k8s-node-2   &lt;none&gt;           &lt;none&gt;
+deploy35-6df945f555-qctx6   1/1     Running   0          24m   192.168.140.68   k8s-node-2   &lt;none&gt;           &lt;none&gt;
+deploy35-6df945f555-qp7qk   1/1     Running   0          24m   192.168.11.197   k8s-node-0   &lt;none&gt;           &lt;none&gt;
+deploy35-6df945f555-rq55k   1/1     Running   0          24m   192.168.11.201   k8s-node-0   &lt;none&gt;           &lt;none&gt;
+deploy35-6df945f555-rr8v2   1/1     Running   0          24m   192.168.11.202   k8s-node-0   &lt;none&gt;           &lt;none&gt;
+deploy35-6df945f555-szwvf   1/1     Running   0          24m   192.168.109.66   k8s-node-1   &lt;none&gt;           &lt;none&gt;
+deploy35-6df945f555-vc4sv   1/1     Running   0          24m   192.168.109.67   k8s-node-1   &lt;none&gt;           &lt;none&gt;
+deploy35-6df945f555-vlcj6   1/1     Running   0          24m   192.168.140.69   k8s-node-2   &lt;none&gt;           &lt;none&gt;
+deploy35-6df945f555-zg6wt   1/1     Running   0          24m   192.168.109.68   k8s-node-1   &lt;none&gt;           &lt;none&gt;
+</code></pre>
+<p>Let's check the count of Pods launched on node-0</p>
+<pre><code>networkandcode@k8s-master-0:~$ kubectl get po -o wide | grep node-0 | wc
+     10      90    1170
+</code></pre>
+<p>So there are 10 Pods as the first output of wc, on the left refers to the no. of lines, so in this case most of the Pods, i.e., 50% of 20 Pods in the Deployment have been launched on node-0 as it was preferred, and rest of the Pods were launched on nodes 1 and 2. This is how soft preference i.e., <code>spec.affinity.nodeAffinity.preferredDuringSchedulingIgnoredDuringExecution</code> works.</p>
+<p>Reference: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.15/#preferredschedulingterm-v1-core</p>
+<p>Cleanup</p>
+<pre><code>networkandcode@k8s-master-0:~$ kubectl delete deploy deploy35
+deployment.apps &quot;deploy35&quot; deleted
+</code></pre>
+<p>--end-of-post--</p>
+</div>
+<p><!-- /wp:jetpack/markdown --></p>

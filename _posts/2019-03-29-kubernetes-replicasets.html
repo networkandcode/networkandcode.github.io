@@ -1,0 +1,90 @@
+---
+layout: post
+title: Kubernetes > ReplicaSets
+date: 2019-03-29 13:06:50.000000000 +05:30
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags:
+- kubernetes
+meta:
+  _oembed_f5a0129967f57657548d1514ed8cb407: "{{unknown}}"
+  _oembed_4f4b7e2202a455c6b7a837e6b66e3ca4: "{{unknown}}"
+  _oembed_cdb0065af928dfd6bee54e6a04f8d1bd: "{{unknown}}"
+  _rest_api_published: '1'
+  _rest_api_client_id: "-1"
+  _wpas_skip_18195285: '1'
+  _publicize_job_id: '29163162210'
+  timeline_notification: '1553845015'
+  _oembed_6dedb5aaa7c534b2e4f056f980b75966: "{{unknown}}"
+author:
+  login: shak1r
+  email: shakir@techie.com
+  display_name: shakir
+  first_name: ''
+  last_name: ''
+permalink: "/2019/03/29/kubernetes-replicasets/"
+---
+<p>Pod replicas can be created using ReplicaSets<br />
+One Pod template, multiple replicas</p>
+<p>networkandcode@cloudshell:~ (kubernetes-cka-224606)$ kubectl get rs<br />
+No resources found.<br />
+networkandcode@cloudshell:~ (kubernetes-cka-224606)$ kubectl get pods<br />
+No resources found.<br />
+networkandcode@cloudshell:~ (kubernetes-cka-224606)$ cat ex6.yml</p>
+<pre>---
+#ReplicaSet is an object that contains replicas of a Pod
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: rs6
+  namespace: default
+spec:
+  replicas: 3  #there will be 3 replicas of the same Pod
+  selector:
+    matchLabels:
+      tag: label6  #the replicaSet should pick Pods with this label
+  template:  #the Pod template
+    metadata:  #Pod name need not be defined as replicaset takes care of it
+      labels:
+        tag: label6
+    spec:
+      containers:
+      - name: ctr6
+        image: nginx
+...
+</pre>
+<p>networkandcode@cloudshell:~ (kubernetes-cka-224606)$ kubectl create -f ex6.yml<br />
+replicaset.apps/rs6 created</p>
+<p>networkandcode@cloudshell:~ (kubernetes-cka-224606)$ kubectl get rs<br />
+NAME DESIRED CURRENT READY AGE<br />
+rs6 3 3 3 1m</p>
+<p>networkandcode@cloudshell:~ (kubernetes-cka-224606)$ kubectl get pods<br />
+NAME READY STATUS RESTARTS AGE<br />
+rs6-<span style="color:#0000ff;">274lv</span> 1/1 Running 0 11s<br />
+rs6-rp6jj 1/1 Running 0 11s<br />
+rs6-vnc4r 1/1 Running 0 11s</p>
+<p>networkandcode@cloudshell:~ (kubernetes-cka-224606)$ kubectl delete pods rs6-274lv<br />
+pod "rs6-274lv" deleted</p>
+<p>Even when a Pod is deleted, the replicaSet would ensure its replaced by another Pod so that the number of replicas remain the same<br />
+networkandcode@cloudshell:~ (kubernetes-cka-224606)$ kubectl get pods<br />
+NAME READY STATUS RESTARTS AGE<br />
+rs6-<span style="color:#0000ff;">pzxwd</span> 1/1 Running 0 11s<br />
+rs6-rp6jj 1/1 Running 0 1m<br />
+rs6-vnc4r 1/1 Running 0 1m</p>
+<p>Once the replicaSet is deleted, the Pods are also deleted<br />
+networkandcode@cloudshell:~ (kubernetes-cka-224606)$ kubectl delete rs rs6<br />
+replicaset.extensions "rs6" deleted<br />
+networkandcode@cloudshell:~ (kubernetes-cka-224606)$ kubectl get pods<br />
+NAME READY STATUS RESTARTS AGE<br />
+rs6-4krtz 0/1 Terminating 0 1m<br />
+rs6-829r6 0/1 Terminating 0 1m<br />
+rs6-x58v5 0/1 Terminating 0 1m<br />
+networkandcode@cloudshell:~ (kubernetes-cka-224606)$ kubectl get pods<br />
+No resources found.</p>
+<p>Reference:<br />
+https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/</p>
+<p>--end-of-post--</p>

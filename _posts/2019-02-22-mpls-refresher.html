@@ -1,0 +1,243 @@
+---
+layout: post
+title: MPLS Refresher
+date: 2019-02-22 07:30:58.000000000 +05:30
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags:
+- mpls
+meta:
+  _wpas_skip_18195285: '1'
+  timeline_notification: '1550800861'
+  _rest_api_published: '1'
+  _rest_api_client_id: "-1"
+  _publicize_job_id: '27896929831'
+author:
+  login: shak1r
+  email: shakir@techie.com
+  display_name: shakir
+  first_name: ''
+  last_name: ''
+permalink: "/2019/02/22/mpls-refresher/"
+---
+<p><span style="color:#3366ff;">MPLS Comparison and Benefits</span></p>
+<p>IGP Traffic Engineering<br />
+-----------------------<br />
+IGP route calculation is topology driven and based on a simple additive metric such as the hop count or administrative value. Implies inefficient utilisation of the expensive resources as the network grows. Manual traffic engineering based on metrics adjustment gave a trial and error approach rather than a scientific solution to an increasingly complex problem. Despite these obvious drawbacks manual traffic engineering based on IGP metric adjustments continued to be an adequate TE solution until mid 90's.</p>
+<p>ATM<br />
+---<br />
+after mid 90's Most ISPs turned to ATM as their core technology. It's an Overlay N/W - multiple Networks (VCs) work in parallel to fwd traffic. The end routers see the VCs as p2p links despite their complex topology connecting ATM Switches. No change in physical network is done, and the VCs are just altered to change traffic from one n/w portion to another less utilised portion.<br />
+Downsides are having skilled professionals for IP and ATM technologies. ATM cell overhead is high ranging from 10-62%, while carrying packet oriented protocols like IP. ATM switches must be connected in full mesh implies n switches need n(n-1)/2 links. ATM VCs are not integrated with IGP either. deploying full mesh VCs further stresses the IGP.</p>
+<p>FR<br />
+--<br />
+Frame Relays are |||r to ATMs. They form VCs between end routers (Overlay Networks). FR switches to be deployed in full mesh. needs expert engineers in their respective platforms (IP, FR) to TS issues. FRs provide congestion control mechanism and they use a unique DLCI (data link connection identifier) to separate VCs from one another.</p>
+<p>Speed<br />
+-----<br />
+Historically MPLS VPI (virtual path identifier) and ATM VCI (virtual channel identifier) based exact match looks were much faster than ip route look ups. But with advances in silicon technology allowing ASIC based route look ups, routing is as faster as MPLS or ATM exact match look ups.</p>
+<p>Multi Protocol Separation<br />
+------------------------<br />
+SPs can run different core technologies like ATM, FR, Ethernet, and IPSEC over the same infrastructure. The real benefit of MPLS is that it provides a clean separation between Control (routing) and Data (forwarding) planes. This allows a single forwarding algorithm -MPLS that can be used for multiple services / traffic types. In future as SPs need to run more revenue generating services, they can include the services with out any change in the infrastructure, just by changing how packets need to be assigned to an LSP.</p>
+<hr />
+<p><span style="color:#3366ff;">End to End Packet Flow and Forwarding</span></p>
+<p>LSP<br />
+---<br />
+Packets flow along a traversed path - the LSP (label switched path) which is similar to an ATM in that it is unidirectional. So duplex traffic requires two LSPs between the ingress and egress routers. Much as with ATM VCIs, label values change at each segment of the LSP. a router can belong to multiple LSPs, with any role-ingress, egress, or transit LSR. But a single router can not be an entry and exit point of the same LSP. Generally an LSP remains with in a single MPLS domain, i.e, the entry, exit, and all intermediate LSRs are ultimately in control of the same administrative authority, ensuring that MPLS traffic engineering is not done haphazardly or at cross purposes but is implemented in a co-ordinated fashion. The ingress router perform push operation and is also called Head-End Router or the Label Edge Router (LER). The Egress router is also called LER or Tail End Router. Ingress is upstream from every other router on the LSP and egress is downstream from every other router on the LSP.</p>
+<p>Transit Router<br />
+--------------<br />
+In the case of a Fully Meshed MPLS Domain, the ingress router would be directly connected to the egress router, and there is no need for a transit LSR. But still transit LSRs may be configured based on TE needs. The MPLS Protocol enforces a maximum of 253 transit routers because of the 8 bit TTL field (0-255), 1 for ingress, 1 for egress.</p>
+<hr />
+<p><span style="color:#3366ff;">MPLS Packet Header</span></p>
+<p>MPLS Packet Header and Label<br />
+--------------------------------<br />
+A 32-bit shim MPLS header is prepended to the incoming packet along with appropriate data layer encapsulation, with a push operation at the ingress node, and the label is added based on the packet's destination, immediately after the L2 encapsulation header. The label trasforms the packet from being forwarded based on IP address to forwarding based on fixed length label (label forwarding tables). MPLS labels can be assigned manually or automatically by using a signaling protocol running in each LSR. MPLS can be used to label non-ip traffic such as in the case of an L2 VPN. Labels are popped the egress router and then the packet is forwarder based on the conventional IGP longest match IP route lookup.<br />
+The name shim (Layer 2.5)implies its between the L2 Frame and the IP header.</p>
+<p>Header Structure<br />
+----------------<br />
+L2 Header|32-Bit MPLS Header|Data|FCS</p>
+<p>32Bit MPLS Header === Label(20)|CoS(3)|S(1)|TTL(8)<br />
+the Label identifies the packet to a particular LSP and changes at each LSR (label switching router) or hop.<br />
+ranges from 0-1,048,575<br />
+CoS is still experimental due to lack of standards defn.s<br />
+S=&gt; Bottom of stack bit, 1=&gt; there are no other labels in the stack. so if popped it would be an unlabelled packet.<br />
+TTL(8)=&gt; by default, its copied from the corresponding IP Packet's TTL, its decremented at each router hop, and once it drops below 1, the packet would be discarded. TTL defines the limit on the maximum no. of router hops in an LSP.</p>
+<hr />
+<p><span style="color:#3366ff;">Label Values and the LIB</span></p>
+<p>Label Values<br />
+------------<br />
+Labels are of local significance, eg: label 10254 can identify one LSP on a router R1 and the same label 10254 could be used to identify a different LSP on a different router. Labels 0-15 are reserved (RFC 3032, MPLS Label Stack Encoding)</p>
+<p>0=IPv4 Explicit Null Label - indicates sole entry on the label stack and that the label should be popped<br />
+should be config under edit protocols mpls hierarchy (Junos) of the egress router, tells penultimate router to send a label(0) which will be popped by the egress router.</p>
+<p>1=Router Alert Label - legal anywhere except at the bottom of the stack, if it's at the top, the packet is delivered to a local s/w module for processing. After processing, if the packet is forwarded again, the label1 needs to be pushed back before forwarding, Label1 essentially gives MPLS modules in different routers a way to communicate with each other.</p>
+<p>2=IPv6 Explicit Null Label - Similar to Label0 except that 2 is for IPv6 packets.</p>
+<p>3=Implicit Null Label, an LSR can assign and distribute Label3, but it never appears in the encapsulation. It must be specified in the signalling protocol. The LSR actually pops the incoming label by swapping the implicit label3.<br />
+Junos default is implicit null with the perspective of the egress router, tells the penultimate router to pop the label and send. This is called Penultimate Hop Popping (PHP).</p>
+<p>4-15=reserved for future use</p>
+<p>LIB<br />
+-----</p>
+<p>The Label information base is stored in the MPLS.0 table, which is automatically created with default label values of 0,1 and 2 when the MPLS protocol is set in junOS. When a packet is received with one of these default labels, it's sent to the RE for processing, this shown by the action 'receive' on the mpls.0 table and there is no next hop associated. The LIB mappings in the MPLS.0 table shows the actions to be performed like receive(for def. labels), swap. The mpls.0 table is used by transit routers to make forwarding decisions. The mpls.0 table maps the incoming labels with the outgoing label and next hop to forward the packets.</p>
+<p>user@router&gt; show route table mpls.0</p>
+<p>this also shows the static LSPs configured</p>
+<p>mpls.0 is the mpls label-switching-table and is used by the transit and egress routers.<br />
+inet.3 is the mpls routing table used by the ingress router.</p>
+<hr />
+<p><span style="color:#3366ff;">MPLS and Routing Tables</span></p>
+<p>inet.3<br />
+------</p>
+<p>with junOS, by default, only BGP knows about the inet.3 table, that too only when it searches for the next-hop associated with the advertised prefixes.</p>
+<p>This separates the normal IGP routing table from the LSPs that are only related to BGP next hops.</p>
+<p>if BGP cannot resolve its next hop (LSP) from inet.3, it then tries to resolve it from the inet.0 table.<br />
+LSPs are preferred over IGP routes due to route preference.</p>
+<p>user@route&gt; show route &lt;prefix&gt; all<br />
+this shows hidden routes too (no * or - or + included)<br />
+this is indicated by the next hop as unusable and isn't exported into the forwarding table<br />
+this refers to the BGP unusable next hop problem</p>
+<p>user@route&gt; show route &lt;prefix&gt; all extensive<br />
+also shows the protocol next-hop</p>
+<p>this could be resolved by the next-hop self option which is one of the possible ways to overcome BGP unreachable next-hop issue.</p>
+<p>note that if the same route is present in both inet.0 and inet.3<br />
+then traffic associated with IGP will use inet.0 and traffic associated with BGP next hop will use inet.3</p>
+<p>LSPs are preferred over IGP routes because of lesser preference values for LSPs. even if the preferences are same, inet.3 will be preferred over inet.0 entries.</p>
+<p>The LSP from the inet.3 table will be learnt by BGP and the same will be installed in the inet.0 table as a BGP route associated with the BGP next-hop.</p>
+<p>the LSP itself is not installed into inet.0 rather the BGP prefix is installed into inet.0 with the forwarding next hop that points to the LSP.</p>
+<p>LSPs generally appear in the ingress router's inet.3 table. The next hop points the egress router's loopback address (router id) as if it were directly connected despite any transition routers in between.<br />
+.............</p>
+<p>with additional non default configuration, LSPs can also be made known to non-bgp traffic, with careful considerations of complicated troubleshooting.<br />
+IGPs can be made to look into the LSP info on an LSP-by-LSP basis by using the install prefix active cli configuration on the LSP, installing it into the inet.0 table.</p>
+<p>mpls.0 is the mpls label-switching-table and is used by the transit and egress routers.<br />
+inet.3 is the mpls routing table used by the ingress router.</p>
+<p>we can use install prefix cli command in the LSP config to install LSPs into inet.3 when BGP next-hop-self is not in effect at the egress router.</p>
+<p>&nbsp;</p>
+<hr />
+<p><span style="color:#3366ff;">Configure Static LSP</span></p>
+<p>Configure Static LSP on the ingress router<br />
+------------------------------------------</p>
+<p>user@R2# edit protocols mpls static-label-switched-path R2-R3-R5-R6<br />
+here R2-R3-R5-R6 is the staticLSP's name<br />
+Note: in a single router a static and dynamic LSP can have the same name</p>
+<p>user@R2# set ingress next-hop 172.20.10.2<br />
+the next-hop can be either the address or interface of the next-hop router</p>
+<p>user@R2# set ingress to 172.20.30.2<br />
+this is the address of the egress router</p>
+<p>user@R2# set push 100503<br />
+this label will be pushed by the ingress router on to the incoming packet<br />
+the push statement is only optional</p>
+<p>Configure Static LSP on the transit router<br />
+------------------------------------------</p>
+<p>user@R3# edit protocols mpls static-label-switched-path R2-R3-R5-R6 transit 100503<br />
+here 100503 is the incoming label</p>
+<p>user@R3# set next-hop 172.20.11.2</p>
+<p>user@R3# set swap 100504<br />
+here 100504 is the outgoing label<br />
+we can also use pop operation here, if its the penultimate router and needs to perform PHP.</p>
+<p>standard static LSP incoming label values - 1,000,000 to 1,048,675<br />
+Each transit static LSP name can have one or more incoming labels configured, each operating as an independent LSP</p>
+<p>We can configure static LSPs with outgoing values from 0-1,048,575, but incoming label values should only range between 1,000,575. to allow interoperability between JunOS and other vendor routers.</p>
+<p>there is no need to configure static LSPs for egress routers in case of PHP, as the egress router would only perform an IP route lookup. The Junos OS will also allow the static label to be swapped and sent with a label value of 0 from the penultimate router. This will allow the egress router to honor the EXP bits when queuing traffic through the static LSP.</p>
+<p>we can view the static LSPs using the mpls.0 routing table.<br />
+user@router&gt; show route table mpls.0</p>
+<hr />
+<p><span style="color:#3366ff;">Interface configuration</span></p>
+<p>1. Configure Inet family with an IP address to accept IP Packets</p>
+<p>user@router# set interfaces ge-1/0/0 unit 0 family inet address 172.20.100.21/30</p>
+<p>2. Configure the interfaces that needs to be participated in the MPLS domain</p>
+<p>user@router# set interfaces ge-1/0/0 unit 0 family mpls</p>
+<p>3. We must tell the MPLS protocol what interfaces it can use</p>
+<p>user@router# set protocols mpls interface ge-1/0/0.0<br />
+user@router# set protocols mpls interface all<br />
+user@router# set protocols mpls interface fxp0.0<br />
+It is a good practice to disable the management interface FXP0 from participating in MPLS as it is not a routable interface.</p>
+<hr />
+<p><span style="color:#3366ff;">JunOS support</span></p>
+<p>JunOS support<br />
+-------------<br />
+MPLS labels can be assigned on a per-interface or per-router basis. Junos at present supports only per router labels. Multicast and ipv6 labels are assigned independently of unicast packet labels. Junos doesn't support multicast and ipv6 except in the context of an L2 or L3 VPN. Junos supports unlimited label stack depths for transit LSR operations. at the ingress router, up to 3 labels can be pushed. All M, T, Mx series ethernet services routers support LSR capabilities. Junos works equally well with or with out PHP.<br />
+It is a good practice to disable the management interface FXP0 from participating in MPLS as it is not a routable interface.</p>
+<p>We can configure static LSPs with outgoing values from 0-1,048,575, but incoming label values should only range between 1,000,575. to allow interoperability between JunOS and other vendor routers.</p>
+<p>The Junos OS will also allow the static label to be swapped and sent with a label value of 0 from the penultimate router. This will allow the egress router to honor the EXP bits when queuing traffic through the static LSP.</p>
+<p>Preference Values<br />
+-----------------<br />
+OSPF-10<br />
+BGP-170<br />
+MPLS static LSP - 6/1</p>
+<hr />
+<p><span style="color:#3366ff;">PHP</span></p>
+<p>PHP<br />
+---<br />
+PHP means popping will be done by the penultimate router (second to last) and an unlabelled packet will be sent to the egress router for IP address based forwarding. If there is only one MPLS tunnel, PHP eliminates MPLS processing at the egress router.</p>
+<p>PHP facilitates label stacking and can improve the performance on some platforms because it eliminates the need for two lookup operations on the egress router. But Junos works equally well with or with out PHP.</p>
+<p>Tunnels with in Tunnels<br />
+-----------------------<br />
+Label stacking facilitates construction tunnels with in tunnels, using multiple mpls labels. And with PHP, the downstream node will be even aware of the outer tunnel's existence.</p>
+<p>Ingress router controls PHP<br />
+---------------------------<br />
+PHP behavior is controlled by the Ingress router by virtue of the label value assigned by it to the penultimate node during the establishment of the LSP.</p>
+<hr />
+<p><span style="color:#3366ff;">Label Distribution Protocols</span></p>
+<p>summary<br />
+--------------<br />
+label distribution protocols or signalling protocols<br />
+for dynamically establishing an LSP with little or no user intervention</p>
+<p>JunOS supports 2 types: 1. LDP, 2. RSVP</p>
+<p>the egress router will send label information in the upstream direction towards the ingress router of the LSP<br />
+RSVP<br />
+---------<br />
+RSVP is a generic QoS protocol adapted to be used with MPLS, but LDP was specifically developed for MPLS<br />
+RSVP uses IP as its network layer protocol<br />
+resources are reserved hop by hop across the internetwork</p>
+<p>RSVP is an internet control protocol similar to ICMP, IGMP, and routing protocols<br />
+RSVP also used IGP best paths</p>
+<p>RSVP is used for TE(Traffic Engineering)</p>
+<p>RSVP provides MPLS LSPs with a method of support for explicit routes ("go here, then here, finally there..."), path numbering through label assignment, and route recording (where the LSP actually goes from ingress to egress, which is very handy information to have)</p>
+<p>RSVP also provides keep alive mechanism to use for visibility (the LSP is still here and available) and redundancy (this LSP appears dead, is there a secondary path)</p>
+<p>LDP<br />
+------<br />
+LDP always follows the IGP best path and executes hop by hop<br />
+LDP supports topology driven MPLS networks in best effort</p>
+<hr />
+<p><span style="color:#3366ff;">Cisco IOS commands</span><br />
+mpls ldp logging neighbor-changes<br />
+mpls ldp graceful-restart<br />
+mpls ldp session protection<br />
+mpls ldp igp sync holddown 5000<br />
+mpls label protocol ldp<br />
+mpls ldp router-id Loopback0 force<br />
+mpls ldp tcp pak-priority<br />
+no mpls ip propagate-ttl</p>
+<p>ip access-list standard mpls-subnets<br />
+permit 192.168.1.0 0.0.0.255<br />
+permit 192.168.2.0 0.0.0.255<br />
+permit 192.168.3.0 0.0.0.255<br />
+no mpls ldp advertise-labels<br />
+mpls ldp advertise-labels for mpls-subnets</p>
+<p>interface g0/0<br />
+mpls ip<br />
+mpls label protocol ldp<br />
+mpls ldp igp sync delay 5</p>
+<hr />
+<p><span style="color:#3366ff;">JunOS commands<br />
+</span>user@router&gt; show route table mpls.0</p>
+<p>user@router# edit interfaces ge-1/0/0 unit 0<br />
+user@router# set family mpls</p>
+<p>user@router# edit protocols mpls<br />
+user@router# set interface ge-1/0/0.0<br />
+user@router# set interface all<br />
+user@router# set interface fxp0.0 disable</p>
+<p>user@router# edit protocols mpls static-label-switched-path MYLSP<br />
+user@router# set ingress next-hop 192.168.1.2<br />
+user@router# set ingress to 192.168.1.10<br />
+user@router# set ingress push 10001</p>
+<hr />
+<p><span style="color:#3366ff;">Numbers<br />
+</span>32 bit MPLS header<br />
+20 bit label + 3 bit cos + 1 bit bos + 8 bit TTL<br />
+labe value - o to 1,048,575<br />
+max 253 transit routers, because of 8 bit TTL<br />
+max 3 labels can be pushed at ingress<br />
+reserved labels 0 to 15 - RFC 3032, MPLS Label Stack Encoding<br />
+0 - explicit null, 1 - router alert, 2 - IPv6 explicit null, 3 - implicit null</p>
+<hr />
+<p>--end-of-post--</p>

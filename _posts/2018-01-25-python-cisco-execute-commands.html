@@ -1,0 +1,120 @@
+---
+layout: post
+title: python > cisco > execute commands
+date: 2018-01-25 23:39:15.000000000 +05:30
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags:
+- python
+meta:
+  _oembed_c7881f6cb4520a114b096a985ee1650d: "{{unknown}}"
+  _oembed_520a61b9843cc61fa5b9a6a85ce89bae: "{{unknown}}"
+  _publicize_job_id: '14032063643'
+  timeline_notification: '1516903758'
+  switch_like_status: '1'
+  _rest_api_published: '1'
+  _rest_api_client_id: "-1"
+  _oembed_c79c0acc72b2a9d302dd46cdcdf4c83e: "{{unknown}}"
+  publicize_linkedin_url: https://www.linkedin.com/updates?discuss=&scope=72550999&stype=M&topic=6362355510888488960&type=U&a=PIXV
+  _publicize_done_18395822: '1'
+  _wpas_done_18169689: '1'
+  _publicize_done_external: a:1:{s:7:"twitter";a:1:{i:18195285;s:59:"https://twitter.com/Mh84ibrShakir/status/956589822570913793";}}
+  _publicize_done_18419479: '1'
+  _wpas_done_18195285: '1'
+  publicize_twitter_user: Mh84ibrShakir
+  _oembed_6684b986c5c5d157e5fea46a4fb476d5: "{{unknown}}"
+  _oembed_41d95ed467a16f0cf5d69ee1c005f23e: "{{unknown}}"
+  _oembed_418894b5e75d401aee28d87905bfe0e9: "{{unknown}}"
+  _oembed_4c3f03ce74073cf668491f33ab6f271d: "{{unknown}}"
+  _oembed_27636c14e42f3ab01e4c4de81e46346c: "{{unknown}}"
+  _oembed_0c14bfc85e5587260290da6ac058eca6: "{{unknown}}"
+author:
+  login: shak1r
+  email: shakir@techie.com
+  display_name: shakir
+  first_name: ''
+  last_name: ''
+permalink: "/2018/01/25/python-cisco-execute-commands/"
+---
+<p>devices:</p>
+<p>192.168.56.132    #7200 gns3<br />
+192.168.56.133    #7200 gns3<br />
+10.10.20.48    #csr1000v</p>
+<p>~~~~~network admin tool, networkandcode.wordpress.com~~~~~</p>
+<p>&nbsp;</p>
+<p>use at your own risk, try to emulate before testing on production</p>
+<p>choose a task:</p>
+<p>1. dns forward lookup: hostname to ip<br />
+2. dns reverse lookup: ip to hostname<br />
+3. ping test<br />
+4. inventory check(comware)<br />
+5. execute same command on multiple devices</p>
+<p>choice: 5<br />
+~~~~~~~~~<br />
+How would you like to provide the device CIs<br />
+1. direct input<br />
+2. file</p>
+<p>choice: 1<br />
+~~~~~~~~~<br />
+Enter the CIs/IPs, one in each line:<br />
+192.168.56.132<br />
+192.168.56.133<br />
+10.10.20.48</p>
+<p>Choose a device type<br />
+1. Comware<br />
+2. Procurve<br />
+3. Aruba<br />
+4. Cisco<br />
+Choice:4</p>
+<p>&nbsp;</p>
+<p>login: cisco<br />
+password:<br />
+is there a super / enable password (Y/N) :y<br />
+enable / super password:</p>
+<p>How would you like to provide the commands, to be executed<br />
+1. direct input<br />
+2. file</p>
+<p>choice: 1<br />
+~~~~~~~~~<br />
+Enter the commands, one in each line:<br />
+sh ip arp<br />
+sh vlan br<br />
+sh log<br />
+sh cdp ne<br />
+sh ip ro<br />
+sh bgp sum</p>
+<p>results are stored here:</p>
+<p>sh ip arp<br />
+sh ip arp\192.168.56.132 sh ip arp.txt<br />
+sh ip arp\192.168.56.133 sh ip arp.txt<br />
+sh ip arp\10.10.20.48 sh ip arp.txt</p>
+<p>sh vlan br<br />
+sh vlan br\192.168.56.132 sh vlan br.txt<br />
+sh vlan br\192.168.56.133 sh vlan br.txt<br />
+sh vlan br\10.10.20.48 sh vlan br.txt</p>
+<p>sh log<br />
+sh log\192.168.56.132 sh log.txt<br />
+sh log\192.168.56.133 sh log.txt<br />
+sh log\10.10.20.48 sh log.txt</p>
+<p>sh cdp ne<br />
+sh cdp ne\192.168.56.132 sh cdp ne.txt<br />
+sh cdp ne\192.168.56.133 sh cdp ne.txt<br />
+sh cdp ne\10.10.20.48 sh cdp ne.txt</p>
+<p>sh ip ro<br />
+sh ip ro\192.168.56.132 sh ip ro.txt<br />
+sh ip ro\192.168.56.133 sh ip ro.txt<br />
+sh ip ro\10.10.20.48 sh ip ro.txt</p>
+<p>sh bgp sum<br />
+sh bgp sum\192.168.56.132 sh bgp sum.txt<br />
+sh bgp sum\192.168.56.133 sh bgp sum.txt<br />
+sh bgp sum\10.10.20.48 sh bgp sum.txt</p>
+<p>&nbsp;</p>
+<p>type q to quit, or any other key to issue more commands: q<br />
+~~~~~~~~~~~~~~~~~~~~~~~~~~thank you~~~~~~~~~~~~~~~~~~~~~~~~~~<br />
+wish to run another task(Y/N)?: n</p>
+<p>https://networkandcode.wordpress.com/2017/10/28/tool-for-daily-network-tasks/</p>
+<p>--end-of-post--</p>

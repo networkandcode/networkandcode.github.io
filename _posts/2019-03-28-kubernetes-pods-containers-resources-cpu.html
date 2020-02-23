@@ -1,0 +1,97 @@
+---
+layout: post
+title: Kubernetes > Pods > Containers > Resources > CPU
+date: 2019-03-28 19:43:59.000000000 +05:30
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags:
+- kubernetes
+meta:
+  timeline_notification: '1553782442'
+  _rest_api_published: '1'
+  _rest_api_client_id: "-1"
+  _wpas_skip_18195285: '1'
+  _publicize_job_id: '29137369415'
+author:
+  login: shak1r
+  email: shakir@techie.com
+  display_name: shakir
+  first_name: ''
+  last_name: ''
+permalink: "/2019/03/28/kubernetes-pods-containers-resources-cpu/"
+---
+<p><span style="font-weight:400;">The CPU resources we are going to see here are</span></p>
+<p><span style="font-weight:400;">- CPU request = Minimum or guaranteed CPU for the container</span></p>
+<p><span style="font-weight:400;">- CPU limit = Maximum CPU, should not exceed for the container</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight:400;">Let’s define the Pod configuration</span></p>
+<p><span style="font-weight:400;">networkandcode@cloudshell:~ (kubernetes-cka-224606)$ cat ex4.yml</span></p>
+<p><span style="font-weight:400;">---</span></p>
+<p><span style="font-weight:400;">apiVersion: v1</span></p>
+<p><span style="font-weight:400;">kind: Pod</span></p>
+<p><span style="font-weight:400;">metadata:</span></p>
+<p><span style="font-weight:400;">  name: pod4</span></p>
+<p><span style="font-weight:400;">  namespace: default</span></p>
+<p><span style="font-weight:400;">spec:</span></p>
+<p><span style="font-weight:400;">  containers:</span></p>
+<p><span style="font-weight:400;">  - name: ctr4</span></p>
+<p><span style="font-weight:400;">    image: vish/stress</span></p>
+<p><span style="font-weight:400;">    resources:</span></p>
+<p><span style="font-weight:400;">      requests:</span></p>
+<p><span style="font-weight:400;">        cpu: "0.5"</span></p>
+<p><span style="font-weight:400;">      limits:</span></p>
+<p><span style="font-weight:400;">        cpu: "1"</span></p>
+<p><span style="font-weight:400;">    args: ["-cpus", "2"]  #attempt to use 2 CPUs</span></p>
+<p><span style="font-weight:400;">...</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight:400;">Let’s create the Pod and check the metrics</span></p>
+<p><span style="font-weight:400;">networkandcode@cloudshell:~ (kubernetes-cka-224606)$ kubectl create -f ex4.yml</span></p>
+<p><span style="font-weight:400;">pod/pod4 created</span></p>
+<p><span style="font-weight:400;">networkandcode@cloudshell:~ (kubernetes-cka-224606)$ kubectl get pod pod4</span></p>
+<p><span style="font-weight:400;">NAME   READY STATUS    RESTARTS AGE</span></p>
+<p><span style="font-weight:400;">pod4   1/1 Running   0 8s</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight:400;">networkandcode@cloudshell:~ (kubernetes-cka-224606)$ kubectl top pods pod4</span></p>
+<p><span style="font-weight:400;">NAME   CPU(cores)   MEMORY(bytes)</span></p>
+<p><span style="font-weight:400;">pod4   962m      0Mi</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight:400;">So, it’s currently consuming 962 milli CPU, which is slightly less than the specified limit(1 CPU).</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight:400;">Let’s define another Pod with very high CPU request, which none of the node in the cluster can accommodate</span></p>
+<p><span style="font-weight:400;">etworkandcode@cloudshell:~ (kubernetes-cka-224606)$ cat ex5.yml</span></p>
+<p><span style="font-weight:400;">---</span></p>
+<p><span style="font-weight:400;">apiVersion: v1</span></p>
+<p><span style="font-weight:400;">kind: Pod</span></p>
+<p><span style="font-weight:400;">metadata:</span></p>
+<p><span style="font-weight:400;">  name: pod5</span></p>
+<p><span style="font-weight:400;">  namespace: default</span></p>
+<p><span style="font-weight:400;">spec:</span></p>
+<p><span style="font-weight:400;">  containers:</span></p>
+<p><span style="font-weight:400;">  - name: ctr5</span></p>
+<p><span style="font-weight:400;">    image: vish/stress</span></p>
+<p><span style="font-weight:400;">    resources:</span></p>
+<p><span style="font-weight:400;">      requests:</span></p>
+<p><span style="font-weight:400;">        cpu: "40"</span></p>
+<p><span style="font-weight:400;">      limits:</span></p>
+<p><span style="font-weight:400;">        cpu: "50"</span></p>
+<p><span style="font-weight:400;">    args: ["-cpus", "2"]  #attempt to use 2 CPUs</span></p>
+<p><span style="font-weight:400;">...</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight:400;">The Pod should remain Pending state</span><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;">networkandcode@cloudshell:~ (kubernetes-cka-224606)$ kubectl get pods pod5</span></p>
+<p><span style="font-weight:400;">NAME   READY STATUS    RESTARTS AGE</span></p>
+<p><span style="font-weight:400;">pod5   0/1 Pending   0 23s</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight:400;">Reference:</span></p>
+<p><a href="https://kubernetes.io/docs/tasks/configure-pod-container/assign-cpu-resource/"><span style="font-weight:400;">https://kubernetes.io/docs/tasks/configure-pod-container/assign-cpu-resource/</span></a></p>
+<p>&nbsp;</p>
+<p><span style="font-weight:400;">--end-of-post--</span></p>
+<p>&nbsp;</p>
+<p><span style="font-weight:400;"><br />
+</span><span style="font-weight:400;"></p>
+<p></span></p>
+<p>&nbsp;</p>

@@ -1,0 +1,69 @@
+---
+layout: post
+title: OpenStack | Routers
+date: 2018-07-10 18:17:38.000000000 +05:30
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags:
+- openstack
+meta:
+  _wpas_skip_18169689: '1'
+  _wpas_skip_18195285: '1'
+  timeline_notification: '1531226861'
+  _rest_api_published: '1'
+  _rest_api_client_id: "-1"
+  _publicize_job_id: '19862029335'
+author:
+  login: shak1r
+  email: shakir@techie.com
+  display_name: shakir
+  first_name: ''
+  last_name: ''
+permalink: "/2018/07/10/openstack-routers/"
+---
+<p>command syntax1: <em>openstack router &lt;action/operation&gt; &lt;--flags values&gt; &lt;router-name&gt;</em></p>
+<p>command syntax2: <em>openstack router &lt;action/operation&gt; subnet &lt;router-name&gt; &lt;subnet-name&gt;</em></p>
+<p>#to check the list of routers</p>
+<p>cumulus@server01:~$ <span style="color:#3366ff;">openstack router list</span></p>
+<p>#let's create a new router</p>
+<p>cumulus@server01:~$ <span style="color:#3366ff;">openstack router create --project firstProject firstRouter</span><br />
++-------------------------+--------------------------------------+<br />
+| Field | Value |<br />
++-------------------------+--------------------------------------+<br />
+| admin_state_up | UP |<br />
+| availability_zone_hints | |<br />
+| availability_zones | |<br />
+| created_at | 2018-07-10T12:10:14Z |<br />
+| description | |<br />
+| distributed | False |<br />
+| external_gateway_info | None |<br />
+| flavor_id | None |<br />
+| ha | False |<br />
+| id | 8b2c9007-5c60-44d5-a4cd-29a0e07df3b1 |<br />
+| name | firstRouter |<br />
+| project_id | e79e5fbcf2be47aa9c1d3600ddfd7a81 |<br />
+| revision_number | None |<br />
+| routes | |<br />
+| status | ACTIVE |<br />
+| tags | |<br />
+| updated_at | 2018-07-10T12:10:14Z |<br />
++-------------------------+--------------------------------------+<br />
+cumulus@server01:~$</p>
+<p>#let's add subnets to the router</p>
+<p>cumulus@server01:~$ <span style="color:#3366ff;">openstack router add subnet firstRouter firstSubnet</span><br />
+cumulus@server01:~$ <span style="color:#3366ff;">openstack router add subnet firstRouter firstProviderSubnet</span><br />
+cumulus@server01:~$</p>
+<p>#a provider network can also be added to the router by specifying the --external-gateway value</p>
+<p>#to check the router list again</p>
+<p>cumulus@server01:~$ <span style="color:#3366ff;">openstack router list --long</span><br />
++--------------------------------------+-------------+--------+-------+-------------+-------+----------------------------------+--------+-----------------------+--------------------+------+<br />
+| ID | Name | Status | State | Distributed | HA | Project| Routes | External gateway info | Availability zones | Tags |<br />
++--------------------------------------+-------------+--------+-------+-------------+-------+----------------------------------+--------+-----------------------+--------------------+------+<br />
+| 8b2c9007-5c60-44d5-a4cd-29a0e07df3b1 | firstRouter | ACTIVE | UP | False | False | e79e5fbcf<br />
+2be47aa9c1d3600ddfd7a81 | | None | nova | |<br />
++--------------------------------------+-------------+--------+-------+-------------+-------+----------------------------------+--------+-----------------------+--------------------+------+</p>
+<p>--end-of-post--</p>

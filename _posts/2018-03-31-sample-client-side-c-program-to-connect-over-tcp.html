@@ -1,0 +1,103 @@
+---
+layout: post
+title: sample client side c program to connect over tcp
+date: 2018-03-31 23:09:57.000000000 +05:30
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags: []
+meta:
+  timeline_notification: '1522663389'
+  _rest_api_published: '1'
+  _rest_api_client_id: "-1"
+  _publicize_job_id: '16378087550'
+  publicize_linkedin_url: https://www.linkedin.com/updates?discuss=&scope=72550999&stype=M&topic=6385903347706195968&type=U&a=ybiS
+  _publicize_done_18395822: '1'
+  _wpas_done_18169689: '1'
+  _publicize_done_external: a:1:{s:7:"twitter";a:1:{i:18195285;s:59:"https://twitter.com/Mh84ibrShakir/status/980137661049565184";}}
+  _publicize_done_18419479: '1'
+  _wpas_done_18195285: '1'
+  publicize_twitter_user: Mh84ibrShakir
+  _wpas_skip_18169689: '1'
+  _wpas_skip_18195285: '1'
+author:
+  login: shak1r
+  email: shakir@techie.com
+  display_name: shakir
+  first_name: ''
+  last_name: ''
+permalink: "/2018/03/31/sample-client-side-c-program-to-connect-over-tcp/"
+---
+<p>#include &lt;sys/socket.h&gt;</p>
+<p>#include &lt;sys/types.h&gt;</p>
+<p>#include &lt;stdio.h&gt;</p>
+<p>#include &lt;arpa/inet.h&gt;</p>
+<p>int main() {</p>
+<p>/*declaring an integer variable client_socket_fd*/</p>
+<p>/*calling the socket function to initiate a tcp socket</p>
+<p>and mapping the returned file descriptor value</p>
+<p>with the client_socket_fd variable*/</p>
+<p>int client_socket_fd = socket(AF_INET, SOCK_STREAM, 0);</p>
+<p>if (client_socket_fd != -1) {</p>
+<p>printf("socket creation is successful, and the file descriptor value is %d\n\n",</p>
+<p>client_socket_fd);</p>
+<p>}</p>
+<p>int length;</p>
+<p>/*declaring two strctures client_address and server_address</p>
+<p>with the type sockaddr_in*/</p>
+<p>struct sockaddr_in server_address, client_address;</p>
+<p>/*client_address.sin_addr.s_addr = INADDR_ANY; /*special keyword to bind any available ip</p>
+<p>addresses in this host*/</p>
+<p>getsockname(client_socket_fd, (struct sockaddr*)&amp;client_address, &amp;length);</p>
+<p>//char client_ip_address = inet_ntoa(client_address.sin_addr);</p>
+<p>//int client_port = ntohs(client_address.sin_port);</p>
+<p>printf("The implicit IP that will be assigned to the client for the connection with server is: %s\n",</p>
+<p>inet_ntoa(client_address.sin_addr));</p>
+<p>char choice;</p>
+<p>int explicit_port;</p>
+<p>printf("should we explicitly specify the client port number(y/n): ");</p>
+<p>scanf("%s", &amp;choice);</p>
+<p>if (choice == 'y') {</p>
+<p>printf("enter the explicit client port number: ");</p>
+<p>scanf("%d", &amp;explicit_port);</p>
+<p>client_address.sin_port = htons(explicit_port);</p>
+<p>getsockname(client_socket_fd, (struct sockaddr*)&amp;client_address, &amp;length);</p>
+<p>printf("The explicit Port that will be assigned to the client for the connection with server is:</p>
+<p>%d\n", ntohs(client_address.sin_port));</p>
+<p>}</p>
+<p>else if (choice == 'n') {</p>
+<p>printf("The implicit Port that will be assigned to the client for the connection with server is:</p>
+<p>%d\n", ntohs(client_address.sin_port));</p>
+<p>}</p>
+<p>printf("\n");</p>
+<p>server_address.sin_family = AF_INET;</p>
+<p>/*the explicit remote host address refers to google.com's public IP*/</p>
+<p>server_address.sin_addr.s_addr = inet_addr("172.217.163.206");</p>
+<p>/*the explicit remote host port is 80 which is http*/</p>
+<p>/*to convet 80 into network byte order format, htons means host to network short*/</p>
+<p>server_address.sin_port = htons(80);</p>
+<p>getsockname(client_socket_fd, (struct sockaddr*)&amp;client_address, &amp;length);</p>
+<p>printf("The explicit Port that will be assigned to the client for the connection with server is:</p>
+<p>%d\n", ntohs(client_address.sin_port));</p>
+<p>}</p>
+<p>else if (choice == 'n') {</p>
+<p>printf("The implicit Port that will be assigned to the client for the connection with server is:</p>
+<p>%d\n", ntohs(client_address.sin_port));</p>
+<p>}</p>
+<p>printf("\n");</p>
+<p>server_address.sin_family = AF_INET;</p>
+<p>/*the explicit remote host address refers to google.com's public IP*/</p>
+<p>server_address.sin_addr.s_addr = inet_addr("172.217.163.206");</p>
+<p>/*the explicit remote host port is 80 which is http*/</p>
+<p>/*to convet 80 into network byte order format, htons means host to network short*/</p>
+<p>server_address.sin_port = htons(80);</p>
+<p>printf("server details provided in the code are: IP 172.217.163.206 , Port 80\n");</p>
+<p>int c = connect(client_socket_fd, (struct sockaddr*)&amp;server_address, sizeof(server_address));</p>
+<p>if (c == 0){</p>
+<p>printf("connection to the server is successful\n");</p>
+<p>}</p>
+<p>}</p>
+<p>--end-of-post--</p>

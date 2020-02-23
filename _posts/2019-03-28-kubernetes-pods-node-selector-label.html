@@ -1,0 +1,114 @@
+---
+layout: post
+title: Kubernetes > Pods > Node Selector > Label
+date: 2019-03-28 19:41:07.000000000 +05:30
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags:
+- kubernetes
+meta:
+  _rest_api_published: '1'
+  _rest_api_client_id: "-1"
+  _wpas_skip_18195285: '1'
+  timeline_notification: '1553782272'
+  _publicize_job_id: '29137285892'
+author:
+  login: shak1r
+  email: shakir@techie.com
+  display_name: shakir
+  first_name: ''
+  last_name: ''
+permalink: "/2019/03/28/kubernetes-pods-node-selector-label/"
+---
+<p>Labels are key value pairs that can be attached to Kubernetes objects such as Nodes, Pods etc. They are either predefined or user defined. User defined labels are defined under the metadata section of the object configuration which is in yaml format.</p>
+<p>In this scenario, we are going to assign a label to a node, and then schedule a pod on that node by calling the same label on the spec &gt; nodeSelector section of the Pod</p>
+<p>To check the list of nodes in the cluster<br />
+networkandcode@cloudshell:~ (kubernetes-cka-224606)$ kubectl get nodes<br />
+NAME STATUS ROLES AGE VERSION<br />
+gke-standard-cluster-1-default-pool-7a916bd9-cpxw Ready &lt;none&gt; 2m v1.11.5-gke.4<br />
+gke-standard-cluster-1-default-pool-7a916bd9-v1jd Ready &lt;none&gt; 2m v1.11.5-gke.4<br />
+gke-standard-cluster-1-default-pool-7a916bd9-xg0f Ready &lt;none&gt; 2m v1.11.5-gke.4<br />
+networkandcode@cloudshell:~ (kubernetes-cka-224606)$</p>
+<p>There would be certain predefined labels for the nodes, to check these labels<br />
+networkandcode@cloudshell:~ (kubernetes-cka-224606)$ kubectl get nodes --show-labels<br />
+NAME STATUS ROLES AGE VERSION LABELS<br />
+gke-standard-cluster-1-default-pool-7a916bd9-cpxw Ready &lt;none&gt; 9m v1.11.5-gke.4 beta.kubernetes.io/arch=amd64,beta.kubernetes.io/fluentd-ds<br />
+-ready=true,beta.kubernetes.io/instance-type=n1-standard-1,beta.kubernetes.io/os=linux,cloud.google.com/gke-nodepool=default-pool,cloud.google.com/gke-os-dis<br />
+tribution=cos,failure-domain.beta.kubernetes.io/region=us-central1,failure-domain.beta.kubernetes.io/zone=us-central1-a,kubernetes.io/hostname=gke-standard-c<br />
+luster-1-default-pool-7a916bd9-cpxw<br />
+gke-standard-cluster-1-default-pool-7a916bd9-v1jd Ready &lt;none&gt; 9m v1.11.5-gke.4 beta.kubernetes.io/arch=amd64,beta.kubernetes.io/fluentd-ds<br />
+-ready=true,beta.kubernetes.io/instance-type=n1-standard-1,beta.kubernetes.io/os=linux,cloud.google.com/gke-nodepool=default-pool,cloud.google.com/gke-os-dis<br />
+tribution=cos,failure-domain.beta.kubernetes.io/region=us-central1,failure-domain.beta.kubernetes.io/zone=us-central1-a,kubernetes.io/hostname=gke-standard-c<br />
+luster-1-default-pool-7a916bd9-v1jd<br />
+gke-standard-cluster-1-default-pool-7a916bd9-xg0f Ready &lt;none&gt; 9m v1.11.5-gke.4 beta.kubernetes.io/arch=amd64,beta.kubernetes.io/fluentd-ds<br />
+-ready=true,beta.kubernetes.io/instance-type=n1-standard-1,beta.kubernetes.io/os=linux,cloud.google.com/gke-nodepool=default-pool,cloud.google.com/gke-os-dis<br />
+tribution=cos,failure-domain.beta.kubernetes.io/region=us-central1,failure-domain.beta.kubernetes.io/zone=us-central1-a,kubernetes.io/hostname=gke-standard-c<br />
+Luster-1-default-pool-7a916bd9-xg0f</p>
+<p>To see the labels associated with the 3rd node<br />
+networkandcode@cloudshell:~ (kubernetes-cka-224606)$ kubectl get nodes/gke-standard-cluster-1-default-pool-7a916bd9-xg0f --show-labels<br />
+NAME STATUS ROLES AGE VERSION LABELS<br />
+gke-standard-cluster-1-default-pool-7a916bd9-xg0f Ready &lt;none&gt; 20m v1.11.5-gke.4 beta.kubernetes.io/arch=amd64,beta.kubernetes.io/fluentd-ds<br />
+-ready=true,beta.kubernetes.io/instance-type=n1-standard-1,beta.kubernetes.io/os=linux,cloud.google.com/gke-nodepool=default-pool,cloud.google.com/gke-os-dis<br />
+tribution=cos,failure-domain.beta.kubernetes.io/region=us-central1,failure-domain.beta.kubernetes.io/zone=us-central1-a,kubernetes.io/hostname=gke-standard-c<br />
+Luster-1-default-pool-7a916bd9-xg0f</p>
+<p>Let’s assign a new user defined label to node1, the label’s key is nodeNumber and it’s value is 3<br />
+networkandcode@cloudshell:~ (kubernetes-cka-224606)$ kubectl label node gke-standard-cluster-1-default-pool-7a916bd9-xg0f nodeNumber=3<br />
+node "gke-standard-cluster-1-default-pool-7a916bd9-xg0f" labeled</p>
+<p>Let’s check the labels assigned to the 3rd node again, it should now show the newly assigned label<br />
+networkandcode@cloudshell:~ (kubernetes-cka-224606)$ kubectl get nodes gke-standard-cluster-1-default-pool-7a916bd9-xg0f --show-labels<br />
+NAME STATUS ROLES AGE VERSION LABELS<br />
+gke-standard-cluster-1-default-pool-7a916bd9-xg0f Ready &lt;none&gt; 24m v1.11.5-gke.4 beta.kubernetes.io/arch=amd64,beta.kubernetes.io/fluentd-ds<br />
+-ready=true,beta.kubernetes.io/instance-type=n1-standard-1,beta.kubernetes.io/os=linux,cloud.google.com/gke-nodepool=default-pool,cloud.google.com/gke-os-dis<br />
+tribution=cos,failure-domain.beta.kubernetes.io/region=us-central1,failure-domain.beta.kubernetes.io/zone=us-central1-a,kubernetes.io/hostname=gke-standard-c<br />
+luster-1-default-pool-7a916bd9-xg0f,nodeNumber=3</p>
+<p>As of now, we haven’t scheduled any pods on the nodes. To check the list of pods in the cluster<br />
+master $ kubectl get pods<br />
+No resources found.</p>
+<p>Let’s define a pod configuration in yaml</p>
+<p>networkandcode@cloudshell:~ (kubernetes-cka-224606)$ cat &gt;&gt; podConfig.yaml<br />
+---<br />
+apiVersion: v1<br />
+kind: Pod<br />
+metadata:<br />
+name: nginx-pod<br />
+spec:<br />
+containers:<br />
+- name: nginx-container<br />
+image: nginx<br />
+nodeSelector: # matching Labels on node(s), defined under the pod’s spec section<br />
+nodeNumber: “3”<br />
+…<br />
+^c</p>
+<p>There is a nodeSelector section inside the spec of the pod, that has the label key and value that we assigned to the node earlier, this ensures the Pod getting scheduled on that particular node matching the label, in this case node3. If we haven’t specified this label, we won’t have the control on where(which node) to place this pod, and that would be handled automatically by kubectl</p>
+<p>Let’s apply the pod configuration to schedule the pod on node3</p>
+<p>networkandcode@cloudshell:~ (kubernetes-cka-224606)$ kubectl create -f podConfig.yaml<br />
+pod "nginx-pod" created</p>
+<p>To check the list of pods again<br />
+networkandcode@cloudshell:~ (kubernetes-cka-224606)$ kubectl get pods<br />
+NAME READY STATUS RESTARTS AGE<br />
+nginx-pod 1/1 Running 0 1m</p>
+<p>To see the node where the pod is scheduled<br />
+networkandcode@cloudshell:~ (kubernetes-cka-224606)$ kubectl get pods -o wide<br />
+NAME READY STATUS RESTARTS AGE IP NODE<br />
+nginx-pod 1/1 Running 0 1m 10.8.0.10 gke-standard-cluster-1-default-pool-7a916bd9-xg0f</p>
+<p>The above output shows the pod is scheduled on node03 which is the desired behavior</p>
+<p>To delete the pod<br />
+networkandcode@cloudshell:~ (kubernetes-cka-224606)$ kubectl delete pod nginx-pod<br />
+pod "nginx-pod" deleted</p>
+<p>networkandcode@cloudshell:~ (kubernetes-cka-224606)$ kubectl get pods<br />
+No resources found.</p>
+<p>To remove the added label from node01<br />
+networkandcode@cloudshell:~ (kubernetes-cka-224606)$ kubectl label node gke-standard-cluster-1-default-pool-7a916bd9-xg0f nodeNumber-<br />
+node "gke-standard-cluster-1-default-pool-7a916bd9-xg0f" labeled</p>
+<p>The label with key ‘nodeNumber’ shouldn't no longer be present on the 3rd node<br />
+networkandcode@cloudshell:~ (kubernetes-cka-224606)$ kubectl get node gke-standard-cluster-1-default-pool-7a916bd9-xg0f --show-labels<br />
+NAME STATUS ROLES AGE VERSION LABELS<br />
+gke-standard-cluster-1-default-pool-7a916bd9-xg0f Ready &lt;none&gt; 2h v1.11.5-gke.4 beta.kubernetes.io/arch=amd64,beta.kubernetes.io/fluentd-ds<br />
+-ready=true,beta.kubernetes.io/instance-type=n1-standard-1,beta.kubernetes.io/os=linux,cloud.google.com/gke-nodepool=default-pool,cloud.google.com/gke-os-dis<br />
+tribution=cos,failure-domain.beta.kubernetes.io/region=us-central1,failure-domain.beta.kubernetes.io/zone=us-central1-a,kubernetes.io/hostname=gke-standard-c<br />
+luster-1-default-pool-7a916bd9-xg0f</p>
+<p>--end-of-post--</p>

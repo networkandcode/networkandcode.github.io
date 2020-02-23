@@ -1,0 +1,136 @@
+---
+layout: post
+title: Kubernetes > Pods > initContainers
+date: 2019-07-30 09:36:23.000000000 +05:30
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags: []
+meta:
+  _oembed_8dab9a391b14c5448ad4bf3ee818a251: "{{unknown}}"
+  _oembed_46ed70738d359bd1a4516114a9e1f7dd: "{{unknown}}"
+  _oembed_5aa16e8ad0253d6a402147c657f47237: "{{unknown}}"
+  _oembed_80518ca6e32410b6fcbfde22c03fcb05: "{{unknown}}"
+  _rest_api_published: '1'
+  _rest_api_client_id: "-1"
+  _oembed_fb676fa5a066f9ead31820e3247371f5: "{{unknown}}"
+  timeline_notification: '1564459586'
+  _publicize_job_id: '33424659648'
+  _oembed_0c625bbb4f1b38515dc3761730a5f706: "{{unknown}}"
+  _oembed_97bd75f6308184603365a46f309e795c: "{{unknown}}"
+  _oembed_5c83fda4fe3c201199ef4166fd13bcee: "{{unknown}}"
+  _oembed_08ca649f8b886d94cae8c3e7e397675b: "{{unknown}}"
+author:
+  login: shak1r
+  email: shakir@techie.com
+  display_name: shakir
+  first_name: ''
+  last_name: ''
+permalink: "/2019/07/30/kubernetes-pods-initcontainers/"
+---
+<p>A Pod can contain more than ore container, likewise it can also contain more than one initContainer which starts when the Pod is initialized. By default, initContainers will be launched first before the normal app containers. The initContainers are used for supporting the normal containers such as performing certain tasks and keeping the environment ready before the app container starts</p></p>
+<p>Let’s see our objectives and few descriptions for this exercise</p>
+<ul>
+<li>We are going to create a Pod volume of type emptyDir, we name the volume vol10</li>
+<li>We would share this volume with both the initContainer(busybox) and the app container(nginx)</li>
+<li>The busy box is a tiny image that combines common unix utilities, in our case we are going to use the ‘wget’ utility from the busybox</li>
+<li>As we know containers would only contain minimal software that reflects the purpose of that container, for example the nginx container would mainly have the nginx package and it wouldn’t have utilities such as curl or wget </li>
+<li>Hence we are running the initContainer first which would have the utilities we need and makes the job easier for the app container</li>
+<li>If we had to use a utility such as wget directly on the nginx container, then we should update the repo and install wget. This isn’t the right way of doing things in the world of containers, and the whole essence of using containers is lost. The containers serve the purpose of combining utilities in an image relevant to the need. So instead of installing wget on nginx, it would be a good choice to have another container such as busybox which already as it installed</li>
+<li>We are going to run “wget -O /work-dir/index.html networkandcode.wordpress.com” on the initContainer(busybox), some explanation on what this command does - it captures  the html content from the website networkandcode.wordpress.com and stores the code in the file index.html which is inside the /work-dir directory of the busybox initContainer, we have given this initContainer the name ctr10-init</li>
+<li>We would attach the volume vol10 with the initContainer and mount the volume in the path /work-dir, note that we have a file ‘index.html’ inside this directory that has the content from the website we mentioned earlier</li>
+<li>Once the initContainer has finished its task, a.k.a executed the command, it would be terminated, and the file index.html is now in the volume vol10</li>
+<li>Note that the app container would only start after the initContainer has finished its job.</li>
+<li>We no more need the initContainer, and the app container (nginx) is now going to start</li>
+<li>We would attach the same volume vol10 to the app container in the path /usr/share/nginx/html</li>
+<li>As the volume is attached to the nginx container, the index.html file inside the volume vol10 should now be inside the directory /usr/share/nginx/html of the nginx container</li>
+<li>Some information on nginx - By default the index.html file inside the /usr/share/nginx/html directory would contain certain default information as configured by the nginx team, and we could customize that webpage to display any other information that we may need, for example a website that we  may build using nginx is going to contain information relevant to our content</li>
+<li>The html code that the nginx web server would display as a website is by default stored in /usr/share/nginx/html/index.html, so whatever html content this index.html has is going to be rendered as a web page on the browser(Chrome, Firefox, Edge, etc.). Note that when we use a utility like curl or wget instead of a web browser, this page would return the html code as is, in text</li>
+<li>Hence when we wget / curl the nginx container it should display the content inside index.html a.k.a the content that we sourced from the website  networkandcode.wordpress.com</li>
+</ul>
+<p>Let's see this in action</p></p>
+<p>Let’s define a Pod configuration/manifest as follows</p>
+<p>---</p>
+<p>apiVersion: v1</p>
+<p>kind: Pod</p>
+<p>metadata:</p>
+<p>  name: po10-init</p>
+<p>spec:</p>
+<p>  volumes:</p>
+<p>  - name: vol10</p>
+<p>    emptyDir: {}</p>
+<p>  initContainers:</p>
+<p>  - name: ctr10-init</p>
+<p>    image: busybox</p>
+<p>    command:</p>
+<p>    - wget</p>
+<p>    - "-O"</p>
+<p>    - "/work-dir/index.html"</p>
+<p>    - networkandcode.wordpress.com</p>
+<p>    volumeMounts:</p>
+<p>    - name: vol10</p>
+<p>      mountPath: "/work-dir"</p>
+<p>  containers:</p>
+<p>  - name: ctr10</p>
+<p>    image: nginx</p>
+<p>    volumeMounts:</p>
+<p>    - name: vol10</p>
+<p>      mountPath: /usr/share/nginx/html</p>
+<p>...</p></p>
+<p>Please note that the command section inside the initContainer has a list of commands, actually it’s a single command, however its given in multiple lines, to specify sections of the command that are separated by spaces</p></p>
+<p>Let’s create the Pod</p>
+<p>networkandcode:~ kubectl create -f ex10-po-init.yaml</p>
+<p>pod/po10-init created</p></p>
+<p>The Pod is now running, please make a note of the Pod’s IP - here its 10.8.1.13, we would need this when we want to curl</p>
+<p>networkandcode:~ kubectl get pods -o wide</p>
+<p>NAME        READY   STATUS    RESTARTS   AGE   IP          NODE                                                NOMINATED NODE</p>
+<p>po10-init   1/1     Running   0          58m   10.8.1.13   gke-standard-cluster-1-default-pool-a798a8f8-601m   </p></p>
+<p>Let’s curl the Pod from one of the worker nodes</p></p>
+<p>To check the list of nodes, note that I am using google cloud here</p>
+<p>networkandcode:~ kubectl get nodes</p>
+<p>NAME                                                STATUS   ROLES    AGE     VERSION</p>
+<p>gke-standard-cluster-1-default-pool-a798a8f8-2w5s   Ready       4m44s   v1.12.8-gke.10</p>
+<p>gke-standard-cluster-1-default-pool-a798a8f8-601m   Ready       4m44s   v1.12.8-gke.10</p>
+<p>gke-standard-cluster-1-default-pool-a798a8f8-p27f   Ready       4m44s   v1.12.8-gke.10</p></p>
+<p>Since this scenario is setup on google cloud, I am using the gcloud way of logging into the node, however if you are running a cluster that is not in cloud, you could directly ssh into the nodes, or you could even directly curl from the master if it has connectivity to the pods, In the case of gcloud I wasn’t able to curl the Pod from the gcloud shell, hence I had to login to one of the nodes to execute curl</p></p>
+<p>To login to the node (in gcloud)</p>
+<p>Check the cluster zone first - its us-central1-a here <img src="{{ site.baseurl }}/assets/null-38.png" width="601" height="144" alt="" title="" /></p></p>
+<p>Set the zone on gcloud shell appropriately</p>
+<p>networkandcode:~ gcloud config set compute/zone us-central1-a</p>
+<p>Updated property [compute/zone].</p></p>
+<p>Login to one of the nodes now</p>
+<p>For instance, gke-standard-cluster-1-default-pool-a798a8f8-2w5s, this name could change in your case, this was checked in the get nodes section few steps back in this post</p>
+<p>networkandcode:~ gcloud compute ssh gke-standard-cluster-1-default-pool-a798a8f8-2w5s</p>
+<p>Warning: Permanently added 'compute.6743270824986417587' (ED25519) to the list of known hosts.</p>
+<p>Welcome to Kubernetes v1.12.8-gke.10!</p>
+<p>You can find documentation for Kubernetes at:</p>
+<p>  http://docs.kubernetes.io/</p>
+<p>The source for this release can be found at:</p>
+<p>  /home/kubernetes/kubernetes-src.tar.gz</p>
+<p>Or you can download it at:</p>
+<p>  https://storage.googleapis.com/kubernetes-release-gke/release/v1.12.8-gke.10/kubernetes-src.tar.gz</p>
+<p>It is based on the Kubernetes source at:</p>
+<p>  https://github.com/kubernetes/kubernetes/tree/v1.12.8-gke.10</p>
+<p>For Kubernetes copyright and licensing information, see:</p>
+<p>  /home/kubernetes/LICENSES</p></p>
+<p>Let’s curl the Pod’s IP, It would display a whole lot of content that was sourced from the website and then placed in index.html</p>
+<p>networkandcode@gke-standard-cluster-1-default-pool-a798a8f8-2w5s ~ $ curl 10.8.1.13</p></p></p></p>
+<p>network blog | blog &gt; practice &gt; share | [ network coding cloud&#8230; ]</p></p>
+<p>--TRUNCATED--</p>
+<p>&lt;path d=&quot;M21.8,8.001c0,0-0.195-1.378-0.795-1.985c-0.76-0.797-1.613-0.801-2.004-0.847c-2.799-0.202-6.997-0.202-6.997-0.202 h-0.009c0,0-4.198,0-6.997,0.202C4.608</p>
+<p>,5.216,3.756,5.22,2.995,6.016C2.395,6.623,2.2,8.001,2.2,8.001S2,9.62,2,11.238v1.517 c0,1.618,0.2,3.237,0.2,3.237s0.195,1.378,0.795,1.985c0.761,0.797,1.76,0.771</p>
+<p>,2.205,0.855c1.6,0.153,6.8,0.201,6.8,0.201 s4.203-0.006,7.001-0.209c0.391-0.047,1.243-0.051,2.004-0.847c0.6-0.607,0.795-1.985,0.795-1.985s0.2-1.618,0.2-3.237v-</p>
+<p>1.517 C22,9.62,21.8,8.001,21.8,8.001z M9.935,14.594l-0.001-5.62l5.404,2.82L9.935,14.594z"/&gt;</p></p></p></p>
+<p>Another way to verify, the same content could be found in /usr/share/nginx/html/index.html</p>
+<p>We can issue this from the master or the gcloud shell, the command is executed on the container inside the pod directly from the master without getting into bash of the container</p>
+<p>networkandcode:~ kubectl exec -it po10-init cat /usr/share/nginx/html/index.html</p>
+<p>--TRUNCATED--</p>
+<p>&lt;path d=&quot;M21.8,8.001c0,0-0.195-1.378-0.795-1.985c-0.76-0.797-1.613-0.801-2.004-0.847c-2.799-0.202-6.997-0.202-6.997-0.202 h-0.009c0,0-4.198,0-6.997,0.202C4.608</p>
+<p>,5.216,3.756,5.22,2.995,6.016C2.395,6.623,2.2,8.001,2.2,8.001S2,9.62,2,11.238v1.517 c0,1.618,0.2,3.237,0.2,3.237s0.195,1.378,0.795,1.985c0.761,0.797,1.76,0.771</p>
+<p>,2.205,0.855c1.6,0.153,6.8,0.201,6.8,0.201 s4.203-0.006,7.001-0.209c0.391-0.047,1.243-0.051,2.004-0.847c0.6-0.607,0.795-1.985,0.795-1.985s0.2-1.618,0.2-3.237v-</p>
+<p>1.517 C22,9.62,21.8,8.001,21.8,8.001z M9.935,14.594l-0.001-5.62l5.404,2.82L9.935,14.594z"/&gt;</p></p></p></p>
+<p>In this scenario, we have used wget on the initContainer, however we could use many other utilities depending on the need</p></p>
+<p>--end-of-post--</p>

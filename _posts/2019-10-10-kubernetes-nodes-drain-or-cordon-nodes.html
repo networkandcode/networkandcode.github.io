@@ -1,0 +1,223 @@
+---
+layout: post
+title: Kubernetes > Nodes > Drain or Cordon Nodes
+date: 2019-10-10 09:14:14.000000000 +05:30
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags: []
+meta:
+  _publicize_job_id: '36180528521'
+  timeline_notification: '1570679058'
+  _oembed_c85637f66525d51cb6bccbcb0ff8dc3f: "{{unknown}}"
+  _oembed_8f06b26c2514c959729e444f9f2a1e8a: "{{unknown}}"
+  _oembed_0195da80ae5fbded7da1722aa14c8641: "{{unknown}}"
+author:
+  login: shak1r
+  email: shakir@techie.com
+  display_name: shakir
+  first_name: ''
+  last_name: ''
+permalink: "/2019/10/10/kubernetes-nodes-drain-or-cordon-nodes/"
+---
+<p><!-- wp:paragraph --></p>
+<p>Prerequisite: Deployments, DaemonSets, Taints and Tolerations</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Before shutting down a node for maintenance or for purposes such as upgrade, it is necessary to evict the Pods running on the node safely. The 'kubectl drain' command comes handy during this situation</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Let's first check the list of nodes in the cluster</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:code --></p>
+<pre class="wp-block-code"><code>networkandcode@k8s-master:~$ kubectl get nodes
+NAME         STATUS   ROLES    AGE   VERSION
+k8s-master   Ready    master   61d   v1.15.2
+k8s-node1    Ready    &lt;none&gt;   61d   v1.15.2
+k8s-node2    Ready    &lt;none&gt;   61d   v1.15.2
+k8s-node3    Ready    &lt;none&gt;   61d   v1.15.2</code></pre>
+<p><!-- /wp:code --></p>
+<p><!-- wp:paragraph --></p>
+<p>We are going to create a Deployment with 10 replicas. The manifest is as follows</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:code --></p>
+<pre class="wp-block-code"><code>networkandcode@k8s-master:~/tech/kubernetes/cka$ cat ex7-deploy.yaml
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+  name: deploy7
+  namespace: default
+spec:
+  replicas: 10
+  selector:
+    matchLabels:
+      tag: label7
+  template:
+    metadata:
+      labels:
+        tag: label7
+    spec:
+      containers:
+      - name: ctr7
+        image: nginx
+...</code></pre>
+<p><!-- /wp:code --></p>
+<p><!-- wp:paragraph --></p>
+<p>Create the deployment and check the Pods' status</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:code --></p>
+<pre class="wp-block-code"><code>networkandcode@k8s-master:~/tech/kubernetes/cka$ kubectl create -f ex7-deploy.yaml 
+deployment.apps/deploy7 created
+
+networkandcode@k8s-master:~/tech/kubernetes/cka$ kubectl get po -o wide | grep deploy7
+deploy7-5f5fff8f56-grjj7   1/1     Running   0          2m53s   192.168.2.106   k8s-node2   &lt;none&gt;           &lt;none&gt;
+deploy7-5f5fff8f56-ljx9s   1/1     Running   0          2m53s   192.168.3.98    k8s-node3   &lt;none&gt;           &lt;none&gt;
+deploy7-5f5fff8f56-qdbz4   1/1     Running   0          2m53s   192.168.3.99    k8s-node3   &lt;none&gt;           &lt;none&gt;
+deploy7-5f5fff8f56-qjxjb   1/1     Running   0          2m53s   192.168.1.115   k8s-node1   &lt;none&gt;           &lt;none&gt;
+deploy7-5f5fff8f56-sznl4   1/1     Running   0          2m53s   192.168.2.105   k8s-node2   &lt;none&gt;           &lt;none&gt;
+deploy7-5f5fff8f56-tvxl9   1/1     Running   0          2m53s   192.168.3.100   k8s-node3   &lt;none&gt;           &lt;none&gt;
+deploy7-5f5fff8f56-v84qn   1/1     Running   0          2m53s   192.168.3.101   k8s-node3   &lt;none&gt;           &lt;none&gt;
+deploy7-5f5fff8f56-wj79j   1/1     Running   0          2m53s   192.168.1.114   k8s-node1   &lt;none&gt;           &lt;none&gt;
+deploy7-5f5fff8f56-x6nrg   1/1     Running   0          2m53s   192.168.1.113   k8s-node1   &lt;none&gt;           &lt;none&gt;
+deploy7-5f5fff8f56-xgc8l   1/1     Running   0          2m53s   192.168.2.107   k8s-node2   &lt;none&gt;           &lt;none&gt;</code></pre>
+<p><!-- /wp:code --></p>
+<p><!-- wp:paragraph --></p>
+<p>We are now going to drain k8s-node3, this is similar to the NoExecute taint on nodes, which means the Pods running on it will be evicted and those will be recreated on some other node, as the Pods are controlled by the Deployment. Please ensure not to drain while you have standalone Pods as those Pods would not be created as they are not controlled by other high level objects such as Deployments. You may have to use --force with 'kubectl drain' if you still wish to evict standalone Pods. However the standard way of deploying applications these days is using Deployments, and kubectl drain works perfectly with deployments.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>The drain command wouldn't work as is, cause it has got daemon set Pods running on them</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:code --></p>
+<pre class="wp-block-code"><code>networkandcode@k8s-master:~/tech/kubernetes/cka$ kubectl drain k8s-node3
+node/k8s-node3 cordoned
+error: unable to drain node "k8s-node3", aborting command...
+
+There are pending nodes to be drained:
+ k8s-node3
+error: cannot delete DaemonSet-managed Pods (use --ignore-daemonsets to ignore): kube-system/calico-node-z5w62, kube-system/kube-proxy-h5pp4</code></pre>
+<p><!-- /wp:code --></p>
+<p><!-- wp:paragraph --></p>
+<p>The associated DaemonSets are part of the kube-system namespace, and those would be launched when the cluster is launched, The calico daemon set is responsible for inter networking communication between objects in the cluster and kube-proxy is responsible exposing applications in or out of the cluster, In short both of these daemon sets are related to networking</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>We have to use the --ignore-daemonsets flag to drain the node now</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:code --></p>
+<pre class="wp-block-code"><code>networkandcode@k8s-master:~/tech/kubernetes/cka$ kubectl drain k8s-node3 --ignore-daemonsets
+node/k8s-node3 already cordoned
+WARNING: ignoring DaemonSet-managed Pods: kube-system/calico-node-z5w62, kube-system/kube-proxy-h5pp4
+evicting pod "deploy7-5f5fff8f56-ljx9s"
+evicting pod "deploy7-5f5fff8f56-v84qn"
+evicting pod "deploy7-5f5fff8f56-qdbz4"
+evicting pod "deploy7-5f5fff8f56-tvxl9"
+pod/deploy7-5f5fff8f56-qdbz4 evicted
+pod/deploy7-5f5fff8f56-tvxl9 evicted
+pod/deploy7-5f5fff8f56-v84qn evicted
+pod/deploy7-5f5fff8f56-ljx9s evicted
+node/k8s-node3 evicted</code></pre>
+<p><!-- /wp:code --></p>
+<p><!-- wp:paragraph --></p>
+<p>The 10 replicas should now be distributed between k8s-node1 and k8s-node2</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:code --></p>
+<pre class="wp-block-code"><code>etworkandcode@k8s-master:~/tech/kubernetes/cka$ kubectl get po -o wide | grep deploy7
+deploy7-5f5fff8f56-7wx2r   1/1     Running   0          55s   192.168.1.116   k8s-node1   &lt;none&gt;           &lt;none&gt;
+deploy7-5f5fff8f56-grjj7   1/1     Running   0          14m   192.168.2.106   k8s-node2   &lt;none&gt;           &lt;none&gt;
+deploy7-5f5fff8f56-mg65p   1/1     Running   0          55s   192.168.2.108   k8s-node2   &lt;none&gt;           &lt;none&gt;
+deploy7-5f5fff8f56-np4kg   1/1     Running   0          55s   192.168.2.109   k8s-node2   &lt;none&gt;           &lt;none&gt;
+deploy7-5f5fff8f56-qjxjb   1/1     Running   0          14m   192.168.1.115   k8s-node1   &lt;none&gt;           &lt;none&gt;
+deploy7-5f5fff8f56-sznl4   1/1     Running   0          14m   192.168.2.105   k8s-node2   &lt;none&gt;           &lt;none&gt;
+deploy7-5f5fff8f56-vzw8q   1/1     Running   0          55s   192.168.1.117   k8s-node1   &lt;none&gt;           &lt;none&gt;
+deploy7-5f5fff8f56-wj79j   1/1     Running   0          14m   192.168.1.114   k8s-node1   &lt;none&gt;           &lt;none&gt;
+deploy7-5f5fff8f56-x6nrg   1/1     Running   0          14m   192.168.1.113   k8s-node1   &lt;none&gt;           &lt;none&gt;
+deploy7-5f5fff8f56-xgc8l   1/1     Running   0          14m   192.168.2.107   k8s-node2   &lt;none&gt;           &lt;none&gt;</code></pre>
+<p><!-- /wp:code --></p>
+<p><!-- wp:paragraph --></p>
+<p>Let's see the cordon option now, This is only going to prevent any extra Pods from being added to the node, however the existing Pods are still going to be there, this is similar to the NoSchedule taint on nodes. Hence, its perfectly fine if we have any standalone pods on nodes that are going to be cordoned, and we don't have use the --ignore-daemonsets flag here</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Let's cordon k8s-node2, there should be no change in the kubect get po -o wide output</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:code --></p>
+<pre class="wp-block-code"><code>etworkandcode@k8s-master:~/tech/kubernetes/cka$ kubectl cordon k8s-node2
+node/k8s-node2 cordoned
+
+networkandcode@k8s-master:~/tech/kubernetes/cka$ kubectl get po -o wide | grep deploy7
+deploy7-5f5fff8f56-7wx2r   1/1     Running   0          5m37s   192.168.1.116   k8s-node1   &lt;none&gt;           &lt;none&gt;
+deploy7-5f5fff8f56-grjj7   1/1     Running   0          19m     192.168.2.106   k8s-node2   &lt;none&gt;           &lt;none&gt;
+deploy7-5f5fff8f56-mg65p   1/1     Running   0          5m37s   192.168.2.108   k8s-node2   &lt;none&gt;           &lt;none&gt;
+deploy7-5f5fff8f56-np4kg   1/1     Running   0          5m37s   192.168.2.109   k8s-node2   &lt;none&gt;           &lt;none&gt;
+deploy7-5f5fff8f56-qjxjb   1/1     Running   0          19m     192.168.1.115   k8s-node1   &lt;none&gt;           &lt;none&gt;
+deploy7-5f5fff8f56-sznl4   1/1     Running   0          19m     192.168.2.105   k8s-node2   &lt;none&gt;           &lt;none&gt;
+deploy7-5f5fff8f56-vzw8q   1/1     Running   0          5m37s   192.168.1.117   k8s-node1   &lt;none&gt;           &lt;none&gt;
+deploy7-5f5fff8f56-wj79j   1/1     Running   0          19m     192.168.1.114   k8s-node1   &lt;none&gt;           &lt;none&gt;
+deploy7-5f5fff8f56-x6nrg   1/1     Running   0          19m     192.168.1.113   k8s-node1   &lt;none&gt;           &lt;none&gt;
+deploy7-5f5fff8f56-xgc8l   1/1     Running   0          19m     192.168.2.107   k8s-node2   &lt;none&gt;           &lt;none&gt;</code></pre>
+<p><!-- /wp:code --></p>
+<p><!-- wp:paragraph --></p>
+<p>Let's delete the deployment and relaunch it, all the Pod replicas could only be scheduled on k8s-node1 as k8s-node2 is cordoned, and k8s-node3 is drained</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:code --></p>
+<pre class="wp-block-code"><code>networkandcode@k8s-master:~/tech/kubernetes/cka$ kubectl delete deploy deploy7
+deployment.extensions "deploy7" deleted
+
+networkandcode@k8s-master:~/tech/kubernetes/cka$ kubectl get deployment
+No resources found.
+
+networkandcode@k8s-master:~/tech/kubernetes/cka$ kubectl create -f ex7-deploy.yaml
+
+deployment.apps/deploy7 created
+
+networkandcode@k8s-master:~/tech/kubernetes/cka$ kubectl get po -o wide | grep deploy7
+deploy7-5f5fff8f56-7rrhg   1/1     Running   0          33s   192.168.1.127   k8s-node1   &lt;none&gt;           &lt;none&gt;
+deploy7-5f5fff8f56-fdmgz   1/1     Running   0          33s   192.168.1.125   k8s-node1   &lt;none&gt;           &lt;none&gt;
+deploy7-5f5fff8f56-ffhps   1/1     Running   0          33s   192.168.1.119   k8s-node1   &lt;none&gt;           &lt;none&gt;
+deploy7-5f5fff8f56-h5z6d   1/1     Running   0          33s   192.168.1.121   k8s-node1   &lt;none&gt;           &lt;none&gt;
+deploy7-5f5fff8f56-jpr5l   1/1     Running   0          33s   192.168.1.122   k8s-node1   &lt;none&gt;           &lt;none&gt;
+deploy7-5f5fff8f56-kvx4v   1/1     Running   0          33s   192.168.1.118   k8s-node1   &lt;none&gt;           &lt;none&gt;
+deploy7-5f5fff8f56-l997s   1/1     Running   0          33s   192.168.1.124   k8s-node1   &lt;none&gt;           &lt;none&gt;
+deploy7-5f5fff8f56-wpq6p   1/1     Running   0          33s   192.168.1.123   k8s-node1   &lt;none&gt;           &lt;none&gt;
+deploy7-5f5fff8f56-xjqj9   1/1     Running   0          33s   192.168.1.120   k8s-node1   &lt;none&gt;           &lt;none&gt;
+deploy7-5f5fff8f56-z8l5w   1/1     Running   0          33s   192.168.1.126   k8s-node1   &lt;none&gt;           &lt;none&gt;
+</code></pre>
+<p><!-- /wp:code --></p>
+<p><!-- wp:paragraph --></p>
+<p>Alright let's revert to the previous settings, let's now delete the deployment again, 'uncordon' both the nodes, so that the Pods get launched on all 3 nodes. Note that 'uncordon' is used to remove both drains and cordons</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:code --></p>
+<pre class="wp-block-code"><code>etworkandcode@k8s-master:~/tech/kubernetes/cka$ kubectl delete deploy deploy7
+deployment.extensions "deploy7" deleted
+
+networkandcode@k8s-master:~/tech/kubernetes/cka$ kubectl uncordon k8s-node2 k8s-node3
+node/k8s-node2 uncordoned
+node/k8s-node3 uncordoned
+
+networkandcode@k8s-master:~/tech/kubernetes/cka$ kubectl create -f ex7-deploy.yaml 
+deployment.apps/deploy7 created
+
+networkandcode@k8s-master:~/tech/kubernetes/cka$ kubectl get pods -o wide | grep deploy7
+deploy7-5f5fff8f56-4khlg   1/1     Running   0          91s   192.168.3.103   k8s-node3   &lt;none&gt;           &lt;none&gt;
+deploy7-5f5fff8f56-8cqcj   1/1     Running   0          91s   192.168.1.130   k8s-node1   &lt;none&gt;           &lt;none&gt;
+deploy7-5f5fff8f56-9l88d   1/1     Running   0          91s   192.168.1.128   k8s-node1   &lt;none&gt;           &lt;none&gt;
+deploy7-5f5fff8f56-blh7f   1/1     Running   0          91s   192.168.2.110   k8s-node2   &lt;none&gt;           &lt;none&gt;
+deploy7-5f5fff8f56-dndtf   1/1     Running   0          91s   192.168.1.129   k8s-node1   &lt;none&gt;           &lt;none&gt;
+deploy7-5f5fff8f56-fthpt   1/1     Running   0          91s   192.168.3.105   k8s-node3   &lt;none&gt;           &lt;none&gt;
+deploy7-5f5fff8f56-m999r   1/1     Running   0          91s   192.168.2.112   k8s-node2   &lt;none&gt;           &lt;none&gt;
+deploy7-5f5fff8f56-p6qrw   1/1     Running   0          91s   192.168.3.102   k8s-node3   &lt;none&gt;           &lt;none&gt;
+deploy7-5f5fff8f56-qm7g4   1/1     Running   0          91s   192.168.2.111   k8s-node2   &lt;none&gt;           &lt;none&gt;
+deploy7-5f5fff8f56-s74gj   1/1     Running   0          91s   192.168.3.104   k8s-node3   &lt;none&gt;           &lt;none&gt;</code></pre>
+<p><!-- /wp:code --></p>
+<p><!-- wp:paragraph --></p>
+<p>Cleanup</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:code --></p>
+<pre class="wp-block-code"><code>networkandcode@k8s-master:~/tech/kubernetes/cka$ kubectl delete deploy deploy7
+deployment.extensions "deploy7" deleted</code></pre>
+<p><!-- /wp:code --></p>
+<p><!-- wp:paragraph --></p>
+<p>--end-of-post--</p>
+<p><!-- /wp:paragraph --></p>

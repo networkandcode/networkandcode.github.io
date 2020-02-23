@@ -1,0 +1,225 @@
+---
+layout: post
+title: Kubernetes > Launch a Cluster using Kubeadm
+date: 2019-03-28 19:21:58.000000000 +05:30
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags:
+- kubernetes
+meta:
+  _oembed_46855e6979cfacbe1a95edc3edc4bce9: "{{unknown}}"
+  _oembed_4099735787b5a92dfe5ecc801f7a026e: "{{unknown}}"
+  _oembed_ea071c5177030c59d13a11f917aaa65b: "{{unknown}}"
+  _oembed_fa0e2bb252d897cef44f86191b322739: "{{unknown}}"
+  _wpas_skip_18195285: '1'
+  _oembed_6f71d873d00be418dccfde1f6cd7f381: "{{unknown}}"
+  _oembed_bc32313e4b2c13217105f2c551225beb: "{{unknown}}"
+  _oembed_9a9ffb19c14a21831ba5c3e85b2e3806: "{{unknown}}"
+  _oembed_8e2270470c272882892dc05cdbbec8c7: "{{unknown}}"
+  timeline_notification: '1553781121'
+  _rest_api_published: '1'
+  _rest_api_client_id: "-1"
+  _publicize_job_id: '29136709789'
+  _oembed_8680a35ce86025e8ce7bfd2a8c6e5960: "{{unknown}}"
+  _oembed_8ce41a0c2a3ad00676cec8c887c4d8b2: "{{unknown}}"
+  _oembed_91b0b5c0036c3396e35131ddcc4bfc9c: "{{unknown}}"
+  _oembed_57b2dd1072efb4164a962084eb98abb3: "{{unknown}}"
+author:
+  login: shak1r
+  email: shakir@techie.com
+  display_name: shakir
+  first_name: ''
+  last_name: ''
+permalink: "/2019/03/28/launch-a-kubernetes-cluster-using-kubeadm/"
+---
+<p>We shall be using VMs on Google Cloud to build a Kubernetes cluster</p>
+<p>Go to Compute Engine &gt; VM Instances, and click on Create</p>
+<p>A cluster should have at least 1 Master and 1 Worker, however a minimum of 3 Workers are recommended for production. Our cluster topology(test environment): 1 Master node and 2 Worker nodes.</p>
+<p>Compatible OS on all nodes:<br />
+machines running a deb/rpm-compatible OS, for example Ubuntu or CentOS<br />
+Our choice: CentOS 7</p>
+<p>Hardware requirements<br />
+2GB RAM on all Nodes (Masters and Workers)<br />
+2 CPUs on Master Nodes<br />
+Our choice: 2CPUs and 4GB RAM on all nodes</p>
+<p>All nodes must have unique hostname<br />
+We shall be using master, node1, and node2</p>
+<p>Create 3 VMs with similar configuration, except for the hostnames<br />
+<img class="alignnone size-full wp-image-928" src="{{ site.baseurl }}/assets/pasted-image-0-5.png" alt="pasted image 0 (5).png" width="866" height="516" /></p>
+<p>Full network connectivity between all nodes either public or private<br />
+Our choice: we shall have one NIC on all nodes connected to the same subnet, this connectivity is provided by Google Cloud’s internal network.</p>
+<p>We shall be using the google cloud shell by clicking on the icon at the top right corner to interact with the VMs<br />
+We can open the cloud shell on a separate window too, by clicking on the icon at the bottom right corner of the window</p>
+<p>The default project and zone are to be set</p>
+<pre>networkandcode@cloudshell:~ (kubernetes-cka-224606)$ gcloud config set compute/zone us-east1-b
+Updated property [compute/zone].
+networkandcode@cloudshell:~ (kubernetes-cka-224606)$ gcloud config set project kubernetes-cka-224606
+Updated property [core/project].
+</pre>
+<p>We can now SSH into the master, likewise to other nodes, for the first time, it would prompt for creating an SSH key, passphrase can be left blank</p>
+<pre>networkandcode@cloudshell:~ (kubernetes-cka-224606)$ gcloud compute ssh master
+</pre>
+<p>You may also go with the SSH option provided on the row of the instance name, to open 3 different SSH windows, or can also SSH from your local machine using the SSH key method.</p>
+<p>To check the OS details</p>
+<pre>[networkandcode@master ~]$ sudo cat /etc/centos-release
+
+CentOS Linux release 7.6.1810 (Core)
+</pre>
+<p>To check RAM details</p>
+<pre>[networkandcode@master ~]$ sudo cat /proc/meminfo | grep Mem
+
+MemTotal: 3880524 kB
+
+MemFree: 993092 kB
+
+MemAvailable: 2753192 kB
+
+</pre>
+<p>To check CPU details</p>
+<pre>[networkandcode@master ~]$ sudo cat /proc/cpuinfo | grep cpu
+
+cpu family : 6
+
+cpu MHz : 2300.000
+
+cpu cores : 1
+
+cpuid level : 13
+
+cpu family : 6
+
+cpu MHz : 2300.000
+
+cpu cores : 1
+
+cpuid level : 13
+</pre>
+<p>All nodes must have a unique MAC address(sometimes two different VMs could have the same MAC)</p>
+<pre>[networkandcode@master ~]$ ip link | grep ether
+link/ether 42:01:0a:8e:00:05 brd ff:ff:ff:ff:ff:ff
+
+[networkandcode@node1 ~]$ ip link | grep ether
+link/ether 42:01:0a:8e:00:08 brd ff:ff:ff:ff:ff:ff
+
+[networkandcode@node2 ~]$ ip link | grep ether
+link/ether 42:01:0a:8e:00:09 brd ff:ff:ff:ff:ff:ff
+</pre>
+<p>All nodes must have unique product_uuid</p>
+<pre>networkandcode@master ~]$ sudo cat /sys/class/dmi/id/product_uuid
+
+1F6A7D57-2B16-521B-1008-5ECDD0F00895
+
+[networkandcode@node1 ~]$ sudo cat /sys/class/dmi/id/product_uuid
+
+A2980F52-12C6-DC19-6194-5949E8E59902
+
+[networkandcode@node2 ~]$ sudo cat /sys/class/dmi/id/product_uuid
+
+1C76D3C4-F102-82C8-7509-2B554EF0C3A0
+</pre>
+<p>The following TCP ports should be open on the nodes:<br />
+Master(s): 6443, 2379-80, 10250-2<br />
+Workers: 10250, 30000-32767</p>
+<p>All the ports are open in this testing environment, note: in CentOS firewalld can be used to allow ports. If external firewalls are used these ports should be explicitly allowed.</p>
+<p>#this is to be done on all the nodes</p>
+<pre>networkandcode@node2 ~]$ sudo systemctl stop firewalld
+</pre>
+<p>If the Master needs external communication from the internet, add rules accordingly</p>
+<p>On the Google Cloud Platform Navigation<br />
+Select Networking &gt; VPC Network &gt; Firewall rules</p>
+<p>Create a Firewall rule<br />
+Name: any-name you want<br />
+Targets: specified target tags &gt; master<br />
+IP ranges: I have kept 0.0.0.0/0<br />
+Specified protocol and ports &gt; tcp:6443; tcp:2379-23880; tcp:10250-10252</p>
+<p>Now goto Compute Engine &gt; VM Instances &gt; Click on the Master instance name<br />
+Edit &gt; Network Tags &gt; add 'master' here (coz thats tag we added previously)<br />
+Hit Save</p>
+<p>Similarly rules can be created for nodes for allowing tcp: 10250, 30000-32767</p>
+<p>Install container runtime such as Docker, CRI-O, Containerd, frakti<br />
+We shall use docker on all nodes</p>
+<pre>
+<em>sudo yum install yum-utils device-mapper-persistent-data lvm2 -y</em>
+<em>sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo</em>
+<em>sudo yum update &amp;&amp; sudo yum install docker-ce-18.06.2.ce -y</em>
+<em>sudo mkdir /etc/docker</em>
+<em># Setup daemon.</em>
+<em>cat &gt; /etc/docker/daemon.json &lt;&lt;EOF</em>
+<em>{</em>
+<em>"exec-opts": ["native.cgroupdriver=systemd"],</em>
+<em>"log-driver": "json-file",</em>
+<em>"log-opts": {</em>
+<em>"max-size": "100m"</em>
+<em>},</em>
+<em>"storage-driver": "overlay2",</em>
+<em>"storage-opts": [</em>
+<em>"overlay2.override_kernel_check=true"</em>
+<em>]</em>
+<em>}</em>
+<em>EOF</em>
+
+<em>mkdir -p /etc/systemd/system/docker.service.d</em>
+</pre>
+<p>Install Kubeadm:</p>
+<pre>
+<code>
+cat &lt; /etc/yum.repos.d/kubernetes.repo
+[kubernetes]
+name=Kubernetes
+baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+enabled=1
+gpgcheck=1
+repo_gpgcheck=1
+gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+exclude=kube*
+EOF
+
+# Set SELinux in permissive mode (effectively disabling it)
+setenforce 0
+sed -i 's/^SELINUX=enforcing$/SELINUX=permissive/' /etc/selinux/config
+
+yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
+
+systemctl enable --now kubelet
+
+cat &lt;  /etc/sysctl.d/k8s.conf
+net.bridge.bridge-nf-call-ip6tables = 1
+net.bridge.bridge-nf-call-iptables = 1
+EOF
+sysctl --system
+</code>
+</pre>
+<p>On the master:</p>
+<pre>
+<code>
+systemctl start docker.service
+<em>sudo kubeadm init --pod-network-cidr=192.168.0.0/16 # for calico pod network addon</em>
+#Please capture the output on the master terminal, you would need it for adding nodes
+<em>mkdir -p $HOME/.kube</em>
+<em>sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config</em>
+<em>sudo chown $(id -u):$(id -g) $HOME/.kube/config
+</em><em>#to enable Calico plugin</em>
+<em>kubectl apply -f https://docs.projectcalico.org/v3.3/getting-started/kubernetes/installation/hosted/rbac-kdd.yaml</em>
+<em>kubectl apply -f https://docs.projectcalico.org/v3.3/getting-started/kubernetes/installation/hosted/kubernetes-datastore/calico-networking/1.7/calico.yaml</em>
+</code>
+</pre>
+<p>On the worker nodes(based on the output captured earlier):<br />
+systemctl start docker.service<br />
+sudo kubeadm join 10.142.0.5:6443 --token 4napq6.0r0o5w84ixo1xmvh \<br />
+--discovery-token-ca-cert-hash sha256:3b9c1b163af8108842294958801c1d5b3e418121900d20904e823a3c1dc55502</p>
+<p>on the master:</p>
+<pre>[networkandcode@master ~]$ kubectl get nodes
+NAME STATUS ROLES AGE VERSION
+master Ready master 29m v1.14.0
+node1 Ready 22s v1.14.0
+node2 Ready 25m v1.14.0
+</pre>
+<p>The Cluster is now up and running</p>
+<p>Reference:<br />
+https://kubernetes.io/docs/setup/independent/create-cluster-kubeadm/<br />
+https://kubernetes.io/docs/setup/cri/</p>
+<p>--end-of-post--</p>

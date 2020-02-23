@@ -1,0 +1,91 @@
+---
+layout: post
+title: Kubernetes > Helm
+date: 2019-06-26 20:39:00.000000000 +05:30
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags: []
+meta:
+  _publicize_pending: '1'
+  timeline_notification: '1561561745'
+  _rest_api_published: '1'
+  _rest_api_client_id: '11'
+  _publicize_job_id: '32215948636'
+author:
+  login: shak1r
+  email: shakir@techie.com
+  display_name: shakir
+  first_name: ''
+  last_name: ''
+permalink: "/2019/06/26/kubernetes-helm/"
+---
+<p>Helm is a package manager for Kubernetes</p>
+<p>Helm deploys package releases based on charts</p>
+<p>Charts refer to a combination of associated Kubernetes objects such as Pods, Controller objects(ReplicaSets, Deployments), Services</p>
+<p>To install helm</p>
+<p>nwcode $ curl https://raw.githubusercontent.com/kubernetes/helm/master/scripts/get | bash</p>
+<p>To initialize helm</p>
+<p>nwcode $ helm init</p>
+<p>To update the chart repository</p>
+<p>nwcode $ helm repo update</p>
+<p>To search for a chart</p>
+<p>nwcode $ helm repo search &lt;searchterm&gt;</p>
+<p>To search for charts containing nginx in their names or descriptions</p>
+<p>nwcode $ helm search nginx</p>
+<p>NAME CHART VERSION APP VERSION DESCRIPTION</p>
+<p>stable/nginx-ingress 1.7.0 0.24.1 An nginx Ingress controller that uses ConfigMap to store ...</p>
+<p>stable/nginx-ldapauth-proxy 0.1.2 1.13.5 nginx proxy with ldapauth</p>
+<p>stable/nginx-lego 0.3.1 Chart for nginx-ingress-controller and kube-lego</p>
+<p>stable/gcloud-endpoints 0.1.2 1 DEPRECATED Develop, deploy, protect and monitor your APIs...</p>
+<p>To view more information about a package</p>
+<p>helm info &lt;chartname&gt;</p>
+<p>helm inspect &lt;chartname&gt;</p>
+<p>To view more information about stable/nginx-ingress chart</p>
+<p>nwcode $ helm info stable/nginx-ingress</p>
+<p>nwcode $ helm inspect stable/nginx-ingress</p>
+<p>To install stable/nginx-ingress chart on the cluster</p>
+<p>nwcode $ helm install stable/nginx-ingress</p>
+<p>To search for charts containing jenkins in their names or descriptions</p>
+<p>nwcode $ helm search jenkins</p>
+<p>NAME CHART VERSION APP VERSION DESCRIPTION</p>
+<p>stable/jenkins 1.3.2 lts Open source continuous integration server. It supports mu...</p>
+<p>To install stable/jenkins chart on the cluster</p>
+<p>nwcode $ helm install stable/jenkins</p>
+<p>To view the list of charts in the Kubernetes cluster</p>
+<p>nwcode $ helm ls</p>
+<p>NAME REVISION UPDATED STATUS CHART APP VERSION NAMESPACE</p>
+<p>measly-jellyfish 1 Wed Jun 26 09:13:15 2019 DEPLOYED nginx-ingress-1.7.0 0.24.1 default</p>
+<p>messy-horse 1 Wed Jun 26 09:18:13 2019 DEPLOYED jenkins-1.3.2 lts default</p>
+<p>The helm package names above were given randomly by Helm but these names can also be given manually, to make it more meaningful</p>
+<p>To install stable/jenkins chart with a user defined name</p>
+<p>nwcode $ helm install --name stable-jenkins-release stable/jenkins</p>
+<p>To check the list of jenkins packages</p>
+<p>nwcode $ helm ls | grep jenkins</p>
+<p>messy-horse 1 Wed Jun 26 09:18:13 2019 DEPLOYED jenkins-1.3.2 lts default</p>
+<p>stable-jenkins-release 1 Wed Jun 26 09:36:05 2019 DEPLOYED jenkins-1.3.2 lts default</p>
+<p>We see there are 2 different Jenkins packages both holding the same chart</p>
+<p>The chart would have installed set of Kubernetes objects</p>
+<p>To view all the deployed objects</p>
+<p>nwcode $ kubectl get all</p>
+<p>To view the deployed objects associated with the nginx-ingress chart</p>
+<p>nwcode $ kubectl get all | grep nginx</p>
+<p>pod/measly-jellyfish-nginx-ingress-controller-69dcdcf4c8-bdt95 1/1 Running 0 13m</p>
+<p>pod/measly-jellyfish-nginx-ingress-default-backend-97545f694-64472 1/1 Running 0 13m</p>
+<p>service/measly-jellyfish-nginx-ingress-controller LoadBalancer 10.102.208.96 &lt;pending&gt; 80:30357/TCP,443:31188/TCP 13m</p>
+<p>service/measly-jellyfish-nginx-ingress-default-backend ClusterIP 10.103.118.235 &lt;none&gt; 80/TCP 13m</p>
+<p>deployment.apps/measly-jellyfish-nginx-ingress-controller 1/1 1 1 13m</p>
+<p>deployment.apps/measly-jellyfish-nginx-ingress-default-backend 1/1 1 1 13m</p>
+<p>replicaset.apps/measly-jellyfish-nginx-ingress-controller-69dcdcf4c8 1 11 13m</p>
+<p>replicaset.apps/measly-jellyfish-nginx-ingress-default-backend-97545f694 1 11 13m</p>
+<p>We see there are 2 Pods, 2 Services, 4 Controllers (2 Deployments, 2 ReplicaSets)</p>
+<p>These were all deployed with just a single helm install command</p>
+<p>We can also search for charts with the web browser, by visting https://hub.helm.sh/</p>
+<p>For example we can search for Spinnaker charts, the resulting url would be https://hub.helm.sh/charts?q=spinnaker</p>
+<p>By clicking on that chart link, we would see the complete info of the spinnaker chart and instructions to install it</p>
+<p>To install a package with spinnaker chart</p>
+<p>$ helm install --name stable-spinnaker-release stable/spinnaker</p>
+<p>--end-of-post--</p>
