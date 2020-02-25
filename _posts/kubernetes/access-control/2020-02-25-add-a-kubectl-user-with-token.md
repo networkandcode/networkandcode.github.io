@@ -117,9 +117,9 @@ users:
 
 So we have chosen token based authentication for admin2, where as 'kubernetes-admin' is using TLS key and certificate
 
-We need to now add a context, with the user and cluster combination, namespace can be specified too
+We need to now add a context, with the user and cluster combination
 ```
-networkandcode@master $ kubectl config set-context context2 --cluster=kubernetes --user=admin2 --namespace=default
+networkandcode@master $ kubectl config set-context context2 --cluster=kubernetes --user=admin2
 Context "context2" created.
 ```
 
@@ -130,7 +130,6 @@ networkandcode@master $ cat ~/.kube/config
 contexts:
 - context:
     cluster: kubernetes
-    namespace: default
     user: admin2
   name: context2
 - context:
