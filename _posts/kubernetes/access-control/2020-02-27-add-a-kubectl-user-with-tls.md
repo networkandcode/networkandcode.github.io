@@ -12,7 +12,7 @@ setup by kubeadm during the cluster launch.
 
 Let's create a new TLS RSA private key of modulus 4096 bit, for the new user, using OpenSSL
 ```
-networkandcode@master $ openssl genrsa 4096 -out user2.key
+networkandcode@master $ openssl genrsa -out user2.key 4096
 
 networkandcode@master $ cat user2.key
 -----BEGIN RSA PRIVATE KEY-----
@@ -114,7 +114,7 @@ User "user2" set.
 
 And now we need to add a new context, that maps this user with the cluster, note that the cluster name is 'kubernetes'
 ```
-networkandcode@master $ kubectl config set-context context2 --cluster kubernetes --useruser2
+networkandcode@master $ kubectl config set-context context2 --cluster kubernetes --user user2
 Context "context2" created.
 ```
 
