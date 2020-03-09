@@ -46,7 +46,7 @@ networkandcode@master $ export user2_csr_base64=$(cat ./user2.csr | base64 | tr 
 
 We now define our Kubernetes CSR object as follows
 ```
-networkandcode@master $ cat csr-user2.yaml <<EOF
+networkandcode@master $ cat > csr-user2.yaml <<EOF
 ---
 apiVersion: certificates.k8s.io/v1beta1
 kind: CertificateSigningRequest
