@@ -4,7 +4,7 @@ categories: kubernetes
 ---
 
 RBAC(Role Based Access Control) is one of the authorization modes supported by the Kube api server. And in this post we would see 
-see some functionality of role, clusterrole and rolebinding objects that are used for ensuring RBAC in Kubernetes.
+some functionality of role, clusterrole and rolebinding objects that are used for ensuring RBAC in Kubernetes.
 
 You should know how to launch a cluster using kubeadm, and how to create a user with TLS, to make the most use of this post.
 
