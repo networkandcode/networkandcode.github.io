@@ -21,7 +21,7 @@ of Kubernetes, the apiVersion of Deployments could vary, so it's better to check
 networkandcode@k8s-master: $ kubectl explain deployments | grep VERSION
 VERSION:  extensions/v1beta1
 
-networkandcode@k8s-master: $ cat clusterrole-list-deployments.yaml
+networkandcode@k8s-master: $ cat > clusterrole-list-deployments.yaml <<EOF
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -35,6 +35,7 @@ rules:
   verbs:
   - list
 ...
+EOF
 
 networkandcode@k8s-master: $ kubectl create -f clusterrole-list-deployments.yaml
 clusterrole.rbac.authorization.k8s.io/list-deployments created
