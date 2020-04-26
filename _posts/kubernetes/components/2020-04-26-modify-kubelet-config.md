@@ -3,8 +3,7 @@ title: kubernetes > modify kubelet config
 categories: kubernetes
 ---
 
-We are going to see some overview about kubelet and its config. The prerequisites are to have basic understanding of kubeadm, kubeconfig and 
-configmaps.
+We are going to see some overview about kubelet and its config. The prerequisites are to have basic understanding of kubeadm, kubeconfig and jsonpath.
 
 Kubelet is the node agent that is responsible for running Pods on the node. Its present in all the instances of the cluster, 
 both master(s) and nodes.
@@ -38,8 +37,8 @@ EnvironmentFile=-/etc/default/kubelet
 ExecStart=
 ExecStart=/usr/bin/kubelet $KUBELET_KUBECONFIG_ARGS $KUBELET_CONFIG_ARGS $KUBELET_KUBEADM_ARGS $KUBELET_EXTRA_ARGS
 ```
-In the output above, we see the kubeconfig file for kubelet as --kubeconfig=/etc/kubernetes/kubelet.conf, this file holds authentication / authorization information for the kubelet to perform opertaions on the kube api server. 
-We also see the configuration for the kubelet is loaded in /var/lib/kubelet/config.yaml
+In the output above, we see the kubeconfig file for kubelet as ```/etc/kubernetes/kubelet.conf```, this file holds authentication / authorization information for the kubelet to perform opertaions on the kube api server. 
+We also see the configuration for the kubelet is loaded in ```/var/lib/kubelet/config.yaml```.
 
 Let's check the kubeconfig first
 ```
@@ -67,6 +66,7 @@ users:
 
 This is just like any other kubeconfig, however the key point to note is the username which is ```system:node:master```, the first two portions system:node refers to 
 the group and this is a special purpose group in Kubernetes that provides the kubelet with a special 'Node Authorization' mode to perform standard operations on the API server. 
+Hence, kubelet doesn't need methods such as RBAC for authorization.
 
 Let's now see the kubelet's configuration on the master instance.
 ```
@@ -123,6 +123,6 @@ networkandcode@master $ kubectl get nodes master -o jsonpath={.status.allocatabl
 ```
 
 So we have modified the kubelet configuration of the master instance, in this example. Likewise we could also modify the kubelet configuration of a node by logging into 
-the node by methods such as SSH
+the node via methods such as SSH.
 
 --end-of-post---
