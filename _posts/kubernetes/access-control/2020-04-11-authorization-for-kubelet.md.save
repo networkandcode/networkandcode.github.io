@@ -1,0 +1,37 @@
+---
+title: authorization for kubelet
+categories: kubernetes
+---
+
+Let' see how kubelets authenticate/authorize against the API server, in order to perform its functions. The prerequisites are some understanding of 
+kubeadm, kubelet, user management, TLS, RBAC.
+
+kubelets are clients for the API server, and they exist on all the instances of the cluster, and are 
+responsible for running Pods in a node. 
+
+Let's check the master first in a cluster launched with kubeadm
+```
+networkandcode@k8s-master $ sudo systemctl status kubelet
+● kubelet.service - kubelet: The Kubernetes Node Agent
+   Loaded: loaded (/lib/systemd/system/kubelet.service; enabled; vendor preset: enabled)
+  Drop-In: /etc/systemd/system/kubelet.service.d
+           └10-kubeadm.conf
+--TRUNCATED--
+```
+
+kubelet is running as a service, and the output above shows the service configuration file, let's check it
+```
+networkandcode@k8s-master $ cat /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+# Note: This dropin only works with kubeadm and kubelet v1.11+
+[Service]
+Environment="KUBELET_KUBECONFIG_ARGS=--bootstrap-kubeconfig=/etc/kubernetes/bootstrap-kubelet.conf --kubeconfig=/etc/kubernetes/kubelet.conf"
+--TRUNCATED--
+```
+
+We know that kubeconfig would hold information about users, contexts, clusters. The file above shows the kubeconfig file for the kubelet, whose contents can be checked
+```
+networkandcode@k8s-master $ cat /etc/kubernetes/kubelet.conf | grep current-context:
+current-context: system:node:master@kubernetes
+```
+
+Here system:node:master is the username, so there should be some RBAC settings that lets this kubelet aka user to perform actions
