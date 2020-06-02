@@ -24,7 +24,7 @@ Type "help", "copyright", "credits" or "license" for more information.
 ```
 
 So, you got it, the first difference what we saw among these objects is the way the contents in them are enclosed. 
-**Lists use Square brackets [], Tuples use parantheses (), Sets use curly braces{}**, however people call these
+*Lists use Square brackets [], Tuples use parantheses (), Sets use curly braces{}*, however people call these
 enclosing elements with different names.
 
 ### All good, let's ask Python to print the data types (or classes) of these objects
@@ -53,8 +53,8 @@ Well, List and Tuple objects are printed asis, however Set is not so, there are 
 1. The contents of the Set object are not in the same order like we gave 
 2. The number of contents in Set are also reduced.
 B
-**This is because Sets are UnOrdered and Unique (means no Duplicate items), where are Lists and Tuples are ordered and 
-not necessarily unique**
+*This is because Sets are UnOrdered and Unique (means no Duplicate items), where are Lists and Tuples are ordered and 
+not necessarily unique*
 
 ### Check the number of contents or length of these objects using 'len'
 ```
@@ -73,8 +73,8 @@ or Set as they store some collection of data. A Dictionary is also a Data Struct
 Index starts from 0, until the length of the object minus 1. In our case, since the length of the List and Tuple is 11 each, the Index would range from 0 to 10.
 Negative Indexing is also possible, where in the last item will be considered -1 and the first item -11, i.e. it ranges from -1 to -11 in reverse
 
-**Note that Indexing works only with Lists and Tuples but not with Sets as they are unordered, i.e. each time when we print a Set we may see the items in it in some
- random order.**
+*Note that Indexing works only with Lists and Tuples but not with Sets as they are unordered, i.e. each time when we print a Set we may see the items in it in some
+ random order.*
 
 #### Access the first item with positive and negative indexing
 ```
@@ -99,22 +99,26 @@ apple apple
 >>> print(sampleTuple[6], sampleTuple[-5])
 apple apple
 ```
-**Math to convert positive to negative index: if i is the index, and l is the length, then i-l is the negative index
-so if 6 is the index, 11 is the length, 6-11 = -5 is the negative index.**
+*Math to convert positive to negative index: if i is the index, and l is the length, then i-l is the negative index
+so if 6 is the index, 11 is the length, 6-11 = -5 is the negative index.*
 
 ### Modify values
 
-**We can only modify the existing value of item in List, using the index of the item. This isn't achievable with Sets / Tuple cause the former doesn't have index, and 
-the later is immutable.**
+*We can only modify the existing value of item in List, using the index of the item. This isn't achievable with Sets / Tuple cause the former doesn't have index, and 
+the later is immutable.*
 
 Immutable means we can't modify it after its created.
 
 #### Modify the 4th item of the list
+```
 >>> sampleList[3] = 'Hey There'
+```
 
 #### Print the List
+```
 >>> print(sampleList)
 ['hey', 'hi', 'hello', 'Hey There', 5, 4, 'apple', 5, 'banana', 'apple', 'jaguar']
+```
 
 So the fourth item is changed from 'hi' to 'Hey There'.
 
@@ -173,7 +177,7 @@ hello
 ```
 
 So we have used the 'for' loop with our data structures to print its contents, well Indentation is very important in Python, else the program breaks, as a best 
-practice please **ensure 4 spaces** for code in any block, so the 'for' block above, we have intended the next line of 'print' by 4 spaces.
+practice please *ensure 4 spaces* for code in any block, so the 'for' block above, we have intended the next line of 'print' by 4 spaces.
 
 ### Use conditions
 
@@ -210,7 +214,7 @@ You may explore this with various other conditions
 
 
 ### Add items
-**We know Tuples are immutable and hence we can't add any items to it, we could do this with Lists and Sets in few ways.**
+*We know Tuples are immutable and hence we can't add any items to it, we could do this with Lists and Sets in few ways.*
 #### Append to List
 The 'append' method, adds an item to the end of the List. Append is not applicable to Sets, also logically speaking there isn't any thing like a last item in the Set, 
 as its unordered. If you try this with a Set, Python would throw an error like ```AttributeError: 'set' object has no attribute 'append'```
@@ -256,10 +260,10 @@ So 'mango' now is part of the Set
 
 
 ### Remove item
-**Items can be removed from Lists and Sets, but not from Tuples as they are immutable**
+*Items can be removed from Lists and Sets, but not from Tuples as they are immutable*
 
 #### Remove from List
-If there are duplicates, only the **first occurence** will be deleted, we have to redo 'remove' to remove other occurences one at a time
+If there are duplicates, only the *first occurence* will be deleted, we have to redo 'remove' to remove other occurences one at a time
 ```
 >>> sampleList.remove('apple')
 >>> print(sampleList)
@@ -293,7 +297,7 @@ However, 'discard' would remove items if the item exists
 ```
 ### Pop 
 #### Without Index
-**Wit out index, Pop can be used to remove the last item in a List or a random item from a Set, it wont work with Tuples as they are immutable**
+*Wit out index, Pop can be used to remove the last item in a List or a random item from a Set, it wont work with Tuples as they are immutable*
 ```
 >>> sampleSet.discard('hi')
 >>> print(sampleSet)
@@ -310,7 +314,7 @@ It would remove a random item from Set, as it's unordered
 ```
 
 #### With Index
-**This only works with Lists, as Sets are unordered**
+*This only works with Lists, as Sets are unordered*
 Let's removing the item at index '2' which is the 3rd item from left
 ```
 >>> sampleList.pop(2)
@@ -321,7 +325,7 @@ Let's removing the item at index '2' which is the 3rd item from left
 
 ### Delete
 There is lots of flexibility when its come to executing tasks in Python, however the choice is yours. 
-**'del' is another way of removing items based on index from Lists, we know Tuples are immutable, and Sets do not support Indexing**
+*'del' is another way of removing items based on index from Lists, we know Tuples are immutable, and Sets do not support Indexing*
 'del' doesn't return the value on screen though, like pop
 
 To remove the item from index 5
@@ -332,7 +336,7 @@ To remove the item from index 5
 ```
 
 ### Remove all items
-**We can remove all items with 'clear()', but we can't do any modifications to Tuples**
+*We can remove all items with 'clear()', but we can't do any modifications to Tuples*
 ```
 >>> alternateList.clear()
 >>> alternateSet.clear()
@@ -423,3 +427,4 @@ Well, some recap to refresh what you have learnt
 - How would you create an empty set
 
 --end-of-post--
+
