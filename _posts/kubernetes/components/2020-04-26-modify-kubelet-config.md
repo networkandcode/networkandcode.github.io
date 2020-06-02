@@ -3,7 +3,7 @@ title: kubernetes > modify kubelet config
 categories: kubernetes
 ---
 
-We are going to see some overview about kubelet and its config. The prerequisites are to have basic understanding of kubeadm, kubeconfig and jsonpath.
+We are going to see, some overview of kubelet and its config. The prerequisites are to have basic understanding of kubeadm, kubeconfig and jsonpath.
 
 Kubelet is the node agent that is responsible for running Pods on the node. Its present in all the instances of the cluster, 
 both master(s) and nodes.
@@ -125,4 +125,4 @@ networkandcode@master $ kubectl get nodes master -o jsonpath={.status.allocatabl
 So we have modified the kubelet configuration of the master instance, in this example. Likewise we could also modify the kubelet configuration of a node by logging into 
 the node via methods such as SSH.
 
---end-of-post---
+--end-of-post--
