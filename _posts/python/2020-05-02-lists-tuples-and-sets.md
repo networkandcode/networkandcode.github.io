@@ -4,7 +4,7 @@ categories: python
 ---
 
 A comparitive study of Lists, Tuples, and Sets should help in better understanding of these objects as they look kind 
-of similar. Few prerequisistes for this post, are that You should have Python3 on your system and you know how to 
+of similar. Few prerequisites for this post, are that You should have Python3 on your system and you know how to 
 access the Python interpreter or how to run Python scripts, and you have good understanding of fundamental data types 
 such as Strings, Integers, and finally statements such as 'if', 'for' :)
 
@@ -207,7 +207,6 @@ no
     print ('yes')
 else:
     print ('no')
-print('~' * 25)
 ```
 
 You may explore this with various other conditions
@@ -299,10 +298,9 @@ However, 'discard' would remove items if the item exists
 #### Without Index
 *Wit out index, Pop can be used to remove the last item in a List or a random item from a Set, it wont work with Tuples as they are immutable*
 ```
->>> sampleSet.discard('hi')
->>> print(sampleSet)
-{4, 5, 'mango', 'banana', 'hello', 'jaguar', 'pal', 'hey', 'friend', 'buddy'}
-
+>>> sampleList.pop()
+>>> print(sampleList)
+['hey', 'hi', 'hello', 'tango', 'Hey There', 5, 4, 5, 'banana', 'apple', 'jaguar', 'mango', 'friend', 'buddy']
 
 ```
 It would remove a random item from Set, as it's unordered
@@ -338,8 +336,8 @@ To remove the item from index 5
 ### Remove all items
 *We can remove all items with 'clear()', but we can't do any modifications to Tuples*
 ```
->>> alternateList.clear()
->>> alternateSet.clear()
+>>> sampleList.clear()
+>>> sampleSet.clear()
 ```
 
 If you try this with a Tuple, Python would raise an 'AttributeError' Exception
