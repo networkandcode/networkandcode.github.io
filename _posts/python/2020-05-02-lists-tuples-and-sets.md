@@ -342,7 +342,7 @@ To remove the item from index 5
 
 If you try this with a Tuple, Python would raise an 'AttributeError' Exception
 ```
->>> alternateTuple.clear()
+>>> sampleTuple.clear()
 Traceback (most recent call last):
   File "<stdin>", line 1, in <module>
 AttributeError: 'tuple' object has no attribute 'clear'
