@@ -158,7 +158,7 @@ We are going to define a dictionary, that has data for multiple interfaces, for 
 ```
 ### Define string
 Let's define our string, but this time we are also going to include a 
-jinja2 for loop in the string, note that statements such as for would be enclosed within \{% %\} jinja2, where as 
+jinja2 for loop in the string, note that statements such as for would be enclosed within ```{% raw %}{% %}{% endraw %}``` in jinja2, where as 
 variables would be enclosed with in \{\{ ..  \}\}
 ```
 {% raw %}
