@@ -197,11 +197,12 @@ SyntaxError: positional argument follows keyword argument
 We have discussed earlier, that if a function doesn't have a return statement, it can be called a void function. Alternatly 
 we can also pass ```retun None``` explicitly to acheieve the same behaviour.
 ```
-def fn2():
-   print('hi')
-   return None  # this is equivalent to having no return statement in the function
-
-fn2()
+>>> def fn2():
+...    print('hi')
+...    return None  # this is equivalent to having no return statement in the function
+...
+>>> fn2()
+hi
 ```
 
 ### Scope
