@@ -3,12 +3,12 @@ title: python >  errors and exceptions
 categories: python
 ---
 
-A Python program can break due to various types of Errors. We shall explore few of these errors in the post. To make best use of use this post, you should know certain topics in Python3 such as datatypes, expression, pass statement, etc.
+A Python program can break due to various types of Errors. We shall explore few of these errors in the post. To make best use of this post, you should know certain topics in Python3 such as datatypes, expression, pass statement, etc.
 
 Not all errors are significant, and hence there would be cases where we can skip certain errors to uninterrupt execution of our code, and this achieved with ```try except``` blocks.
 
 ### ZeroDivisionError
-This error is returned when we try divide any number by 0
+This error is returned when we try to divide any number by 0
 ```
 >>> 50 / 0
 Traceback (most recent call last):
@@ -114,13 +114,6 @@ oh! there was an exception error
 Note that in the snippet above, we have excepted all types of Errors and not just NameError.
 
 One more example for providing exception to all errors
-```
-try:
-    print(y)
-except:
-    print('There was an error, But that\'s ok, go ahead with the rest of the code')
-
-print('Thank you')
 ```
 >>> try:
 ...     print(y)
