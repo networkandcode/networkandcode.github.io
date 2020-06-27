@@ -76,7 +76,7 @@ Next, we would pass all 3 arguments so they take specific values instead of defa
 >>> a = 10
 >>> b = 20
 >>> sumOfThree(a, b)
-3
+33
 ```
 
 #### One Argument, Two Defaults
@@ -171,8 +171,8 @@ would break and throws a SyntaxError
 SyntaxError: positional argument follows keyword argument
 ```
 ### Another example
-```
 Here is another example to try keyword arguments and positional arguments
+```
 >>> def fn(a, b, c):
 ...     print(a * b / c)
 ...
