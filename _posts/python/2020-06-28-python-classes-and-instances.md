@@ -19,7 +19,7 @@ But its most common to call the instance of the class, as an object, and the cla
 To be more specific, everything is an object, no matter its a function, class, or an instance of a class.
 
 ### Built in classes
-Let's create string variable with name text
+Let's create a string variable with name text
 ```
 >>> text = 'Hello World!'
 ```
@@ -115,7 +115,7 @@ class Furniture():
         self.color = 'Black'  # instance attribute wil be preferred
 ```
 #### Class Attributes
-So we define a class with the name 'Furniture' above, and gave it two attributes color and weight. 
+So we defined a class with the name 'Furniture' above, and gave it two attributes color and weight. 
 We should be able to access these attributes now, but with out typing ```()``` after the class name
 ```
 >>> Furniture.color
