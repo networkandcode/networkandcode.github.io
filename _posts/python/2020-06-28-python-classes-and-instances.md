@@ -128,6 +128,7 @@ Note that if you include ```()```, that would actually refer to the instance of 
 #### Init and Instance Attributes
 Whats the __init__ all about, its a special method in the class, that gets called when an instance of the class is being created, 
 recall that the format for creating an instance is ```instanceObjectName = classObjectName(arguments)```. So lets create an instance.
+
 ```
 chair = Furniture()  # creating an instance
 ```
@@ -163,6 +164,133 @@ Traceback (most recent call last):
 AttributeError: type object 'Furniture' has no attribute 'material'
 ```
 
+### Other built in methods
+Let's create a class with name Rectangle, and we are going to define a user defined method called area and additional built in methods such as 
+__str__, __add__, and __del__
+```
+class Rectangle():
+    'This is a class for rectange objects'    # can output this with __doc__
+    # has to be at the very first line
+
+    # unit and name are class attributes
+    unit = 'sq.cm'  # this becomes self.unit
+    name = 'rectangle'
+
+    # __init__ is a constructor
+    def __init__(self, length, breadth):
+        self.length = length
+        self.breadth = breadth
+        self.unit = 'sq.m'  # takes precedence
+        print(self.name)
+    def area(self):
+        self.area = self.length * self.breadth
+        return(str(self.area) + self.unit)
+
+    def __str__(self):
+        return ("Hello this gets printed, when you print the object, this rectangle's area is %s sq.m" %(self.area))
+
+    # to define addition of two instances of a class
+    def __add__(self, other):
+        totalLength =  self.length + other.length
+        totalBreadth = self.breadth + other.breadth
+        print(totalLength, totalBreadth)
+
+    # destructor method of the class, called when the class is about to get destroyed
+    def __del__(self):
+        print('end of class')
+```
+
+An instance can created from this class
+```
+rectangle1 = Rectangle(2, 10)
+```
+output: *rectangle*
+
+Let's check the contents of the Class and Instance
+```
+print(dir(Reactangle))
+```
+output: *['__add__', '__class__', '__del__', '__delattr__', '__dict__', '__dir__', '__doc__', '__eq__', '__format__', '__ge__', '__getattribute__', '__gt__', '__hash__', '__init__', '__init_subclass__', '__le__', '__lt__', '__module__', '__ne__', '__new__', '__reduce__', '__reduce_ex__', '__repr__', '__setattr__', '__sizeof__', '__str__', '__subclasshook__', '__weakref__', 'area', 'name', 'unit']*
+```
+print(dir(reactangle1))
+```
+output: *['__add__', '__class__', '__del__', '__delattr__', '__dict__', '__dir__', '__doc__', '__eq__', '__format__', '__ge__', '__getattribute__', '__gt__', '__hash__', '__init__', '__init_subclass__', '__le__', '__lt__', '__module__', '__ne__', '__new__', '__reduce__', '__reduce_ex__', '__repr__', '__setattr__', '__sizeof__', '__str__', '__subclasshook__', '__weakref__', 'area', 'breadth', 'length', 'name', 'unit']*
+
+We could now access the instance attributes and methods
+```
+print(rectangle1.unit)
+```
+output: *sq.m*
+
+```
+print(rectangle1.area())
+```
+output: *20sq.m*
+```
+print(rectangle1.name)
+```
+output: *rectangle*
+
+
+And let's access few built in methods
+```
+print(Rectangle.__doc__)
+```
+output: *This is a class for rectange objects*
+
+```
+print(rectangle1.__doc__)
+```
+output: *This is a class for rectange objects*
+
+```
+# works only with class
+print(Rectangle.__name__)
+```
+output: *Rectangle*
+```
+
+```
+print(Rectangle.__module__)  # name of the module in which the class is defined
+print(rectangle1.__module__)
+```
+output: *
+__main__
+__main__
+*
+
+```
+# works only with class
+print(Rectangle.__bases__)  # base classes of the class
+```
+output: *(<class 'object'>,)*
+
+```
+# dictionary holding the class namespace
+print(Rectangle.__dict__)
+print('~' * 25 )
+print(rectangle1.__dict__)
+
+print(rectangle1)  # calls the __str__ method of the class
+
+rectangle2 = Rectangle(1, 3)
+
+print(rectangle1 + rectangle2)
+
+```
+output:
+```
+{'__module__': '__main__', '__doc__': 'This is a class for rectange objects', 'unit': 'sq.cm', 'name': 'rectangle', '__init__': <function Rectangle.__init__ at 0x7f68cdb25f70>, 'area': <function Rectangle.area at 0x7f68cdb30040>, '__str__': <function Rectangle.__str__ at 0x7f68cdb300d0>, '__add__': <function Rectangle.__add__ at 0x7f68cdb30160>, '__del__': <function Rectangle.__del__ at 0x7f68cdb301f0>, '__dict__': <attribute '__dict__' of 'Rectangle' objects>, '__weakref__': <attribute '__weakref__' of 'Rectangle' objects>}
+~~~~~~~~~~~~~~~~~~~~~~~~~
+{'length': 2, 'breadth': 10, 'unit': 'sq.m', 'area': 20}
+Hello this gets printed, when you print the object, this rectangle's area is 20 sq.m
+rectangle
+3 13
+None
+end of class
+end of class
+```
+
 ### Class Inheritance
 We are gonna see some multiple inheritance examples. Multiple inheritance means we can create multiple derived classes from the same base class. 
 We can first create base / parent classes and then create sub classes under them
@@ -193,7 +321,7 @@ We are now going to create a Derived class that should inherit properties from t
 class Employee(Person):
     pass  #  pass used when we don't to add any extra properties or methods to this class
 ```
-This is just a base call with no unique properties, it inherits everything from the base class. 
+This is just a derived class with no unique properties, it inherits everything from the base class. 
 Subsequently, we would create an instance under the derived class
 ```
 # create object in Dervied class
