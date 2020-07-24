@@ -210,33 +210,52 @@ Let's check the contents of the Class and Instance
 ```
 print(dir(Reactangle))
 ```
-output: *['__add__', '__class__', '__del__', '__delattr__', '__dict__', '__dir__', '__doc__', '__eq__', '__format__', '__ge__', '__getattribute__', '__gt__', '__hash__', '__init__', '__init_subclass__', '__le__', '__lt__', '__module__', '__ne__', '__new__', '__reduce__', '__reduce_ex__', '__repr__', '__setattr__', '__sizeof__', '__str__', '__subclasshook__', '__weakref__', 'area', 'name', 'unit']*
+output: 
+```
+*['__add__', '__class__', '__del__', '__delattr__', '__dict__', '__dir__', '__doc__', '__eq__', '__format__', '__ge__', '__getattribute__', '__gt__', '__hash__', '__init__', '__init_subclass__', '__le__', '__lt__', '__module__', '__ne__', '__new__', '__reduce__', '__reduce_ex__', '__repr__', '__setattr__', '__sizeof__', '__str__', '__subclasshook__', '__weakref__', 'area', 'name', 'unit']*
+```
+
 ```
 print(dir(reactangle1))
 ```
-output: *['__add__', '__class__', '__del__', '__delattr__', '__dict__', '__dir__', '__doc__', '__eq__', '__format__', '__ge__', '__getattribute__', '__gt__', '__hash__', '__init__', '__init_subclass__', '__le__', '__lt__', '__module__', '__ne__', '__new__', '__reduce__', '__reduce_ex__', '__repr__', '__setattr__', '__sizeof__', '__str__', '__subclasshook__', '__weakref__', 'area', 'breadth', 'length', 'name', 'unit']*
 
+output: 
+```
+['__add__', '__class__', '__del__', '__delattr__', '__dict__', '__dir__', '__doc__', '__eq__', '__format__', '__ge__', '__getattribute__', '__gt__', '__hash__', '__init__', '__init_subclass__', '__le__', '__lt__', '__module__', '__ne__', '__new__', '__reduce__', '__reduce_ex__', '__repr__', '__setattr__', '__sizeof__', '__str__', '__subclasshook__', '__weakref__', 'area', 'breadth', 'length', 'name', 'unit']
+```
 We could now access the instance attributes and methods
 ```
 print(rectangle1.unit)
 ```
-output: *sq.m*
+output: 
+```
+sq.m
+```
 
 ```
 print(rectangle1.area())
 ```
-output: *20sq.m*
+output: 
+```
+20sq.m
+```
+
 ```
 print(rectangle1.name)
 ```
-output: *rectangle*
-
+output: 
+```
+rectangle
+```
 
 And let's access few built in methods
 ```
 print(Rectangle.__doc__)
 ```
-output: *This is a class for rectange objects*
+output: 
+```
+This is a class for rectange objects
+```
 
 ```
 print(rectangle1.__doc__)
@@ -247,23 +266,29 @@ output: *This is a class for rectange objects*
 # works only with class
 print(Rectangle.__name__)
 ```
-output: *Rectangle*
+output: 
+```
+Rectangle
 ```
 
 ```
 print(Rectangle.__module__)  # name of the module in which the class is defined
 print(rectangle1.__module__)
+````
+output: 
 ```
-output: *
 __main__
 __main__
-*
+```
 
 ```
 # works only with class
 print(Rectangle.__bases__)  # base classes of the class
 ```
-output: *(<class 'object'>,)*
+output: 
+```
+(<class 'object'>,)
+```
 
 ```
 # dictionary holding the class namespace
