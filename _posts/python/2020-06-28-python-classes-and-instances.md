@@ -337,7 +337,10 @@ personName = Person('James', 'Watson')
 # as it comes after '.'
 personName.print()
 ```
-output: *James Watson*
+output: 
+```
+James Watson
+```
 
 We are now going to create a Derived class that should inherit properties from the base class
 ```
@@ -353,7 +356,10 @@ Subsequently, we would create an instance under the derived class
 employeeName = Employee('Michael', 'Jones')
 employeeName.print()
 ```
-output: *Michael Jones*
+output: 
+```
+Michael Jones
+```
 
 Let's create another derived class, but with the __init__ method. 
 And, also an instance under this new derived class.
@@ -367,7 +373,10 @@ class Engineer(Person):
 engineerName = Engineer('Clark', 'Peters')
 engineerName.print()
 ```
-output: *Clark Peters*
+output: 
+```
+Clark Peters
+```
 
 So in the snippet above, we have initialized the base class, by calling the __init__ method of the base class.
 
@@ -383,7 +392,10 @@ class Pilot(Person):
 pilotName = Pilot('Steven', 'Williams')
 pilotName.print()
 ```
-output: *Steven Williams*
+output: 
+```
+Steven Williams
+```
 
 Let's create a derived class and add an extra property to it
 ```
@@ -394,7 +406,10 @@ class Chauffeur(Person):
 chauffeurData = Chauffeur('Jackson', 'Noah', 30)
 chauffeurData.print()
 ```
-output: *Jackson Noah*
+output: 
+```
+Jackson Noah
+```
 
 So the derived class Chauffer inherited attributes and methods from the base class Person, and it now also has an extra attribute called age. 
 We may now try creating a derived class and both an extra attribute and an extra method. 
@@ -411,7 +426,10 @@ class Helmsman(Person):
 helmsmanData = Helmsman('Stephen', 'Kenneth', 30)
 helmsmanData.print()
 ```
-output: *Stephen Kenneth 30*
+output: 
+```
+Stephen Kenneth 30
+```
 
 In the code above, we have defined a method called print, which uses the same name as the method defined in the derived class Person. 
 However the method defined in the derived class takes precedence as it's more specific. 
@@ -431,6 +449,9 @@ bearerData = Bearer('Williams', 'Goodman', '40')
 bearerData.print()
 bearerData.prettyPrint()
 ```
-output: *Williams Goodman 40*
+output: 
+```
+Williams Goodman 40
+```
 
 --end-of-post--
