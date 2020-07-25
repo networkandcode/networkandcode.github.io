@@ -273,4 +273,92 @@ program doesn't really make use of it, it just executes it though as a string
 ... docstring'''
 ' This \nis a \nmultiline \ndocstring'
 ```
+### Script
+We can put code in a file and then run it as a script. Here is an example to do concatenation of two strings.
+```
+$ cat string-concatenation.py
+print("Example for string operation")
+
+firstName = "Michael"
+lastName = "Jackson"
+
+fullName = firstName + " " + lastName
+
+print(fullName)
+
+$ python3 string-concatenation.py
+Example for string operation
+Michael Jackson
+```
+We have used the cat utility in Linux above to display the file's contents, however all we need is a file edited using any text editor in 
+any operating system where Python is installed, and then run that file as a script using Python.
+
+### If Else
+```
+$ cat ex3.py
+# Strings with If else, and function
+
+a = '"Hello"'
+b = "'World'"
+c = "\"Hi All\""
+d = '\'How are you\''
+e = a + b
+
+print (a)
+print (b)
+print ( a + ' ' + b )
+print (c)
+print (d)
+print ( e )
+
+print ('\n' * 2 )
+
+print (len(d))
+
+if ('How' in d):
+    print ('yes')
+else:
+    print ('no')
+
+if ('You' in c):
+    print ('yes')
+else:
+    print ('no')
+
+def  findInString(var1, var2):
+    if (var1 in var2):
+        print('yes')
+    else:
+        print('no')
+
+findInString('How', d)
+findInString('You', c)
+findInString(a, e)
+findInString(b, e)
+findInString('S', 'Shahul')
+findInString(a, 'RandomString')
+```
+
+```
+$ python3 ex3.py
+"Hello"
+'World'
+"Hello" 'World'
+"Hi All"
+'How are you'
+"Hello"'World'
+
+
+
+13
+yes
+no
+yes
+no
+yes
+yes
+yes
+no
+```
+
 --end-of-post--

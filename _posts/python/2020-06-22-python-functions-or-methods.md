@@ -141,6 +141,27 @@ Let's pass another set of arguments
 yes
 ```
 So 100 / 5 gives quotient 20 and remainder 0, hence it returns ```yes```.
+
+##### Multiplication example
+```
+$ cat multiply.py
+def mul(number1, number2):
+    print(number1 * number2)
+
+
+mul(100, 10)
+mul(10, 90)
+mul(15, 50)
+```
+Here we have kept the code in a file and then would execute it as a script. The example above was done in Linux, however can be tried in any 
+operating system where Python is installed. Above, we have used the cat utility in Linux to display the file's contents.
+
+```
+$ python3 multiply.py
+1000
+900
+750
+```
 #### Keyword arguments
 Keyword arguments can also be passed to a function as follows
 ```
