@@ -26,6 +26,8 @@ using %s:
 ```
 >>> print('Welcome %s' %(name))
 Welcome Ahmed
+>>> print('Hi %s, Welcome' %(name))
+Hi Ahmed, Welcome
 ```
 
 using curly braces and .format:

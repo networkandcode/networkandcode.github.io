@@ -224,6 +224,26 @@ as its unordered. If you try this with a Set, Python would throw an error like `
 ```
 So 'mango' now appears at the end of the list
 
+#### Add to List using '+'
+```
+>>> list = ['apple', 'banana', 'orange']
+>>> print(list)
+['apple', 'banana', 'orange']
+>>> list = list + ['grapes']
+>>> print(list)
+['apple', 'banana', 'orange', 'grapes']
+>>>
+>>> # list += is equivalent to list = list +
+>>> list += ['pineapple', 'passion fruit']
+>>> print(list)
+['apple', 'banana', 'orange', 'grapes', 'pineapple', 'passion fruit']
+>>>
+>>> list = list * 3
+>>>
+>>> print(list)
+['apple', 'banana', 'orange', 'grapes', 'pineapple', 'passion fruit', 'apple', 'banana', 'orange', 'grapes', 'pineapple', 'passion fruit', 'apple', 'banana', 'orange', 'grapes', 'pineapple', 'passion fruit']
+```
+
 #### Add to Set
 'add' is applicable only to Sets, this adds an item to the Set, and there is no scope of positioning or indexing here
 ```
@@ -413,6 +433,33 @@ So the right way to create an empty set is:
 >>> alternateSet =  set()
 >>> print(type(alternateSet))
 <class 'set'>
+```
+
+### Max, Min
+We can find the smallest and highest number in a list, tuple, or set using the functions min and max.
+```
+>>> # numbers
+>>> print(max(1, 100, 3))
+100
+>>> print(min(1, 100, 3))
+1
+>>>
+>>> list = [1, 100, 3]
+>>> tuple = (1, 100, 3)
+>>> set = {1, 100, 3}
+>>>
+>>> print(max(list))
+100
+>>> print(max(tuple))
+100
+>>> print(max(set))
+100
+>>> print(min(list))
+1
+>>> print(min(tuple))
+1
+>>> print(min(set))
+1
 ```
 
 ### Quiz

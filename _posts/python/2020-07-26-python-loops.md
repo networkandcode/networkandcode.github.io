@@ -3,9 +3,11 @@ title: python > loops
 categories: python
 ---
 
-# While
-## Infinite Loop
-### With a string
+Loops are common in all programmings languages, they help in executing tasks that are recurring in nature. Lets look at these loops in Python with few examples. The prerequisites are: knowing how to Python code through the Interpreter or as a script in a file.
+
+## While
+### Infinite Loop
+#### With a string
 ```
 # This is an infinite loop
 # Ctrl z to stop it
@@ -25,7 +27,7 @@ Traceback (most recent call last):
     print("Hello")
 KeyboardInterrupt
 ```
-### With a number
+#### With a number
 ```
 >>> # infinite loop once more
 >>> i = 1
@@ -43,7 +45,7 @@ Traceback (most recent call last):
 KeyboardInterrupt
 ```
 
-## No Loop
+### No Loop
 ```
 >>> # this loop wont execute, bcause False is not the default condition
 >>> while False:
@@ -52,7 +54,7 @@ KeyboardInterrupt
 >>> 
 ```
 
-## Finite Loop
+### Finite Loop
 The loop would break when the condition i <= 10 becomes false.
 In each iteration, we are incrementing the value of i by 1. When i becomes 11, the loop breaks.
 ```
@@ -66,7 +68,7 @@ In each iteration, we are incrementing the value of i by 1. When i becomes 11, t
 10 Hello
 ```
 
-## Break
+### Break
 The 'break' statement can also be used to break out of a loop based on certain condition.
 ```
 $ cat break.py
@@ -86,7 +88,7 @@ $ python3 break.py
 10 hello
 ```
 
-## Continue
+### Continue
 The 'continue' statement skips rest of the statements in the current iteration, and moves the loop forward to the next iteration.
 
 Here is a code to find odd and even numbers between 1 and 11. 
@@ -115,8 +117,8 @@ $ python3 odd-or-even.py
 10 even
 11 odd
 
-# For
-## in
+## For
+### in
 The in statement is used with for, to loop over a list of values. Let's try this with the range function, which is used to return a range a numbers, except the last number, for example range(1, 11) actually ranges from 1 to 10. We could loop over this range.
 ```
 $ cat range.py
@@ -130,7 +132,7 @@ $ python3 ex9.py
 9
 ```
 
-## nested
+### nested
 We can use nested blocks in python, same is true for 'for' as well. We are going to nest a for loop with in another for loop as follows.
 ```
 $ cat nested-range.py
@@ -166,3 +168,5 @@ $ python3 range.py
 10 19
 10 20
 ```
+
+--end-of-post--

@@ -134,5 +134,23 @@ $ python3 odd-or-even.py
 Please input the number 0
 Neither odd nor even
 ```
+
+## Constants
+```
+$ cat const.py
+# this is the standard way of declaring a constant
+# however its a variable
+# its value can be changed
+# but we dont tend to change it
+# and it is way of denoting other people reading this code
+# that this variable is intended to be a constant
+PI = 3.14
+
+print(PI)
+```
+$ python3 const.py
+3.14
+```
+
 --end-of-post--
 

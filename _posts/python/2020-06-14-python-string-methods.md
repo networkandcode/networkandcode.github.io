@@ -53,6 +53,7 @@ function
 'translate', 'upper', 'zfill']
 ```
 We are going to try few of these methods
+
 ### Strip 
 We see that are some space characters at the beginning and ending of the string
 ```
@@ -76,6 +77,62 @@ However we can assign it to the same variable or a new one
 >>> sampleString = sampleString.strip()
 >>> print(sampleString)
 This World is so Huge !!!
+```
+lstrip and rstrip are variants of strip, removing spaces from left or right sides respectively.
+```
+>>> # lstrip, left
+>>> print('hihihihihihellohellohellohihihihihi'.lstrip('hi'))
+ellohellohellohihihihihi
+>>>
+>>> # right
+>>> print('hihihihihihellohellohellohihihihihi'.rstrip('hi'))
+hihihihihihellohellohello
+>>>
+>>> # both sides
+>>> print('hihihihihihellohellohellohihihihihi'.strip('hi'))
+ellohellohello
+>>> print('                 hello                 '.strip())
+hello
+>>>
+```
+
+### Find
+The find method is used to find a word or character in a string.
+```
+>>> string = 'This World is so Big, and this World holds many creatures'
+>>>
+>>> # returns the index number of the word found
+>>> # the first occurence would be considered
+>>> print(string.find('World'))
+5
+>>>
+>>> # from position
+>>> # finds the word starting from position 6 of the string
+>>> print(string.find('World', 6))
+31
+>>>
+>>> # from and to
+>>> # it will throw -1 if it couldnt find
+>>> print(string.find('World', 30, 33))
+-1
+>>> print(string.find('is', 10, 15))
+11
+>>> print(string.find('big'))
+-1
+```
+
+### Count
+We can count the number of occurences of a character or word in a string using the count method.
+```
+>>> # count the no. of occurences
+>>> print(string.count('World'))
+2
+>>> print(string.count('i'))
+4
+>>> print(string.count(' '))
+10
+>>> print(string.count('Alien'))
+0
 ```
 
 ### Replace
@@ -102,6 +159,22 @@ with '$' in the string and check the memory location again
 >>> print(sampleString)
 Thi$ Earth i$ $o Huge !!!
 ```
+
+### Join
+This is used to combine multiple strings into one string.
+```
+# join can be used to combine elements of a tuple or a list, and make one string out of it
+
+tollfree = ['1800', '123', '456']
+print('-'.join(tollfree))
+
+ipaddress = ('192', '168', '1', '100')
+print('.'.join(ipaddress))
+
+url = ['wwww', 'google', 'com']
+print('.'.join(url))
+```
+
 ### Length
 The 'len' function can be used to check the length of the string in terms 
 of number of characters in it, including spaces if any. Note that this is 
@@ -121,6 +194,8 @@ T !
 >>> print(sampleString[-25], sampleString[-1])
 T !
 ```
+
+### Slicing
 We may also print a range of characters i.e. slice it
 ```
 >>> print(sampleString[3:6])
@@ -128,6 +203,23 @@ $ E
 ```
 The above statement has printed characters 3 to 5, note that last position  
 in the range i.e. 6 will not be included
+
+Few other examples for slicing below.
+```
+>>> string = 'Hello World!'
+>>> print(string[0:3])  # 3 will not be included
+Hel
+>>> print(string[4:-1])  # -1 will not be included
+o World
+>>> print(string[1:])
+ello World!
+>>> print(string[:6])   # until 5
+Hello
+>>> print(string[-3:-2]) # starts and ends at -3 coz -2 will not be included
+l
+>>>
+```
+
 
 ### Convert case
 We can covert the case of the string using some methods as follows
@@ -359,6 +451,118 @@ yes
 yes
 yes
 no
+```
+
+### Space
+We can find if a string contains only spaces.
+```
+>>> string = '''
+...
+...
+...
+...
+...
+... '''
+>>>
+>>> print(string.isspace())
+True
+>>>
+>>> string = '                   '
+>>>
+>>> print(string.isspace())
+True
+>>>
+>>> string = ''
+>>> print(string.isspace())
+False
+>>>
+>>> print('Hello World'.isspace())
+False
+>>>
+```
+
+### AlphaNumeric
+Check if a given string is alphanumeric, alphabetic, or numeric.
+```
+$ cat alpha-num.py
+# alphanumeric
+# false as it has a space character
+print('Navas Khader'.isalnum())
+
+print('NavasKhader'.isalnum())
+print('1233HelloHi456'.isalnum())
+
+# alphabetic
+print('1233Hello'.isalpha())
+print('NavasKhader'.isalpha())
+
+# numbers
+print('1234567'.isdigit())
+print('ab12'.isdigit())
+```
+```
+$ python3 alpha-num.py
+False
+True
+True
+False
+True
+True
+False
+```
+
+### Compare length of strings
+```
+$ cat compare-strings.py
+string1 = 'Hello'
+string2 = 'Hi'
+string3 = 'Hello'
+
+print(len(string1) > len(string2))  # True or False, Boolean
+print(len(string1) < len(string2))
+print(len(string1) >= len(string2))
+print(len(string1) == len(string2))
+print(len(string1) != len(string2))
+
+print(string1 == string3)
+```
+```
+$ python3 compare-strings.py
+True
+False
+True
+False
+True
+True
+```
+
+### Encode / Decode
+The code below is used to encode a string into bytes, and decode bytes back to a string.
+```
+$ cat encode-decode.py
+# encode
+# string to bytes
+s = 'Hello'
+print(type(s))
+print(s)
+b = s.encode()
+print(type(b))
+print(b)
+
+# decode
+# bytes to string
+s = b.decode()
+print(type(s))
+print(s)
+```
+```
+$ python3 encode-decode.py
+<class 'str'>
+Hello
+<class 'bytes'>
+b'Hello'
+<class 'str'>
+Hello
 ```
 
 --end-of-post--
