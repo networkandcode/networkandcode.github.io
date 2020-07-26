@@ -7,6 +7,39 @@ Sometimes its necessary to take some input from the user and pass it to
 the program, let's explore with few examples. Its assumed you know to write 
 functions, for and while statements.
 
+## Input and Formatting
+The input function is used to read a string input from the user.
+```
+>>> name = input('Hello, whats your name ')
+Hello, whats your name Ahmed
+```
+So the name 'Ahmed' is stored in the name variable.
+```
+>>> print(name)
+Ahmed
+```
+
+We can use some formatting methods to include string variables along 
+with some text.
+
+using %s:
+```
+>>> print('Welcome %s' %(name))
+Welcome Ahmed
+```
+
+using curly braces and .format:
+```
+>>> print('Welcome {}' .format(name))
+Welcome Ahmed
+```
+
+using f and curly braces:
+```
+>>> print(f'Welcome {name}')
+Welcome Ahmed
+```
+
 ## Example1
 
 ```

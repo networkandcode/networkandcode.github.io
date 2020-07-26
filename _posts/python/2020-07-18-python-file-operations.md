@@ -35,6 +35,8 @@ Let's now read what we have written.
 # r for read mode
 with open('firstfile.txt', 'r') as f:   # f is a variable
     print(f.read())  # reads up to the max buffer size
+    # to read the entire capacity of the system's buffer
+    # this would print an error if the file is not existing 
 ```
 output:
 ```

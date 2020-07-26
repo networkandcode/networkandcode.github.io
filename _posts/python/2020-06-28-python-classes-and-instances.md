@@ -454,4 +454,102 @@ output:
 Williams Goodman 40
 ```
 
+### Another example
+Let's define another class and try few things for practice.
+```
+$ cat merchandise.py
+class Merchandise():
+    'This is the documentation for this class'  # this a class property or attribute
+
+    # __init__ is also called as a constructor
+    def __init__(self, unitprice, color, size):
+        self.unitprice = unitprice  # these are instance properties or attributes
+        self.color = color
+        self.size = size
+
+    def __str__(self):
+        return(str(self.unitprice) + ' ' + str(self.color) + ' ' + str(self.size))
+
+    #  __del__ is also called as a destructor
+    def __del__(self):
+        print('the Merchandise class has been utilized')
+
+    def __add__(self, other):
+        print("total price is" , self.unitprice + other.unitprice)
+
+    # this is a user  defined function
+    def add(self, other):
+        print("Hello, thanks for your order")
+        print("please pay ", self.unitprice + other.unitprice)
+
+
+# shoe is an instance of the class Merchandise
+shoe = Merchandise(100, 'black', 7)
+
+print(type(shoe))
+
+name = "Washington"
+print(type(name))
+
+print(shoe.unitprice)
+print(shoe.color)
+print(shoe.size)
+
+print(shoe.unitprice, ',', shoe.color, shoe.size)
+
+# checks for the __str__ function or method
+print(shoe)
+
+# phone is another instance of the class Merchandise
+phone = Merchandise(200, 'white', 7)
+print(phone.unitprice)
+print(phone.color)
+print(phone.size)
+
+# bottle = Merchandise()  would throw an error
+
+
+print(Merchandise.__doc__)  # __doc__ is a built in property
+print(shoe.__doc__)
+print(phone.__doc__)
+
+print(Merchandise.__dict__)  # gives details about the class, its properties and functions
+print('-' * 25 )
+print(shoe.__dict__)    # gives details about the instance's properties
+print(phone.__dict__)
+
+print(Merchandise.__name__)
+print(Merchandise.__module__)
+
+shoe + phone  # __add__ gets executed automatically coz we are using '+', shoe would become self, phone would become other
+
+shoe.add(phone)    # add gets execurted, shoe would become self, phone would become other
+```
+```
+$ python3 merchandise.py
+<class '__main__.Merchandise'>
+<class 'str'>
+100
+black
+7
+100 , black 7
+100 black 7
+200
+white
+7
+This is the documentation for this class
+This is the documentation for this class
+This is the documentation for this class
+{'__module__': '__main__', '__doc__': 'This is the documentation for this class', '__init__': <function Merchandise.__init__ at 0x7f3e620758b0>, '__str__': <function Merchandise.__str__ at 0x7f3e62045f70>, '__del__': <function Merchandise.__del__ at 0x7f3e62050040>, '__add__': <function Merchandise.__add__ at 0x7f3e620500d0>, 'add': <function Merchandise.add at 0x7f3e62050160>, '__dict__': <attribute '__dict__' of 'Merchandise' objects>, '__weakref__': <attribute '__weakref__' of 'Merchandise' objects>}
+-------------------------
+{'unitprice': 100, 'color': 'black', 'size': 7}
+{'unitprice': 200, 'color': 'white', 'size': 7}
+Merchandise
+__main__
+total price is 300
+Hello, thanks for your order
+please pay  300
+the Merchandise class has been utilized
+the Merchandise class has been utilized
+```
 --end-of-post--

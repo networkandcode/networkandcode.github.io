@@ -1,4 +1,4 @@
----
+/---
 title: python > numbers
 categories: python
 ---
@@ -103,5 +103,36 @@ $ python3 ex3.py
 100.0
 ```
 
+## Odd or Even numbers
+Let's write code to find if a number is odd or even, note that the input function is used to get some input from the user as string.
+```
+$ cat odd-or-even.py
+numberString = input('Please input the number ')    # this is always a string
+
+number = int(numberString)   # converting string to integer
+
+if (number == 0):
+    print('Neither odd nor even')
+elif (number % 2 == 0):
+    print('This is even')
+else:
+    print('This is odd')
+```
+
+```
+$ python3 odd-or-even.py
+Please input the number 7
+This is odd
+
+$ python3 odd-or-even.py
+Please input the number 4
+This is even
+```
+
+```
+$ python3 odd-or-even.py
+Please input the number 0
+Neither odd nor even
+```
 --end-of-post--
 

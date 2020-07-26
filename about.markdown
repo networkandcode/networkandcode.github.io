@@ -20,5 +20,4 @@ Certifications pursued by the site author:
 
 ---
 
-[<i class="fab fa-2x fa-linkedin"></i>](https://linkedin.com/in/networkandcode)
 [<i class="fab fa-2x fa-github"></i>](https://github.com/networkandcode)

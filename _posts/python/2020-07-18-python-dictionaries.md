@@ -142,6 +142,46 @@ False
 --------------------------------------------------
 ```
 
+### Check for Keys, Values
+```
+>>> shirt = {
+... 'Brand': 'Louis Philippe',
+... 'Size': '40',
+... 'Color': 'White'
+... }
+>>>
+>>> # check for a particular key
+>>> if 'Brand' in shirt:
+...     print('yes')
+... else:
+...     print('no')
+...
+yes
+>>> if 'Model' in shirt:
+...     print('yes, model is there')
+... else:
+...     print('no, model is not there')
+...
+no, model is not there
+>>> # check for a particular value
+>>> print(shirt.values())
+dict_values(['Louis Philippe', '40', 'White'])
+>>>
+>>> if 'White' in shirt.values():
+...     print('yes its a white shirt')
+... else:
+...     print('no, its not white')
+...
+yes its a white shirt
+>>> if 'Black' in shirt.values():
+...     print('yes, its black')
+... else:
+...     print('no, its not black')
+...
+no, its not black
+>>>
+```
+
 ### Loop
 
 #### Iterate over keys
@@ -459,6 +499,10 @@ del mydetails
 We can also create a dictionary using the dict class, this method refers to creating an instance of a class, 
 as however it belongs to the 'dict' class.
 ```
+# alternate way of creating a dictionary
+# no quotes in keys
+# use parantheses
+# use the dict keyword
 shirt = dict(
 Brand = 'Louis Philippe',
 Size = '40',
@@ -473,6 +517,43 @@ output:
 ```
 {'Brand': 'Louis Philippe', 'Size': '40', 'Color': 'White'}
 ```
+### Another example
+One more example for practice.
+```
+$ cat phone-dictionary.py
+emptyDictionary = {}
+print(type(emptyDictionary))
+
+sampleDictionary = {
+'model': 'iphone7',
+'manufacturer': 'apple',
+'color': 'space grey'
+}
+
+print(type(sampleDictionary))
+print(sampleDictionary)
+
+print(sampleDictionary['model'])
+print(sampleDictionary['manufacturer'])
+print(sampleDictionary['color'])
+
+# change the color to rose gold
+sampleDictionary['color'] = 'rose gold'
+
+print(sampleDictionary['color'])
+```
+
+```
+$ python3 phone-dictionary.py
+<class 'dict'>
+<class 'dict'>
+{'model': 'iphone7', 'manufacturer': 'apple', 'color': 'space grey'}
+iphone7
+apple
+space grey
+rose gold
+```
+
 
 --end-of-post--
 
