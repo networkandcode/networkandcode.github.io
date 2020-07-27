@@ -552,4 +552,46 @@ please pay  300
 the Merchandise class has been utilized
 the Merchandise class has been utilized
 ```
+
+### Multiple Inheritance
+A class can also belong to multiple classes.
+
+We are defining a base class called Country.
+```
+>>> class Country():
+...     def __init__(self, countryName, nationalLanguage):
+...         self.countryName = countryName
+...         self.nationalLanguage = nationalLanguage
+...     def printCountry(self):
+...         print("The country name is {} and the national language is {}".format(self.countryName, self.nationalLanguage))
+...
+```
+We are defining another base class called state.
+```
+>>> class State():
+...     def __init__(self, stateName, stateLanguage):
+...         self.stateName = stateName
+...         self.stateLanguage = stateLanguage
+...     def printState(self):
+...         print("The state name is {} and the state language is {}".format(self.stateName, self.stateLanguage))
+...
+```
+Now, let's define a derived class called City which would inherit attributes and methods from both Country and State.
+```
+>>> class City(Country, State):
+...     def __init__(self, countryName, nationalLanguage, stateName, stateLanguage):
+...         Country.__init__(self, countryName, nationalLanguage)
+...         State.__init__(self, stateName, stateLanguage)
+...
+```
+A new instance is now being created in the City class. In the __init__ method of the City class, we are first initializing the Country class, and 
+then the state class. The printCountry method will be inherited from the Country class, where as the printState method will be inherited from the 
+State class.
+```
+>>> madras = City( 'India', 'Hindi', 'TamilNadu', 'Tamil' )
+>>> madras.printCountry()
+The country name is India and the national language is Hindi
+>>> madras.printState()
+The state name is TamilNadu and the state language is Tamil
+```
 --end-of-post--

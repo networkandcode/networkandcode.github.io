@@ -102,6 +102,16 @@ apple apple
 *Math to convert positive to negative index: if i is the index, and l is the length, then i-l is the negative index
 so if 6 is the index, 11 is the length, 6-11 = -5 is the negative index.*
 
+### Using the index method
+We can also check the index, based on a value being searched. Works with lists and tuples, but not sets, as sets are unordered. 
+Note that when the value is repeated in more than one index, only the first index will be considered.
+```
+>>> print(sampleList.index('apple'))
+6
+>>> print(sampleTuple.index('apple'))
+6
+```
+
 ### Modify values
 
 *We can only modify the existing value of item in List, using the index of the item. This isn't achievable with Sets / Tuple cause the former doesn't have index, and 
@@ -462,6 +472,41 @@ We can find the smallest and highest number in a list, tuple, or set using the f
 1
 ```
 
+### Sort
+We can sort items in ascending or descending order, however all the items should belong to the same datatype. 
+We can sort a list, tuple, or set, however the result is a list.
+```
+>>> list = ['apple', 'orange', 'banana', 'grapes', 'passion fruit']
+>>> tuple = ('apple', 'orange', 'banana', 'grapes', 'passion fruit')
+>>> set = {'apple', 'orange', 'banana', 'grapes', 'passion fruit'}
+```
+### Ascending order
+```
+>>> print(sorted(list))
+['apple', 'banana', 'grapes', 'orange', 'passion fruit']
+>>> print(sorted(tuple))
+['apple', 'banana', 'grapes', 'orange', 'passion fruit']
+>>> print(sorted(set))
+['apple', 'banana', 'grapes', 'orange', 'passion fruit']
+```
+### Descending order
+```
+>>> print(sorted(list, reverse=True))
+['passion fruit', 'orange', 'grapes', 'banana', 'apple']
+>>> print(sorted(tuple, reverse=True))
+['passion fruit', 'orange', 'grapes', 'banana', 'apple']
+>>> print(sorted(set, reverse=True))
+['passion fruit', 'orange', 'grapes', 'banana', 'apple']
+```
+
+### Reverse
+This is only applicable to a list, as tuples are immutable and sets are unordered.
+```
+>>> list.reverse() # the original list gets changed
+>>> print(list)
+['passion fruit', 'grapes', 'banana', 'orange', 'apple']
+```
+
 ### Quiz
 Well, some recap to refresh what you have learnt
 - Is Tuple ordered or unordered
@@ -472,4 +517,3 @@ Well, some recap to refresh what you have learnt
 - How would you create an empty set
 
 --end-of-post--
-

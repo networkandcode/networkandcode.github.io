@@ -169,4 +169,71 @@ We could however print a user defined message.
 ...
 The type error was raised manually
 ```
+
+### Class with Multi level inheritance
+The errors we have seen so far belong to a predefined class called Exception.
+```
+>>> print(ValueError.__bases__)
+(<class 'Exception'>,)
+
+>>> print(TypeError.__bases__)
+(<class 'Exception'>,)
+```
+Note that __bases__ is used to find the base class of a class.
+
+Let's define a class called Base that would inherit the Exception class. We are not defininig any unique attributes or methods for this class, 
+and hence say pass.
+```
+>>> class Base(Exception):
+...     pass
+...
+```
+Now another class called Child, which would inherit the class 'Base'.
+```
+>>> class Child(Base):
+...     pass
+...
+```
+And the Grandchild class to further inherit from Child.
+```
+>>> class Grandchild(Child):
+...     pass
+...
+```
+We are going to loop over these classes, to raise that exception in each iteration, so that the except block would be executed.
+```
+>>> for i in [ Base, Child, Grandchild ]:
+...     try:
+...         raise i()
+...     except Grandchild:
+...         print("Grand child exception")
+...     except Child:
+...         print("Child exception")
+...     except Base:
+...         print("Base exception")
+...
+Base exception
+Child exception
+Grand child exception
+```
+The loop above was straight forward, i.e. when the Base exception was raised, it would print 'Base exception'.
+
+Let's now try reverse the order of except statements and try.
+```
+>>> for i in [ Base, Child, Grandchild ]:
+...     try:
+...         raise i()
+...     except Base:
+...         print("Base exception")
+...     except Child:
+...         print("Child exception")
+...     except Grandchild:
+...         print("Grand child exception")
+...
+Base exception
+Base exception
+Base exception
+>>>
+```
+Each time the Base exception will be caught, as both Child and Grandchild inherit Base. And the except block for Base was written first.
 --end-of-post--
