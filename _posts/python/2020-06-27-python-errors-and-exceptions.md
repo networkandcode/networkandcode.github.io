@@ -218,7 +218,7 @@ Grand child exception
 ```
 The loop above was straight forward, i.e. when the Base exception was raised, it would print 'Base exception'.
 
-Let's now try reverse the order of except statements and try.
+Let's now reverse the order of except statements and try.
 ```
 >>> for i in [ Base, Child, Grandchild ]:
 ...     try:
@@ -236,4 +236,87 @@ Base exception
 >>>
 ```
 Each time the Base exception will be caught, as both Child and Grandchild inherit Base. And the except block for Base was written first.
+
+### Custom message
+Define a custom exception as a sub / derived class of the Exception class.
+Define a new class MyException as a derived class of the Exception class.
+```
+>>> class MyException(Exception):
+...     pass
+...
+```
+Define InputException as a derived class of MyException. So InputException also inherits Exception. 
+However a custom message is defined for InputException, so it won't inherit this message from Exception.
+```
+>>> class InputException(MyException):
+...     def __init__(self, message):
+...          self.message = message
+...
+```
+Create an instance 'i' of the InputException class, and pass argument for message.
+```
+>>> i = InputException('This is a user defined exception')
+>>>
+```
+We can now raise i, i.e. an InputException instance, to create an error manually, and the screen would throw the custom message. 
+```
+>>> raise i
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+__main__.InputException: This is a user defined exception
+```
+__main__ is the value of the __name__ keyword, its used to fetch the name of an object, and by default it's __main__.
+It means the value of __name__ in our program or module is always __main__, and it has global scope.
+```
+>>> print(__name__)
+__main__
+```
+For instance the __name__ atrribute of InputException is its name itself, same is the case for Exception.
+```
+>>> print(InputException.__name__)
+InputException
+
+>>> print(Exception.__name__)
+Exception
+```
+
+### SyntaxError
+We have seen errors than can be excepted, but there are also Errors that can not be excepted. 
+For instance IndentationError can not be excepted.
+```
+>>> if True:
+...     print('hi')
+...   print('hello')
+  File "<stdin>", line 3
+    print('hello')
+                 ^
+IndentationError: unindent does not match any outer indentation level
+```
+Indentation error is derived class of SyntaxError.
+```
+>>> print(IndentationError.__bases__)
+(<class 'SyntaxError'>,)
+```
+
+Make a syntax error directly.
+```
+>>> print('Hello)
+  File "<stdin>", line 1
+    print('Hello)
+                ^
+SyntaxError: EOL while scanning string literal
+```
+SyntaxError inherits Exception, which in turn inherits BaseException.
+```
+>>> print(SyntaxError.__bases__)
+(<class 'Exception'>,)
+>>> print(Exception.__bases__)
+(<class 'BaseException'>,)
+>>> print(BaseException.__bases__)
+(<class 'object'>,)
+>>> print(object.__bases__)
+()
+>>>
+```
+
 --end-of-post--

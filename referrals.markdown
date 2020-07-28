@@ -4,6 +4,8 @@ title: "referrals"
 permalink: /referrals/
 ---
 
+Get $25 credits at <a href="https://upcloud.com/signup/?promo=34SA24"> UpCloud </a>
+
 <a href="//pluralsight.pxf.io/c/1256607/432943/7490">
   <img src="//a.impactradius-go.com/display-ad/7490-432943" border="0" alt="" />
 </a>
