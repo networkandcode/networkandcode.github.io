@@ -57,14 +57,14 @@ $ kubectl exec -it basicnodeapp-648568547f-z28nl -- bash
 root@basicnodeapp-648568547f-z28nl:/usr/src/app#
 ```
 
-## Check the current user details
+# Check the current user details
 ```
 root@basicnodeapp-648568547f-z28nl:/usr/src/app# whoami
 root
 ```
 This shows you are logged in as root, its also evident from the from the container prompt that says root@.
 
-## Check the id
+# Check the id
 ```
 root@basicnodeapp-648568547f-z28nl:/usr/src/app# id
 uid=0(root) gid=0(root) groups=0(root)
@@ -73,7 +73,7 @@ uid refers to the user id of the user, gid refers to the primary group id of the
 
 So, the current container user is root, it's user id is 0, primary group id is also 0, the primary group name is root. And it doesnt belong to any additional groups.
 
-## Processes
+# Processes
 All the running processes will be owned the current user and its only group, which are both root
 ```
 root@basicnodeapp-648568547f-z28nl:/usr/src/app# ps aux
@@ -83,7 +83,7 @@ root        14  0.0  0.1  18184  3304 pts/0    Ss   07:59   0:00 bash
 root        22  0.0  0.1  36632  2692 pts/0    R+   08:02   0:00 ps aux
 ```
 
-## New file
+# New file
 And any new files we create will also be owned by the current user root and its only group root.
 ```
 root@basicnodeapp-648568547f-z28nl:/usr/src/app# touch /tmp/test-file
@@ -93,7 +93,7 @@ root@basicnodeapp-648568547f-z28nl:/usr/src/app# ls /tmp/ -l | grep test-file
 ```
 By default, as shown above, new files will get read write (rw-) permission for the user 'root', read only (r--) permission for the group 'root' and others.
 
-## New file in the volume
+# New file in the volume
 Any new file in the volume will also be owned by the current user root and its only group root.
 ```
 root@basicnodeapp-648568547f-z28nl:/usr/src/app# touch /tmp/ed/test-file
@@ -103,15 +103,15 @@ total 0
 ```
 Note that we have earlier mentioned /tmp/ed as the mount path in the container for the shared empty directory volume.
 
-## Exit the container
+# Exit the container
 ```
 root@basicnodeapp-648568547f-z28nl:/usr/src/app# exit
 exit
 ```
 
-# Set user and group using security context
+## Set user and group using security context
 We are now going to use the security context feature to set the running user / group.
-## Non root user and group
+# Non root user and group
 Well as seen above, certain containers, run as root. 
 Logging into a container as root may not be secure, as it can interact with sensitive files, hence we can change it to a 
 nonroot user during runtime. We are going to slightly modify the deployment manifest as follows.
@@ -141,7 +141,7 @@ NAME                            READY   STATUS    RESTARTS   AGE
 basicnodeapp-5cd66b595b-pnrzr   1/1     Running   0          25s
 ```
 
-## Test
+# Test
 Let's launch the shell of the new container and test.
 ```
  kubectl exec -it basicnodeapp-5cd66b595b-pnrzr -- bash
@@ -153,14 +153,14 @@ I have no name!@basicnodeapp-5cd66b595b-pnrzr:/usr/src/app$ whoami
 whoami: cannot find name for user ID 11000
 ```
 
-### Id
+# Id
 ```
 I have no name!@basicnodeapp-5cd66b595b-pnrzr:/usr/src/app$ id
 uid=11000 gid=22000 groups=22000,33000
 ```
 We see two groups, 22000 is the primary group and 33000 is the supplementary group
 
-### Processes
+# Processes
 ```
 I have no name!@basicnodeapp-5cd66b595b-pnrzr:/usr/src/app$ ps aux
 USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
@@ -170,7 +170,7 @@ USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
 ```
 All the running processes are owned by the current user with uid 11000
 
-### New file
+# New file
 ```
 I have no name!@basicnodeapp-5cd66b595b-pnrzr:/usr/src/app$ ls /tmp -l | grep test-file
 -rw-r--r-- 1 11000 22000    0 Aug 22 08:25 test-file
@@ -190,7 +190,7 @@ I have no name!@basicnodeapp-5cd66b595b-pnrzr:/usr/src/app$ touch /etc/testfile
 touch: cannot touch '/etc/testfile': Permission denied
 ```
 
-### New file in the volume
+# New file in the volume
 ```
 I have no name!@basicnodeapp-5cd66b595b-pnrzr:/usr/src/app$ ls /tmp/ -l | grep ed
 drwxrwsrwx 2 root  33000 4096 Aug 22 08:16 ed
