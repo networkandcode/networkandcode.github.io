@@ -5,7 +5,7 @@ categories: python
 
 A Python program can break due to various types of Errors. We shall explore few of these errors in the post. To make best use of this post, you should know certain topics in Python3 such as datatypes, expression, pass statement, etc.
 
-Not all errors are significant, and hence there would be cases where we can skip certain errors to uninterrupt execution of our code, and this achieved with ```try except``` blocks.
+Not all errors are significant, and hence there would be cases where we can skip certain errors to uninterrupt execution of our code, and this is achieved with ```try except``` blocks.
 
 ### ZeroDivisionError
 This error is returned when we try to divide any number by 0
@@ -77,7 +77,7 @@ TypeError: can only concatenate str (not "int") to str
 We get an error cause, as we tried to except ValueError, where as the statement in try block was producing TypeError
 
 
-### Except Multiple Errors
+### Exception for Multiple Errors
 We can include exceptions for multiple error types by separating each error type by a comma. The following example should have produced NameError.
 ```
 >>> try:
@@ -265,13 +265,15 @@ Traceback (most recent call last):
   File "<stdin>", line 1, in <module>
 __main__.InputException: This is a user defined exception
 ```
-__main__ is the value of the __name__ keyword, its used to fetch the name of an object, and by default it's __main__.
-It means the value of __name__ in our program or module is always __main__, and it has global scope.
+```__main__``` is the value of the ```__name__``` keyword, its used to fetch the name of an object, and by default it's ```__main__```.
+It means the value of ```__name__``` in our program or module is always ```__main__```, and it has global scope, its like the name of the 
+overall current module.
 ```
 >>> print(__name__)
 __main__
 ```
-For instance the __name__ atrribute of InputException is its name itself, same is the case for Exception.
+Each class will also have this attribute. For instance the ```__name__``` atrribute of InputException is its name itself, 
+same is the case for Exception.
 ```
 >>> print(InputException.__name__)
 InputException
