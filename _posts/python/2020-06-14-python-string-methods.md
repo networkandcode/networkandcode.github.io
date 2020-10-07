@@ -156,6 +156,7 @@ with '$' in the string and check the memory location again
 ```
 >>> print(id(sampleString))
 140615517001648
+>>> sampleString = sampleString.replace('s', '$')
 >>> print(sampleString)
 Thi$ Earth i$ $o Huge !!!
 ```
@@ -194,7 +195,6 @@ T !
 >>> print(sampleString[-25], sampleString[-1])
 T !
 ```
-
 ### Slicing
 We may also print a range of characters i.e. slice it
 ```
@@ -237,6 +237,7 @@ True
 #### Capitalize
 The first letter of the statement will be in Capital letter
 ```
+
 >>> print(sampleString.capitalize())
 Thi$ earth i$ $o huge !!!
 ```
