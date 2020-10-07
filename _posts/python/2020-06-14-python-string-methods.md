@@ -174,6 +174,11 @@ print('.'.join(ipaddress))
 url = ['wwww', 'google', 'com']
 print('.'.join(url))
 ```
+```
+1800-123-456
+192.168.1.100
+wwww.google.com
+```
 
 ### Length
 The 'len' function can be used to check the length of the string in terms 

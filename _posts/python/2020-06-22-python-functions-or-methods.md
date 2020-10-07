@@ -259,4 +259,16 @@ Local will be preferred
 100
 ```
 
+#### Use or in format 
+A default value can be specified in format, when an argument is passed to a function
+```
+>>> def howareyou(name=None):
+...     return('Hi {}, how are you' .format(name or 'friend'))
+...
+>>> howareyou('Ahmed')
+'Hi Ahmed, how are you'
+>>> howareyou()
+'Hi friend, how are you'
+```
+
 --end-of-post--
