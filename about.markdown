@@ -22,3 +22,4 @@ Certifications pursued by the site author:
 ---
 
 [<i class="fab fa-2x fa-github"></i>](https://github.com/networkandcode)
+[<i class="fab fa-youtube"></i>](https://www.youtube.com/channel/UCZTRMzFB2HJ6zCDM1n4FhHA)
