@@ -507,6 +507,92 @@ This is only applicable to a list, as tuples are immutable and sets are unordere
 ['passion fruit', 'grapes', 'banana', 'orange', 'apple']
 ```
 
+### Sum
+Sum is a built in function.
+```
+>>> print(type(sum))
+<class 'builtin_function_or_method'>
+```
+
+It's used to find the sum of all numbers in a list, tuple, or set.
+```
+>>> li = [ 1024, 2048, 1, 2, 3, 10 ]
+>>> tu = ( 1024, 2048, 1, 2, 3, 10 )
+>>> se = { 1024, 2048, 1, 2, 3, 10 }
+>>> print(sum(li))
+3088
+>>> print(sum(tu))
+3088
+>>> print(sum(se))
+3088
+```
+
+### Any
+It's a built in function, used to find if anyone of the items in a list, tuple, or set is true(boolean).
+Note that Values such as 0, False, None, '' are considered False.
+```
+>>> li = [ 0, False, None, '' ]
+>>> tu = ( 0, False, None, '' )
+>>> se = { 0, False, None, '' }
+```
+It should return False, as there is no single True value. All values except those are False would be True, such as integer, string, a Boolean True and so on.
+```
+>>> print(any(li))
+False
+>>> print(any(tu))
+False
+>>> print(any(se))
+False
+```
+We are going to add a True value to each of the variables.
+```
+>>> li = [ 0, False, None, '', 3 ]
+>>> tu = ( 0, False, None, '', 'hello' )
+>>> se = { 0, False, None, '', True }
+```
+The 'any' function should now true for all 3 cause, The integer 3 is True, The string 'hello' is True, and the boolean True is True anyway.
+```
+>>> print(any(li))
+True
+>>> print(any(tu))
+True
+>>> print(any(se))
+True
+```
+
+### All
+This function helps to check if all the values in a list, tuple, and set are True.
+```
+>>> li = [ True, 100, 3.3 ]
+>>> tu = ( True, 100, 'hi' )
+>>> se = { True, 100, 1 }
+```
+We should get True as expected.
+```
+>>> print(all(li))
+True
+>>> print(all(tu))
+True
+>>> print(all(se))
+True
+```
+
+Let's modify things slightly so that we get False.
+```
+>>> li = [ True, 100, 3.3, False ]
+>>> tu = ( True, 100, 3.3, 0 )
+>>> se = { True, 100, 3.3, '' }
+```
+We should now get False, due to the last element False, 0, and '' added to each object.
+```
+>>> print(all(li))
+False
+>>> print(all(tu))
+False
+>>> print(all(se))
+False
+```
+
 ### Quiz
 Well, some recap to refresh what you have learnt
 - Is Tuple ordered or unordered

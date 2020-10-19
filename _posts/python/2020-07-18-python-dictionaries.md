@@ -343,7 +343,7 @@ Python software foundation
 ```
 
 ### Same value dictionary
-If the values for a set of keys are same, the fromkeys method could used to create those entries quickly.
+If the values for a set of keys are same, the fromkeys method could be used to create those entries quickly.
 ```
 print('Create a dictionary with different keys, same value, using fromkeys()')
 keys = ('color', 'fruit', 'company', 'extrakey')
@@ -476,11 +476,13 @@ output:
 3
 ```
 #### Access the values of keys
-The values of a sub key can also be accesses by calling the sub key appropriately.
+The values of a sub key can also be accesses by calling the sub key appropriately. The get method may also be used alternatively to retrieve values.
 ```
 print(mydetails['address'])
 print(mydetails['address']['county'])
 print(mydetails['address']['postcode'])
+print(mydetails.get('address').get('door'))
+print(mydetails['address']['door'])
 ```
 
 output:
@@ -488,7 +490,22 @@ output:
 {'door': '23', 'postcode': '100098', 'street no': '35', 'county': 'Berkshire'}
 Berkshire
 100098
+23
+23
 ```
+
+#### Loop over a sub dictionary
+We can iterate through the 'address' sub dictionary.
+```
+>>> for k, v in mydetails['address'].items():
+...     print(k, v)
+...
+door 23
+postcode 100098
+street no 35
+county Berkshire
+```
+
 
 #### Delete this dictionary
 ```
