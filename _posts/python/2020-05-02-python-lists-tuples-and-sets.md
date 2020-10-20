@@ -593,6 +593,54 @@ False
 False
 ```
 
+### Comprehension
+We can generate lists with a single line statament, this is like a shortcut for multline loop blocks.
+Let' say we have a list of numbers.
+```
+list = [1, 2, 3]
+```
+Usually, to find the square of these numbers, we would do something like the following.
+```
+>>> for i in list:
+...     print(i * i)
+...
+1
+4
+9
+```
+
+With list comprehension, its even more easy.
+```
+>>> # comprehension
+>>> iSquare = [ i * i for i in list ]
+>>> print(iSquare)
+[1, 4, 9]
+```
+
+We can extend the logic for nested lists as well. Let's try with an example to find the common items in two lists.
+```
+>>> list1 = [ 10, 20, 30, 40 ]
+>>> list2 = [ 20, 30, 40, 50]
+>>> # comprehension
+>>> commonItems = [ i for i in list1 for  j in list2 if i == j ]
+>>> print(commonItems)
+[20, 30, 40]
+>>> commonItems = [ j for i in list1 for  j in list2 if i == j ]
+>>> print(commonItems)
+[20, 30, 40]
+```
+An alternate way to do this using for loop would be as follows. However we need to have some extra logic to make the resulting numbers part of a new list.
+```
+>>> for i in list1:
+...     for j in list2:
+...          if i == j:
+...              print(i)
+...
+20
+30
+40
+```
+
 ### Quiz
 Well, some recap to refresh what you have learnt
 - Is Tuple ordered or unordered
