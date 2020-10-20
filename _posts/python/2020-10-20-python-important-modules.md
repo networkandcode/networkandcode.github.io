@@ -130,8 +130,8 @@ And then, floor, which rounds off the number downards to the nearest integer.
 ```
 
 ### Random
-We can generate random numbers using the random module. The randint method lets us choose an integer range, and the random method with in the random module helps in 
-generating a random float as follows.
+We can generate random numbers using the random module. The randint method lets us choose an integer range, and the random method with in the
+random module helps in generating a random float as follows.
 ```
 >>> import random
 >>>
@@ -146,7 +146,7 @@ generating a random float as follows.
 ```
 
 ### Conclusion
-So, we have tried exploring few important modules using the from and import stamentents, checked the contents of the modules, and explored certain methods of the 
+So, we have tried exploring few important modules using the from and import statements, checked the contents of the modules, and explored certain methods of the 
 modules. Thank you.
 
 --end-of-post--
