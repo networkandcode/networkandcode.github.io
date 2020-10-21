@@ -271,4 +271,56 @@ A default value can be specified in format, when an argument is passed to a func
 'Hi friend, how are you'
 ```
 
+### Recursion
+Functions can be recursive, meaning they can be called repeatedly from within, until a condition is arrived.
+
+The following example, would call the function continuously, as there is no terminating condition, and finally break until the maximum recursion depth is reached.
+```
+>>> def fn():
+...     print('Hello')
+...     fn()
+...
+>>> fn()
+Hello
+Hello
+Hello
+Hello
+--TRUNCATED--
+Hello
+Hello
+Hello
+Hello
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "<stdin>", line 3, in fn
+  File "<stdin>", line 3, in fn
+  File "<stdin>", line 3, in fn
+  [Previous line repeated 992 more times]
+  File "<stdin>", line 2, in fn
+RecursionError: maximum recursion depth exceeded while calling a Python object
+Hello
+```
+
+Let's write a factorial function, which a famous recursive use case.
+```
+>>> def fact(n):
+...     if n == 0:
+...         return 1
+...     else:
+...         return n * fact(n-1)
+...
+```
+
+The number keeps reducing by 1 each time, and finally there is a condition to return to the main program, when the number becomes 0.
+
+Let's call the function with different numbers.
+```
+>>> print(fact(4))
+24
+>>> print(fact(0))
+1
+>>> print(fact(10))
+3628800
+```
+
 --end-of-post--

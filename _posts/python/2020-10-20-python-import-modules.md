@@ -1,10 +1,48 @@
 ---
-title: python > important modules
+title: python > import modules
 categories: python
 ---
 
 There could be tasks that we intend to perform in Python, which are not doable straightway by a builtin function or class method, we would have to import specific 
 modules for that purpose, a module in its simple terms is nothing but a python file. We are gonna see some important modules in this post.
+
+### Sys
+
+The sys module can help perform system related tasks. 
+
+We should first import the sys module.
+```
+>>> import sys
+```
+
+We can check the path, where python would search for modules including 'sys' or packages while importing them.
+```
+>>> print(sys.path)
+['', '/usr/lib/python38.zip', '/usr/lib/python3.8', '/usr/lib/python3.8/lib-dynload', '/home/shakir/.local/lib/python3.8/site-packages', '/usr/local/lib/python3.8/dist-packages', '/usr/lib/python3/dist-packages']
+```
+Note that package is like a collection of modules.
+
+We can append any extra paths using the append method.
+```
+>>> sys.path.append(r'/tmp/')
+>>> print(sys.path[-1])
+/tmp/
+```
+The last entry in the path would be /tmp/ as we just appended it.
+
+We may also print the list of all modules including 'sys' using the 'modules' attribute.
+>>> print(sys.modules)
+{'sys': <module 'sys' (built-in)>, 'builtins': <module 'builtins' (built-in)>, '_frozen_importlib': <module 'importlib._bootstrap' (frozen)>, '_imp': <module '_imp' (built-in)>, '_warnings': <module '_warnings' (built-in)>, '_frozen_importlib_external': <module 'importlib._bootstrap_external' (frozen)>, '_io': <module 'io' (built-in)>, 'marshal': <module 'marshal' (built-in)>, 'posix': <module 'posix' (built-in)>, '_thread': <module '_thread' (built-in)>, '_weakref': <module '_weakref' (built-in)>, 'time': <module 'time' (built-in)>, 'zipimport': <module 'zipimport' (frozen)>, '_codecs': <module '_codecs' (built-in)>, 'codecs': <module 'codecs' from '/usr/lib/python3.8/codecs.py'>,
+--TRUNCATED--
+```
+
+We may use list comprehension, to print just the names of all the system modules.
+```
+>>> moduleNames = [i for i in sys.modules ]
+>>> print(sorted(moduleNames))
+['__main__', '_abc', '_bootlocale', '_codecs', '_collections', '_collections_abc', '_frozen_importlib', '_frozen_importlib_external', '_functools', '_heapq', '_imp', '_io', '_locale', '_operator', '_signal', '_sitebuiltins', '_stat', '_thread', '_warnings', '_weakref', 'abc', 'apport_python_hook', 'atexit', 'builtins', 'codecs', 'collections', 'contextlib', 'encodings', 'encodings.aliases', 'encodings.latin_1', 'encodings.utf_8', 'functools', 'genericpath', 'heapq', 'importlib', 'importlib._bootstrap', 'importlib._bootstrap_external', 'importlib.abc', 'importlib.machinery', 'importlib.util', 'io', 'itertools', 'jnpr', 'keyword', 'marshal', 'operator', 'os', 'os.path', 'posix', 'posixpath', 'readline', 'reprlib', 'rlcompleter', 'ruamel', 'site', 'sitecustomize', 'stat', 'sys', 'time', 'types', 'warnings', 'zipimport', 'zope']
+```
+We have used the sorted function above to sort the list.
 
 ### Datetime
 
@@ -143,6 +181,128 @@ random module helps in generating a random float as follows.
 >>>
 >>> print(random.random())  # any random float between 0 and 1
 0.8855626065544242
+```
+
+### User defined
+As modules are just python files, we can also write modules ourselves and import them in any other python file.
+
+Let's write a module.
+```
+$ cat testmodule.py
+testvariable = 'Hello'
+
+def testfunction():
+    print('Hello')
+```
+Above, the file name is testmodule.py which means the module name is testmodule with out '.py'.
+
+Let's import this module as follows.
+```
+>>> import testmodule
+```
+
+We can now try printing the testvariable which is defined in the testmodule.
+```
+>>> print(testmodule.testvariable)
+Hello
+```
+
+It works as expected, likewise we shall now call the testfunction.
+```
+>>> testmodule.testfunction()
+Hello
+```
+Note that we need to use a '.' followed by the modulename, to call any variable or function defined in the module.
+
+Let's write another module.
+```
+$ cat anothermodule.py
+x = 100
+
+def fn(x):
+    print(x * x)
+```
+
+We shall import the variable directly from the module, using the from and import statements, so that we don't need a '.' like before.
+```
+>>> # alternate method
+>>> from anothermodule import x, fn
+```
+So the variable x and the function fn are imported successfully. 
+
+We can now call x directly, with out the module name.
+```
+>>> print(x)
+100
+```
+
+Similarly, we should be able to call the function directly.
+```
+>>> fn(x)
+10000
+
+```
+
+#### All
+We can also import the all the objects from a module using wildcard *. However its recommended to avoid importing all, and rather import specific entities as required.
+```
+>>> # its always a good practice to use something like from module import variable, function
+>>> from anothermodule import *
+```
+
+The step above, should have imported both the variable x and the function fn(), and hence they could be called.
+```
+>>> print(x)
+100
+>>> fn(x)
+10000
+```
+
+### Execute
+We could import and run a module as is, if the module is executing code.
+```
+$ cat runmodule1.py
+x = 100
+
+def fn(x):
+   print(x * x)
+
+fn(x)
+```
+In the module above we are executing the function at the end. We can run with python as usual.
+```
+$ python3 runmodule1.py
+10000
+```
+
+Let' say we have some other module as follows.
+```
+$ cat runmodule2.py
+x = 100
+
+def fn(x):
+   print(x * x * x)
+
+fn(x)
+```
+This should run as well.
+```
+$ python3 runmodule2.py
+1000000
+```
+
+What if we want to run both one after the other, we can run them in a separate script by importing.
+```
+$ cat runmodules.py
+import runmodule1
+import runmodule2
+```
+
+Running this file would run both the other files.
+```
+$ python3 runmodules.py
+10000
+1000000
 ```
 
 ### Conclusion
