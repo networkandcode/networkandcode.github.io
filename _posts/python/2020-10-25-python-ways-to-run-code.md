@@ -99,6 +99,52 @@ $ python3 __pycache__/script.cpython-38.pyc
 Hello World!
 ```
 
+Here is an alternative way of compiling using code using the compile method of py_compile, instead of a single command via cli.
+```
+$ python3
+Python 3.8.5 (default, Jul 28 2020, 12:59:40) 
+[GCC 9.3.0] on linux
+Type "help", "copyright", "credits" or "license" for more information.
+>>> import py_compile
+>>> py_compile.compile('script.py')
+'__pycache__/script.cpython-38.pyc'
+>>> exit()
+
+$ ls __pycache__/
+script.cpython-38.pyc
+```
+
+We can also compile all files in the directory at once.
+
+Let's say we have two scripts as follows.
+```
+$ ls
+script1.py  script2.py
+
+$ cat script1.py 
+print('Hello')
+
+$ cat script2.py 
+print('World!')
+```
+
+We can compile both at the same time.
+```
+$ python3 -m compileall .
+Listing '.'...
+Compiling './script1.py'...
+Compiling './script2.py'...
+```
+
+The \_\_pycache\_\_ directory should have pycs for both.
+```
+$ ls
+__pycache__  script1.py  script2.py
+
+$ ls __pycache__/
+script1.cpython-38.pyc  script2.cpython-38.pyc
+```
+
 ## Virtual Environment
 We can create virtual environments, which creates a complete copy of the python interpreter, any modules or packages installed inside the virtual 
 environment, stays with in it and doesn't affect rest of the system. This is very useful when you have multiple projects and you don't want 

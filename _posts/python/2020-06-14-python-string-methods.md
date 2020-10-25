@@ -160,6 +160,25 @@ with '$' in the string and check the memory location again
 Thi$ Earth i$ $o Huge !!!
 ```
 
+### Partition
+
+We can parition a string in to a three element tuple, based on a pattern we search.
+```
+>>> p = 'Micky and Mouse'.partition('and')
+>>> print(type(p))
+<class 'tuple'>
+>>> print(len(p))
+3
+>>> print(p[0], p[1], p[2])
+Micky  and  Mouse
+>>> print(p[0], p[1], p[-1])
+Micky  and  Mouse
+>>> print(p)
+('Micky ', 'and', ' Mouse')
+```
+The string above was partioned in to a tuple containing three string, the middle string is however the string we are searching, in this case 
+'and'.
+
 ### Join
 This is used to combine multiple strings into one string.
 ```
