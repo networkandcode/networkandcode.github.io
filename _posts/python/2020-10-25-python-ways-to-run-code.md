@@ -84,7 +84,7 @@ $ python3 -m py_compile script.py
 $
 ```
 
-An empty output means the code is syntactically good. The step above would create a \__pycache__\ directory with a pyc file inside.
+An empty output means the code is syntactically good. The step above would create a \_\_pycache\_\_ directory with a pyc file inside.
 ```
 $ ls __pycache__/
 script.cpython-38.pyc
