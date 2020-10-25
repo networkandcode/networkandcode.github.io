@@ -1,6 +1,6 @@
 ---
 title: python > ways to run code
-categories
+categories: python
 ---
 
 Let's see some ways of running Python. It's assumed you know some basics of Linux and its filesystem navigation.
