@@ -100,7 +100,7 @@ Hello World!
 ```
 
 ## Virtual Environment
-We can virtual environments, which creates a complete copy of the python interpreter, any modules or packages installed inside the virtual 
+We can create virtual environments, which creates a complete copy of the python interpreter, any modules or packages installed inside the virtual 
 environment, stays with in it and doesn't affect rest of the system. This is very useful when you have multiple projects and you don't want 
 the dependecies of one project affecting another, which is otherwise possible without a virtual environment.
 
@@ -128,11 +128,11 @@ $ source myenv/bin/activate
 (myenv) $ 
 ```
 
-We are now in the virtual environment, what ever package we are going to install now in this virtual environment to going to stay here only.
+We are now in the virtual environment, what ever package we are going to install now in this virtual environment is going to stay here only.
 
 Let's try installing flask.
 ```
-myenv) $ pip install flask
+(myenv) $ pip install flask
 Collecting flask
 --TRUNCATED--
 ```
@@ -157,11 +157,10 @@ not showing it here though.
 ## Conclusion
 We have seen few ways of running python code, most of the times we would be running code as scripts i.e. files and virtual environments are 
 used wherever applicable to isolate dependencies and to have an overall stable underlying system. The choice of CLI or GUI(IDE) is up to the 
-developer, IDEs come with lots of options that can sometimes overwhelming during initial phases of learning. Thank you.
+developer, IDEs come with lots of options, I think that can be sometimes overwhelming during initial phases of learning. Thank you.
 
 --end-of-post--
 ```
-
 
 
 
