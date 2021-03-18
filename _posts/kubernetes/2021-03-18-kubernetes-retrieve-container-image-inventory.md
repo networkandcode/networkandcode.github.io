@@ -64,7 +64,7 @@ Type "help", "copyright", "credits" or "license" for more information.
 >>> import yaml
 ```
 
-We are now to going to read the file and create a new object that stores the YAML content as a 
+We are now going to read the file and create a new object that stores the YAML content as a 
 dictionary object.
 ```
 with open('/tmp/details-of-pods.yaml') as f:
@@ -96,7 +96,7 @@ Let's create a file, where we can store the results, we are retreiving.
 file = open('/tmp/container-img-inventory.csv', 'w')
 file.write('Pod Name\tPod Namespace\tContainer Name\tContainer Image\n')
 ```
-Note that \t referes to tab \n refers to newline character.
+Note that \t referes to tab and \n refers to newline character.
 
 ```
 for item in pod_list['items']:
@@ -147,7 +147,7 @@ for item in pod_list['items']:
         file.write(f'{pod_name}\t{pod_namespace}\t{container_name}\t{container_image}\n')
 ```
 
-The file should contain the details that we need.
+The file should now contain the details that we need.
 ```
 $ head /tmp/container-img-inventory.csv 
 Pod Name	Pod Namespace	Container Name	Container Image
@@ -166,16 +166,3 @@ Since the file is in csv format, we could use utilities like Excel or Google she
 content in a graphical way.
 
 ---end-of-post---
-    
-
-
-
-
-
-
-
-
-
-
-
-
