@@ -51,7 +51,7 @@ items:
 ---TRUNCATED---
 ```
 
-# Retrive the images
+# Retrieve the images
 Since we have the required data in a file, we can parse it to retrieve the info we need, in this case 
 the image of containers.
 
@@ -91,7 +91,7 @@ There are 4 main keys in the dictionary, and we are interested in items, as that
 Pods. We can iterate over the items list, and each item would be a dictionary again as that refers to 
 one complete Pod manifest.
 
-Let's create a file, where we can store the results, we are retreiving.
+Let's create a file, where we can store the results, we are retrieving.
 ```
 file = open('/tmp/container-img-inventory.csv', 'w')
 file.write('Pod Name\tPod Namespace\tContainer Name\tContainer Image\n')
