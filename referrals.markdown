@@ -13,3 +13,6 @@ Get $25 credits at <a href="https://upcloud.com/signup/?promo=34SA24"> UpCloud <
 <a href="http://tracking.lucidchart.biz/aff_c?offer_id=2&amp;aff_id=2697">
   <img src="https://media.go2speed.org/brand/files/tyler/2/lucidchart-logo-2016-300.png" />
 </a>
+
+<br/>
+Learn a language for free at<a href="https://invite.duolingo.com/BDHTZTB5CWWKSY2NENP4QVUJOI">Duolingo</a>
