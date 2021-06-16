@@ -18,3 +18,7 @@ Get $25 credits at <a href="https://upcloud.com/signup/?promo=34SA24"> UpCloud <
 Learn a language for free at <a href="https://invite.duolingo.com/BDHTZTB5CWWKSY2NENP4QVUJOI">Duolingo</a>
 <br/>
 Buy cheap domains, hosting or other related services at <a href="https://namecheap.pxf.io/ELk0D">namecheap</a>
+<br/>
+Learn by reading and save time with super cool courses at 
+    <a href="https://www.educative.io/unlimited?aff=VGeA"> Educative </a>
+<br/>
