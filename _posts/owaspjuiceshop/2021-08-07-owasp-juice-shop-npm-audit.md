@@ -215,9 +215,9 @@ high and 3 critical vulnerabilites.
 
 # Fix
 
-In certain cases, its possible to give an automatic fix using npm with `npm audit fix` command fix 
-vulnerabilities. Its not possible always though as in our case, we can simulate this with the 
---dry-run flag to foresee what really happens.
+In certain cases, its possible to give an automatic fix using npm with `npm audit fix` command. Its not 
+possible always though as in our case, we can simulate this with the --dry-run flag to foresee what 
+really happens.
 ```
 networkandcode@ubuntu20:~/juice-shop$ npm audit fix --dry-run
 npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@^2.1.2 (node_modules/jest-haste-map/node_modules/fsevents):
@@ -234,11 +234,11 @@ fixed 0 of 25 vulnerabilities in 2005 scanned packages
   (use `npm audit fix --force` to install breaking changes; or refer to `npm audit` for steps to fix these manually)
 ```
 
-So it clearly says no vulnerabilities are fixed, and could also lead to breaking changes if the fix is 
-forced. We have to then go through the recommendation for each vulnerability and try and fix it 
+So it clearly says no vulnerabilities could be fixed, and could also lead to breaking changes if the 
+fix is forced. We have to then go through the recommendation for each vulnerability and try to fix it 
 manually after reviewing that it doesnt break other packages.
 
 Thats the end of this post, we saw how to perform few commands in the npm audit family, and how the exit
- code can be checked to see if failed auditing or not.
+ code can be checked to see if it failed auditing or not.
 
 --end-of-post--
