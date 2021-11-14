@@ -81,7 +81,7 @@ We have successfully installed kubectl. We can now remove kubectl and the checks
 └──╼ $rm kubectl*
 ```
 
-# AWS CLI
+## AWS CLI
 We are going to launch a cluster in AWS EKS, we can do this via CLI. For that purpose, we need to install the 
 [aws cli](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2-linux.html#cliv2-linux-install) and eksctl.
 
@@ -114,7 +114,7 @@ We would need an access key to issue AWS commands, for which let's add an IAM us
 [URL](https://console.aws.amazon.com/iam/home#/users$new?step=details) it would look like 
 ![Add IAM User](/assets/aws-eks-setup-cluster-and-deploy-owasp-juice-shop-1.png)
 
-On the next page, you can create a group, if there isnt one. ![Add IAM Group](/assets/aws-eks-setup-cluster-and-deploy-owasp-juice-shop-2.png)
+On the next page, you can create a group, if there isn't one. ![Add IAM Group](/assets/aws-eks-setup-cluster-and-deploy-owasp-juice-shop-2.png)
 
 I am going to create a group for the Administrators with the AdministratorAccess policy.
 ![Administrator Access](/assets/aws-eks-setup-cluster-and-deploy-owasp-juice-shop-3.png)
@@ -153,9 +153,6 @@ So we have done the essential settings for the AWS CLI. Let's now continue with
 ┌─[nc@parrot]─[~]
 └──╼ $sudo mv /tmp/eksctl /usr/local/bin/eksctl
 [sudo] password for nc: 
-
-┌─[nc@parrot]─[~]
-└──╼ $
 
 ┌─[nc@parrot]─[~]
 └──╼ $eksctl version
@@ -289,7 +286,7 @@ $ kubectl delete -f /tmp/juice-shop.yaml
 And finally when you are done, if you wish to delete the cluster, you may do so as follows.
 ```
 ┌─[nc@parrot]─[~]
-└──╼ $eksctl delete cluster --name hacktoberfest-2021 --region us-west-2
+└──╼ $eksctl delete cluster --name my-cluster --region us-west-2
 ```
 
 --end-of-post--
