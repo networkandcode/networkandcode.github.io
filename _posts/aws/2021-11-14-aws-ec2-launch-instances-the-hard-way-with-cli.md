@@ -5,7 +5,7 @@ title: aws ec2 > launch instances the hard way with cli
 
 Hey All :wave:, in this post we shall launch 3 AWS EC2 instances and test SSH connectivity to those...
 
-We are not going to use the GUI / Web console :relaxed: for this purpose, we would be using the CLI :sweat_drops:, and also create individual components along the way, that are required for the instances to function properly, instead of relying on default ones, and thus touch bits of networking and security areas. Hope this approach gives someone a better understanding of the different components(like it gave me) that glue together underhood / behind the scenes, which we don't usually notice when we quickly setup instances with all the default options.
+We are not going to use the GUI / Web console :relaxed: for this purpose, we would be using the CLI :sweat_drops:, and also create individual components along the way, that are required for the instances to function properly, instead of relying on default ones, and thus touch bits of networking and security areas. Hope this approach gives someone a better understanding(like it gave me)  of the different components that glue together underhood / behind the scenes, which we don't usually notice when we quickly setup instances with all the default options.
 
 Hence, please ensure you have the following installed and configured: [aws cli](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) and [jq](https://stedolan.github.io/jq/download/). Note that jq is used to parse JSON content at different places in this post, though you can use the AWS CLI's built in filters.
 
@@ -245,6 +245,8 @@ EOF
 
 And then test the connection.
 ```
+$ ips=$(<k8s-node-ips.txt)
+
 $ for ip in $ips; do ssh ubuntu@$ip -i ~/.ssh/kubeadmKeyPair.pem 'echo -n "Hello World!, my AWS EC2 hostname is "; hostname'; done
 Hello World!, my AWS EC2 hostname is ip-10-0-0-5
 Hello World!, my AWS EC2 hostname is ip-10-0-0-11
