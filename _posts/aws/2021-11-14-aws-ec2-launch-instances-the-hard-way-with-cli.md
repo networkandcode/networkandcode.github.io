@@ -188,7 +188,7 @@ We have also enabled public IP address as we need to SSH in to the instances fro
 
 Great, so our instances are created finally.
 ```
-$ aws ec2 describe-instances | jq -r '.Reservations[0] | .Instances[] | select(.SubnetId==env.KUBEADM_SUBNET_ID) | .InstanceId' 
+$ aws ec2 describe-instances | jq -r '.Reservations[] | .Instances[] | select(.SubnetId==env.KUBEADM_SUBNET_ID) | .InstanceId' 
 <i-id1>
 <i-id2>
 <i-id3>
