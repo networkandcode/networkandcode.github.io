@@ -1,5 +1,5 @@
 ---
-title: aws iam > create user via cli
+title: aws iam > setup user via cli
 categories: aws
 ---
 
