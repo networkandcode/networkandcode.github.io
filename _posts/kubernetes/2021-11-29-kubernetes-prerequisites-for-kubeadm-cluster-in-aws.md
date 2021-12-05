@@ -1,9 +1,9 @@
 ---
 categories: kubernetes
-title: kubernetes set prerequisites for kubeadm based cluster in aws with cli
+title: kubernetes > prerequisites for kubeadm cluster in aws
 ---
 
-[kubeadm](https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/) is one of the popular tools used for bootstrapping kubernetes, here we would be setting up the [prerequisites][prerequisites](https://theithollow.com/2020/01/13/deploy-kubernetes-on-aws/) on AWS that are essential before launching the cluster.
+[kubeadm](https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/) is one of the popular tools used for bootstrapping kubernetes, here we would be setting up the [prerequisites](https://theithollow.com/2020/01/13/deploy-kubernetes-on-aws/) on AWS that are essential before launching the cluster.
 
 This is a continuation to this [blog](https://networkandcode.github.io/aws/ec2/2021/11/14/aws-ec2-launch-instances-the-hard-way-with-cli.html) where we have launched the instances via CLI, if you followed that, you should have a file k8s-node-ips.txt with the list of instance IPs.
 
@@ -27,7 +27,7 @@ ip-10-0-0-6
 ip-10-0-0-4
 ```
 
-And the check the private DNS.
+And then check the private DNS.
 ```
 $ for ip in $ips; do ssh -i ~/.ssh/kubeadmKeyPair.pem ubuntu@$ip "curl http://169.254.169.254/latest/meta-data/local-hostname --silent; echo"; done                                                          
 ip-10-0-0-9.us-east-2.compute.internal
@@ -38,17 +38,18 @@ Note that the AWS region in this blog is different from the one in the instances
 
 Ok, so we need to set the hostname to match with the private dns, so that the region and compute.internal domain get appended to the hostname.
 ```
-$ for ip in $ips; do ssh -i ~/.ssh/kubeadmKeyPair.pem ubuntu@$ip "sudo hostnamectl set-hostname $(curl http://169.254.169.254/latest/meta-data/local-hostname --silent)"; done
+$ for ip in $ips; do ssh -i ~/.ssh/kubeadmKeyPair.pem ubuntu@$ip "curl http://169.254.169.254/latest/meta-data/local-hostname --silent | xargs sudo hostnamectl set-hostname"; done
 ```
 
 Let's verify.
 ```
-$ for ip in $ips; do ssh -i ~/.ssh/kubeadmKeyPair.pem ubuntu@$ip hostname; done                                                                        ip-172-31-13-141.us-east-2.compute.internal
-ip-172-31-13-141.us-east-2.compute.internal
-ip-172-31-13-141.us-east-2.compute.internal
+$ for ip in $ips; do ssh -i ~/.ssh/kubeadmKeyPair.pem ubuntu@$ip hostname; done
+ip-10-0-0-9.us-east-2.compute.internal
+ip-10-0-0-6.us-east-2.compute.internal
+ip-10-0-0-4.us-east-2.compute.internal
 ```
 
-So hostname is now as expected, note that you could also enable DNS hostname at the VPC level.
+So hostname is now as expected, note that you could also enable DNS hostnames at the VPC level.
 ```
 $ aws ec2 modify-vpc-attribute --vpc-id $KUBEADM_VPC_ID --enable-dns-hostname
 ```
@@ -229,7 +230,7 @@ $ aws iam add-role-to-instance-profile --role-name k8s-worker-nodes-role --insta
 ```
 
 ## Tags
-We have to add [tags](https://awscli.amazonaws.com/v2/documentation/api/latest/reference/ec2/create-tags.html) to the AWS resources with the format owned: kubernetes.io/cluster/<cluster-name>: owned, if we keep kubernetes as the cluster name also, then it would be kubernetes.io/cluster/kubernetes: owned.
+We have to add [tags](https://awscli.amazonaws.com/v2/documentation/api/latest/reference/ec2/create-tags.html) to the AWS resources with the format kubernetes.io/cluster/<cluster-name>: owned, if we keep kubernetes as the cluster name also, then it would be kubernetes.io/cluster/kubernetes: owned.
 
 Add tags to VPC, Subnet, Internet gateway and Route table.
 ```
