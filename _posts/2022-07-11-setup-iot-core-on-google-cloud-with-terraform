@@ -2,6 +2,7 @@
 canonical_url: https://dev.to/networkandcode/setup-iot-core-on-google-cloud-with-terraform-4h6a
 cover_image: https://source.unsplash.com/featured/?iot
 tags: cloud, googlecloud, iot, terraform
+title: Setup IoT core on Google cloud with Terraform
 ---
 
 Hello :wave:, we shall see how to provision a minimal IoT infrastructure on Google cloud with Terraform.
