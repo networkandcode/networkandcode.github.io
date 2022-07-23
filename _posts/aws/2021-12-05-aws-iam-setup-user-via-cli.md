@@ -5,7 +5,7 @@ categories: aws
 
 Hey all, :wave: we shall see the following in this post: :scroll:
 - Create a group
-- Attach a policy :writing_hand: to the group
+- Attach policies :writing_hand: to the group
 - Create user
 - Add the user to the group
 - Generate access key for the user
@@ -44,7 +44,7 @@ $ aws iam create-group --group-name developers-group
 ```
 
 ## List polices
-There are several built in policies in AWS, that avoids the need of creating custom polcies in most cases, let's try to retrieve policies associated with EC2. Note that I have used [jq](https://stedolan.github.io/jq/download/) for parsing JSON.
+There are several built in policies in AWS, :muscle: that avoids the need of creating custom polcies in most cases, let's try to retrieve policies associated with EC2. Note that I have used [jq](https://stedolan.github.io/jq/download/) for parsing JSON.
 
 ```
 $ aws iam list-policies | jq '.Policies[] | select(.PolicyName | contains ("EC2")) | .Arn'                                                                              
@@ -82,7 +82,7 @@ $ aws iam list-policies | jq '.Policies[] | select(.PolicyName | contains ("EC2"
 "arn:aws:iam::aws:policy/EC2InstanceConnect"
 ```
 
-Now let's try to find policies related to S3. :bucket:
+Now let's try to find policies related to S3.
 ```
 $ aws iam list-policies | jq '.Policies[] | select(.PolicyName | contains ("S3")) | .Arn'
 "arn:aws:iam::aws:policy/service-role/AmazonDMSRedshiftS3Role"
@@ -130,7 +130,7 @@ Add the developer1 user to developers-group, so that the user inherits the polic
 $ aws iam add-user-to-group --group-name developers-group --user-name developer1 
 ```
 
-Nice they are asking for group name and user name here, unlike ARNs in cases where the names are not unique.
+Nice they are asking for group name and user name here, :slightly_smiling_face:	unlike ARNs in cases where the names are not unique.
 
 ## Access key
 Generate access key for the user, and share it with the user, so that they can setup the credentials for AWS CLI, just like you did.
@@ -164,7 +164,7 @@ $ aws iam list-groups-for-user --user-name developer1
 }
 ```
 
-List the polices, the group is attached to.
+List the polices, attached to the group.
 ```
 {
     "AttachedPolicies": [
