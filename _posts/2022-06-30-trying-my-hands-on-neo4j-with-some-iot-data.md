@@ -6,7 +6,7 @@ tags: cypher, graphdb, iot, neo4j
 title: Trying my hands on Neo4j with some IoT data
 ---
 
-* This post first appeared on [dev.to](https://dev.to/networkandcode/trying-my-hands-on-neo4j-with-some-iot-data-28g7) *
+*This post first appeared on [dev.to](https://dev.to/networkandcode/trying-my-hands-on-neo4j-with-some-iot-data-28g7)*
 
 ## Introduction
 
