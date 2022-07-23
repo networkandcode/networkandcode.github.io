@@ -1,7 +1,6 @@
 ---
 canonical_url: https://dev.to/aws-builders/setup-an-alexa-skill-with-serverless-1gck
 categories: alexa, aws, node, serverless
-cover_image: https://source.unsplash.com/featured/?galaxy
 date: 2022-05-31
 tags: categories: alexa, aws, node, serverless
 title: Host Alexa skill on AWS with Serverless
