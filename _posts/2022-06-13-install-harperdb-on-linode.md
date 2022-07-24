@@ -1,9 +1,9 @@
 ---
-title: Install HarperDB on Linode
 canonical_url: https://networkandcode.hashnode.dev/install-harperdb-on-linode
 categories: docker, harperdb, linode, linux
 date: 2022-06-13
-tags: categories: docker, harperdb, linode, linux
+tags: docker, harperdb, linode, linux
+title: Install HarperDB on Linode
 ---
 
 *This post first appeared on [hashnode.dev](https://networkandcode.hashnode.dev/install-harperdb-on-linode)*
