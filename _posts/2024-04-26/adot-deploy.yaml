@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: adot-collector
+  name: adot-collector
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: adot-collector
+  template:
+    metadata:
+      labels:
+        app: adot-collector
+    spec:
+      containers:
+        - args:
+            - '--config=/etc/adot-config.yaml'
+          envFrom:
+            - secretRef:
+                name: aws-credentials
+          image: public.ecr.aws/aws-observability/aws-otel-collector:latest
+          name: adot-collector
+          volumeMounts:
+            - mountPath: /etc/adot-config.yaml
+              name: config-volume
+              subPath: adot-config.yaml
+      volumes:
+        - configMap:
+            name: adot-config
+          name: config-volume

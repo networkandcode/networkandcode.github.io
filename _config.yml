@@ -31,7 +31,7 @@ twitter_username: networkandcode
 github_username:  networkandcode
 
 # Build settings
-theme: minima
+theme: architect
 plugins:
   - jekyll-feed
 

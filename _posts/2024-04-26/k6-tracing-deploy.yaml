@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: xk6-tracing
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: xk6-tracing
+  template:
+    metadata:
+      labels:
+        app: xk6-tracing
+    spec:
+      containers:
+        - env:
+            - name: ENDPOINT
+              value: http://adot-collector-service:4317
+          image: ghcr.io/grafana/xk6-client-tracing:v0.0.2
+          name: xk6-tracing
