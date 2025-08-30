@@ -1,3 +1,0 @@
-openssl rand -base64 32
-
-install helm chart langfuse/langfuse with release name langfuse in the namespace langfuse
