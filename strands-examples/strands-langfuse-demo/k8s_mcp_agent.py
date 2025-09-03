@@ -8,6 +8,8 @@ import streamlit as st
 from set_telemetry import set_telemetry
 import uuid
 
+from model import model
+
 def remove_html_tags(text_with_html):
     text_with_out_html = re.sub(r"<[^>]+>", "", text_with_html)
     return text_with_out_html
@@ -49,7 +51,7 @@ class KubernetesMCPAgent:
             # Create an agent with these tools
             self.agent = Agent(
                 callback_handler=None,
-                model="us.amazon.nova-micro-v1:0",
+                model=model,
                 tools=tools,
                 trace_attributes={
                     "session.id": str(uuid.uuid4()),
