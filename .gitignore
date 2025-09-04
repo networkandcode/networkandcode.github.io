@@ -8,3 +8,4 @@ vendor
 **/.env
 **/__pycache__
 **/.venv
+k3s.yaml
