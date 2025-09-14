@@ -4,12 +4,12 @@
   "permissions": "PUBLIC_READ_WRITE",
   "pages": [
     {
-      "guid": "NDM4MzU0MHxWSVp8REFTSEJPQVJEfDQxNzQyNzUw",
+      "guid": "NDM4MzU0MHxWSVp8REFTSEJPQVJEfDQxODY0ODIy",
       "name": "App level",
       "description": null,
       "widgets": [
         {
-          "id": "464373611",
+          "id": "465947042",
           "title": "Tokens",
           "layout": {
             "column": 1,
@@ -59,7 +59,7 @@
           }
         },
         {
-          "id": "465832032",
+          "id": "465947043",
           "title": "Requests/Operations",
           "layout": {
             "column": 5,
@@ -102,7 +102,7 @@
           }
         },
         {
-          "id": "464372777",
+          "id": "465947044",
           "title": "Req. duration(P95) in sec",
           "layout": {
             "column": 8,
@@ -137,7 +137,7 @@
           }
         },
         {
-          "id": "464373629",
+          "id": "465947045",
           "title": "Tool calls with status",
           "layout": {
             "column": 10,
@@ -169,7 +169,7 @@
           }
         },
         {
-          "id": "465881060",
+          "id": "465947046",
           "title": "Token cost (USD)",
           "layout": {
             "column": 1,
@@ -219,7 +219,7 @@
           }
         },
         {
-          "id": "464372608",
+          "id": "465947047",
           "title": "Operations per status code",
           "layout": {
             "column": 5,
@@ -254,7 +254,7 @@
           }
         },
         {
-          "id": "465935031",
+          "id": "465947048",
           "title": "Requests per model",
           "layout": {
             "column": 9,
@@ -286,12 +286,12 @@
       ]
     },
     {
-      "guid": "NDM4MzU0MHxWSVp8REFTSEJPQVJEfDQxODUzMjMy",
+      "guid": "NDM4MzU0MHxWSVp8REFTSEJPQVJEfDQxODY0ODIz",
       "name": "Request level",
       "description": null,
       "widgets": [
         {
-          "id": "465832044",
+          "id": "465947049",
           "title": "Input tokens per request(trace)",
           "layout": {
             "column": 1,
@@ -326,7 +326,7 @@
           }
         },
         {
-          "id": "465939048",
+          "id": "465947050",
           "title": "Output tokens per request(trace)",
           "layout": {
             "column": 5,
@@ -359,8 +359,8 @@
           }
         },
         {
-          "id": "465860543",
-          "title": "Output tokens per request(trace)",
+          "id": "465947051",
+          "title": "Total tokens per request(trace)",
           "layout": {
             "column": 9,
             "row": 1,
@@ -383,7 +383,7 @@
                 "accountIds": [
                   4383540
                 ],
-                "query": "SELECT sum(gen_ai.usage.output_tokens) AS 'Output tokens' FROM Span FACET trace.id WHERE instrumentation.provider = 'opentelemetry' AND service.name = {{service.name}}"
+                "query": "SELECT sum(gen_ai.usage.total_tokens) AS 'Total tokens' FROM Span FACET trace.id WHERE instrumentation.provider = 'opentelemetry' AND service.name = {{service.name}}"
               }
             ],
             "platformOptions": {
@@ -392,7 +392,7 @@
           }
         },
         {
-          "id": "465836296",
+          "id": "465947052",
           "title": "Duration per request(trace) in sec",
           "layout": {
             "column": 1,
@@ -425,7 +425,7 @@
           }
         },
         {
-          "id": "465858046",
+          "id": "465947053",
           "title": "Tools calls per request(trace)",
           "layout": {
             "column": 5,
@@ -458,7 +458,7 @@
           }
         },
         {
-          "id": "465857080",
+          "id": "465947054",
           "title": "Errors per request(trace)",
           "layout": {
             "column": 9,
@@ -495,12 +495,12 @@
       ]
     },
     {
-      "guid": "NDM4MzU0MHxWSVp8REFTSEJPQVJEfDQxODUzMjM0",
+      "guid": "NDM4MzU0MHxWSVp8REFTSEJPQVJEfDQxODY0ODI0",
       "name": "Operation level",
       "description": null,
       "widgets": [
         {
-          "id": "465832548",
+          "id": "465947055",
           "title": "Input tokens per operation(span)",
           "layout": {
             "column": 1,
@@ -532,7 +532,7 @@
           }
         },
         {
-          "id": "465832646",
+          "id": "465947056",
           "title": "Output tokens per operation(span)",
           "layout": {
             "column": 4,
@@ -564,7 +564,7 @@
           }
         },
         {
-          "id": "465832645",
+          "id": "465947057",
           "title": "Total tokens per operation(span)",
           "layout": {
             "column": 7,
@@ -596,7 +596,7 @@
           }
         },
         {
-          "id": "465832763",
+          "id": "465947058",
           "title": "Operation duration(sec)",
           "layout": {
             "column": 10,
@@ -628,7 +628,7 @@
           }
         },
         {
-          "id": "465862973",
+          "id": "465947059",
           "title": "Operation description",
           "layout": {
             "column": 1,
