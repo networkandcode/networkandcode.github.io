@@ -1,0 +1,11 @@
+resource_id,service,region,status,monthly_cost,owner_team
+i-01,EC2,us-east-1,running,45.0,DevOps
+i-02,EC2,us-west-2,stopped,0.0,DevOps
+db-01,RDS,ap-south-1,available,120.0,Data-Science
+db-02,RDS,us-east-1,backing-up,95.0,Data-Science
+vol-01,EBS,us-east-1,attached,10.5,DevOps
+s3-01,S3,eu-west-1,active,5.25,Security
+s3-02,S3,us-east-1,active,55.0,Marketing
+elb-01,ALB,us-east-1,active,22.0,DevOps
+cf-01,CloudFront,global,deployed,15.0,Marketing
+sqs-01,SQS,us-east-1,active,1.2,DevOps

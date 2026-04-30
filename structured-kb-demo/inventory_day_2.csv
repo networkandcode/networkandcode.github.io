@@ -1,0 +1,11 @@
+resource_id,service,region,status,monthly_cost,owner_team,environment
+lambda-01,Lambda,us-east-1,active,0.5,DevOps,Production
+lambda-02,Lambda,us-east-1,active,0.1,DevOps,Staging
+db-03,RDS,ap-south-1,available,150.0,Data-Science,Production
+i-03,EC2,us-east-1,running,45.0,Interns,Development
+i-04,EC2,us-east-1,running,45.0,Interns,Development
+s3-03,S3,us-east-1,active,12.0,Sales,Production
+eks-01,EKS,us-east-1,active,73.0,DevOps,Production
+redshift-01,Redshift,us-east-1,available,350.0,Analytics,Production
+sns-01,SNS,us-east-1,active,0.8,DevOps,Production
+glue-01,Glue,us-east-1,idle,0.0,DevOps,Staging
