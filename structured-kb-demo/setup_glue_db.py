@@ -12,9 +12,9 @@ try:
             'Description': 'Database for Bedrock structured knowledge base demo',
         }
     )
-    logger.info(f"Glue database '{DB_NAME}' created successfully.")
+    logger.info(f"Glue database created successfully.")
     
 except glue.exceptions.AlreadyExistsException:
-    logger.error(f"Database {DB_NAME} already exists.")
+    logger.error(f"Database already exists.")
 except Exception as e:
     logger.error(f"Error creating Glue database: {e}")

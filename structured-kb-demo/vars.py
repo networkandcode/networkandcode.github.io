@@ -1,18 +1,25 @@
+from functools import lru_cache
 import os
 
 from dotenv import load_dotenv
 
-load_dotenv()
+@lru_cache(maxsize=1)
+def _load_env_once() -> os._Environ[str]:
+	load_dotenv()
+	return os.environ
 
-ACCOUNT_ID = os.getenv("ACCOUNT_ID")
-BUCKET_NAME = os.getenv("BUCKET_NAME")
-DB_NAME = os.getenv("DB_NAME")
-GLUE_CRAWLER_IAM_POLICY=os.getenv("GLUE_CRAWLER_IAM_POLICY")
-GLUE_CRAWLER_IAM_ROLE = os.getenv("GLUE_CRAWLER_IAM_ROLE")
-GLUE_CRAWLER_NAME = os.getenv("GLUE_CRAWLER_NAME")
-QUEUE_NAME = os.getenv("QUEUE_NAME")
-REGION = os.getenv("REGION")
+# load all env vars at once as a dictionary
+env_vars = _load_env_once()
 
-# derived vars
-BUCKET_ARN = f"arn:aws:s3:::{BUCKET_NAME}"
-QUEUE_ARN = f"arn:aws:sqs:{REGION}:{ACCOUNT_ID}:{QUEUE_NAME}"
+ACCOUNT_ID = env_vars["ACCOUNT_ID"]
+BUCKET = env_vars["BUCKET"]
+CRAWLER_IAM_POLICY = env_vars["CRAWLER_IAM_POLICY"]
+CRAWLER_IAM_ROLE = env_vars["CRAWLER_IAM_ROLE"]
+CRAWLER = env_vars["CRAWLER"]
+DB = env_vars["DB"]
+FOLDER = env_vars["FOLDER"]
+QUEUE = env_vars["QUEUE"]
+REDSHIFT_IAM_ROLE = env_vars["REDSHIFT_IAM_ROLE"]
+REDSHIFT_NAMESPACE = env_vars["REDSHIFT_NAMESPACE"]
+REDSHIFT_WORKGROUP = env_vars["REDSHIFT_WORKGROUP"]
+REGION = env_vars["REGION"]

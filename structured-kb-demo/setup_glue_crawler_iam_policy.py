@@ -2,8 +2,10 @@ import boto3
 
 import json
 
+from arns import BUCKET_ARN, CRAWLER_IAM_POLICY_ARN, QUEUE_ARN
+
 from logger import logger
-from vars import BUCKET_ARN, GLUE_CRAWLER_IAM_POLICY
+from vars import CRAWLER_IAM_POLICY
 
 iam = boto3.client('iam')
 
@@ -23,24 +25,38 @@ policy_document = {
         {
             "Effect": "Allow",
             "Action": [
-                "sqs:ReceiveMessage",
                 "sqs:DeleteMessage",
-                "sqs:GetQueueAttributes"
+                "sqs:GetQueueAttributes",
+                "sqs:GetQueueUrl",
+                "sqs:PurgeQueue",
+                "sqs:ReceiveMessage",
+                "sqs:SetQueueAttributes"
             ],
-            "Resource": "arn:aws:sqs:us-east-1:842960110593:structured-kb-demo-queue"
+            "Resource": QUEUE_ARN
         },
     ]
 }
 
 try:
     iam.create_policy(
-        PolicyName=GLUE_CRAWLER_IAM_POLICY,
+        PolicyName=CRAWLER_IAM_POLICY,
         PolicyDocument=json.dumps(policy_document),
         Description='Permissions for Glue Crawler to crawl S3 and use SQS Events'
     )
     logger.info(f"Policy created successfully!")
     
 except iam.exceptions.EntityAlreadyExistsException:
-    logger.error(f"Policy already exists.")
+    logger.info(f"Policy already exists. Updating...")
+    try:
+        # Create a new policy version
+        iam.create_policy_version(
+            PolicyArn=CRAWLER_IAM_POLICY_ARN,
+            PolicyDocument=json.dumps(policy_document),
+            SetAsDefault=True
+        )
+        logger.info(f"Policy updated successfully!")
+    except Exception as e:
+        logger.error(f"Error updating policy: {e}")
+        
 except Exception as e:
     logger.error(f"Error: {e}")
