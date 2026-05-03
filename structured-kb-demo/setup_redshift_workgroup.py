@@ -3,11 +3,11 @@ from botocore.exceptions import ClientError
 
 from arns import REDSHIFT_IAM_ROLE_ARN
 from logger import logger
-from vars import REDSHIFT_NAMESPACE, REDSHIFT_WORKGROUP, REGION
+from vars import REDSHIFT_NAMESPACE, REDSHIFT_WORKGROUP, AWS_REGION
 
 redshift_client = boto3.client(
     "redshift-serverless",
-    region_name=REGION
+    region_name=AWS_REGION
 )
 
 try:

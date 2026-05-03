@@ -3,10 +3,10 @@ import time
 import boto3
 
 from logger import logger
-from vars import CRAWLER, REGION
+from vars import GLUE_CRAWLER, AWS_REGION
 
 def run_glue_crawler(crawler_name):
-    glue = boto3.client("glue", region_name=REGION)
+    glue = boto3.client("glue", region_name=AWS_REGION)
 
     try:
         glue.start_crawler(Name=crawler_name)
@@ -31,4 +31,4 @@ def run_glue_crawler(crawler_name):
     except Exception as e:
         logger.error(f"Error: {str(e)}")
 
-run_glue_crawler(CRAWLER)
+run_glue_crawler(GLUE_CRAWLER)

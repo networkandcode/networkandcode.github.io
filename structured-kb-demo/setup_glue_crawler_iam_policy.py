@@ -2,7 +2,7 @@ import boto3
 
 import json
 
-from arns import BUCKET_ARN, GLUE_CRAWLER_IAM_POLICY_ARN, QUEUE_ARN
+from arns import S3_BUCKET_ARN, GLUE_CRAWLER_IAM_POLICY_ARN, SQS_QUEUE_ARN
 
 from logger import logger
 from vars import GLUE_CRAWLER_IAM_POLICY
@@ -19,7 +19,7 @@ policy_document = {
                 "s3:ListBucket"
             ],
             "Resource": [
-                f"{BUCKET_ARN}/*"
+                f"{S3_BUCKET_ARN}/*"
             ]
         },
         {
@@ -32,7 +32,7 @@ policy_document = {
                 "sqs:ReceiveMessage",
                 "sqs:SetQueueAttributes"
             ],
-            "Resource": QUEUE_ARN
+            "Resource": SQS_QUEUE_ARN
         },
     ]
 }

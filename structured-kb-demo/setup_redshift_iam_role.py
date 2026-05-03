@@ -3,9 +3,9 @@ import json
 
 from arns import AWS_MANAGED_REDSHIFT_IAM_POLICY_ARN
 from logger import logger
-from vars import REDSHIFT_IAM_ROLE, REGION
+from vars import REDSHIFT_IAM_ROLE, AWS_REGION
 
-iam = boto3.client("iam", region_name=REGION)
+iam = boto3.client("iam", region_name=AWS_REGION)
 
 trust_policy = {
     "Version": "2012-10-17",

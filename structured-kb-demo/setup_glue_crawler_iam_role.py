@@ -4,7 +4,7 @@ import json
 
 from arns import AWS_MANAGED_GLUE_IAM_POLICY_ARN, GLUE_CRAWLER_IAM_POLICY_ARN
 from logger import logger
-from vars import ACCOUNT_ID, GLUE_CRAWLER_IAM_ROLE
+from vars import AWS_ACCOUNT_ID, GLUE_CRAWLER_IAM_ROLE
 
 iam = boto3.client("iam")
 
@@ -19,7 +19,7 @@ trust_policy = {
             "Action": "sts:AssumeRole",
             "Condition": {
                 "StringEquals": {
-                    "aws:SourceAccount": ACCOUNT_ID
+                    "aws:SourceAccount": AWS_ACCOUNT_ID
                 }
             }
         }

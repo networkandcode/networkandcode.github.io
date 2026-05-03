@@ -3,7 +3,7 @@ import sys
 import boto3
 from botocore.exceptions import NoCredentialsError
 
-from vars import BUCKET, FOLDER
+from vars import S3_BUCKET, S3_FOLDER
 
 def upload_to_s3(local_file, bucket, s3_file):
     s3 = boto3.client("s3")
@@ -22,4 +22,4 @@ if len(sys.argv) < 2:
     sys.exit(1)
 
 local_file = sys.argv[1]
-upload_to_s3(local_file, BUCKET, f"{FOLDER}/{local_file}")
+upload_to_s3(local_file, S3_BUCKET, f"{S3_FOLDER}/{local_file}")
