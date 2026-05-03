@@ -2,10 +2,10 @@ import boto3
 
 import json
 
-from arns import BUCKET_ARN, CRAWLER_IAM_POLICY_ARN, QUEUE_ARN
+from arns import BUCKET_ARN, GLUE_CRAWLER_IAM_POLICY_ARN, QUEUE_ARN
 
 from logger import logger
-from vars import CRAWLER_IAM_POLICY
+from vars import GLUE_CRAWLER_IAM_POLICY
 
 iam = boto3.client('iam')
 
@@ -39,7 +39,7 @@ policy_document = {
 
 try:
     iam.create_policy(
-        PolicyName=CRAWLER_IAM_POLICY,
+        PolicyName=GLUE_CRAWLER_IAM_POLICY,
         PolicyDocument=json.dumps(policy_document),
         Description='Permissions for Glue Crawler to crawl S3 and use SQS Events'
     )
@@ -50,7 +50,7 @@ except iam.exceptions.EntityAlreadyExistsException:
     try:
         # Create a new policy version
         iam.create_policy_version(
-            PolicyArn=CRAWLER_IAM_POLICY_ARN,
+            PolicyArn=GLUE_CRAWLER_IAM_POLICY_ARN,
             PolicyDocument=json.dumps(policy_document),
             SetAsDefault=True
         )

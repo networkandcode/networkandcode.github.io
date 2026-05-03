@@ -1,6 +1,6 @@
 import boto3
 
-from arns import CRAWLER_IAM_ROLE_ARN, QUEUE_ARN
+from arns import GLUE_CRAWLER_IAM_ROLE_ARN, QUEUE_ARN
 from logger import logger
 from vars import BUCKET, CRAWLER, DB, FOLDER
 
@@ -9,7 +9,7 @@ S3_PATH = f"s3://{BUCKET}/{FOLDER}"
 glue = boto3.client("glue", region_name="us-east-1")
 
 CRAWLER_CONFIG = {
-    "Role": CRAWLER_IAM_ROLE_ARN,
+    "Role": GLUE_CRAWLER_IAM_ROLE_ARN,
     "DatabaseName": DB,
     "Description": "Crawler for inventory data triggered by SQS events",
     "Targets": {

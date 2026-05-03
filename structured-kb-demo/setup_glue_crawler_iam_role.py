@@ -2,9 +2,9 @@ import boto3
 
 import json
 
-from arns import AWS_MANAGED_GLUE_IAM_POLICY_ARN, CRAWLER_IAM_POLICY_ARN
+from arns import AWS_MANAGED_GLUE_IAM_POLICY_ARN, GLUE_CRAWLER_IAM_POLICY_ARN
 from logger import logger
-from vars import ACCOUNT_ID, CRAWLER_IAM_ROLE
+from vars import ACCOUNT_ID, GLUE_CRAWLER_IAM_ROLE
 
 iam = boto3.client("iam")
 
@@ -28,7 +28,7 @@ trust_policy = {
 
 try:
     iam.create_role(
-        RoleName=CRAWLER_IAM_ROLE,
+        RoleName=GLUE_CRAWLER_IAM_ROLE,
         AssumeRolePolicyDocument=json.dumps(trust_policy)
     )
     logger.info(f"Created role")
@@ -37,22 +37,22 @@ except iam.exceptions.EntityAlreadyExistsException:
 
 
 # Get existing attached policies
-response = iam.list_attached_role_policies(RoleName=CRAWLER_IAM_ROLE)
+response = iam.list_attached_role_policies(RoleName=GLUE_CRAWLER_IAM_ROLE)
 attached_policies = [p['PolicyArn'] for p in response.get('AttachedPolicies', [])]
 
 if AWS_MANAGED_GLUE_IAM_POLICY_ARN not in attached_policies:
     iam.attach_role_policy(
-        RoleName=CRAWLER_IAM_ROLE,
+        RoleName=GLUE_CRAWLER_IAM_ROLE,
         PolicyArn=AWS_MANAGED_GLUE_IAM_POLICY_ARN
     )
     logger.info("AWS Glue Service Role policy attached.")
 else:
     logger.info("AWS Glue Service Role policy already attached.")
 
-if CRAWLER_IAM_POLICY_ARN not in attached_policies:
+if GLUE_CRAWLER_IAM_POLICY_ARN not in attached_policies:
     iam.attach_role_policy(
-        RoleName=CRAWLER_IAM_ROLE,
-        PolicyArn=CRAWLER_IAM_POLICY_ARN
+        RoleName=GLUE_CRAWLER_IAM_ROLE,
+        PolicyArn=GLUE_CRAWLER_IAM_POLICY_ARN
     )
     logger.info("Custom Glue Crawler policy attached.")
 else:
