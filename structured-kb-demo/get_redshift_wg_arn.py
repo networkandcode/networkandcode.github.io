@@ -1,3 +1,9 @@
+import boto3
+from botocore.exceptions import ClientError
+
+from logger import logger
+from vars import AWS_REGION, REDSHIFT_WORKGROUP
+
 try:
     client = boto3.client("redshift-serverless", region_name=AWS_REGION)
     response = client.get_workgroup(workgroupName=REDSHIFT_WORKGROUP)

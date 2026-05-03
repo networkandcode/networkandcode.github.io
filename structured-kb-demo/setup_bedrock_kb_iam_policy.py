@@ -1,9 +1,12 @@
 import boto3
 import json
 
+from arns import S3_BUCKET_ARN
+from get_redshift_wg_arn import REDSHIFT_WORKGROUP_ARN
 from logger import logger
-from vars import AWS_ACCOUNT_ID, BEDROCK_KB_IAM_POLICY
+from vars import AWS_ACCOUNT_ID, AWS_REGION, BEDROCK_KB_IAM_POLICY, GLUE_DB, S3_BUCKET, S3_FOLDER
 
+GLUE_TABLE = S3_FOLDER
 iam = boto3.client("iam")
 
 # Define the policy document
@@ -32,7 +35,7 @@ policy_document = {
                 "redshift-data:ExecuteStatement"
             ],
             "Resource": [
-                f"arn:aws:redshift-serverless:us-east-1:{AWS_ACCOUNT_ID}:workgroup/*"
+                REDSHIFT_WORKGROUP_ARN
             ]
         },
         {
@@ -40,7 +43,7 @@ policy_document = {
             "Effect": "Allow",
             "Action": "redshift-serverless:GetCredentials",
             "Resource": [
-                f"arn:aws:redshift-serverless:us-east-1:{AWS_ACCOUNT_ID}:workgroup/*"
+                REDSHIFT_WORKGROUP_ARN
             ]
         },
         {
@@ -61,6 +64,35 @@ policy_document = {
                 "bedrock:GenerateQuery"
             ],
             "Resource": "*"
+        },
+        {
+            "Sid": "VisualEditor0",
+            "Effect": "Allow",
+            "Action": [
+                "glue:GetDatabases",
+                "glue:GetDatabase",
+                "glue:GetTables",
+                "glue:GetTable",
+                "glue:GetPartitions",
+                "glue:GetPartition",
+                "glue:SearchTables"
+            ],
+            "Resource": [
+                f"arn:aws:glue:{AWS_REGION}:{AWS_ACCOUNT_ID}:table/{GLUE_DB}/{GLUE_TABLE}",
+                f"arn:aws:glue:{AWS_REGION}:{AWS_ACCOUNT_ID}:database/{GLUE_DB}",
+                f"arn:aws:glue:{AWS_REGION}:{AWS_ACCOUNT_ID}:catalog"
+            ]
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "s3:ListBucket",
+                "s3:GetObject"
+            ],
+            "Resource": [
+                f"{S3_BUCKET_ARN}",
+                f"{S3_BUCKET_ARN}/*"
+            ]
         }
     ]
 }
@@ -76,6 +108,17 @@ try:
     logger.info(f"Successfully created policy!")
 
 except iam.exceptions.EntityAlreadyExistsException:
-    logger.info(f"Policy already exists.")
+    logger.info(f"Policy already exists, updating it.")
+    # Get the policy ARN
+    policies = iam.list_policies(Scope='Local')
+    policy_arn = next(p['Arn'] for p in policies['Policies'] if p['PolicyName'] == BEDROCK_KB_IAM_POLICY)
+    
+    # Create a new version and set it as default
+    iam.create_policy_version(
+        PolicyArn=policy_arn,
+        PolicyDocument=json.dumps(policy_document),
+        SetAsDefault=True
+    )
+    logger.info(f"Successfully updated policy!")
 except Exception as e:
     logger.error(f"An error occurred: {e}")

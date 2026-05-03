@@ -1,7 +1,3 @@
-import boto3
-from botocore.exceptions import ClientError
-
-from logger import logger
 from vars import (
     AWS_ACCOUNT_ID,
     S3_BUCKET,
