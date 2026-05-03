@@ -31,9 +31,9 @@ try:
         RoleName=GLUE_CRAWLER_IAM_ROLE,
         AssumeRolePolicyDocument=json.dumps(trust_policy)
     )
-    logger.info(f"Created role")
+    logger.info("Created role")
 except iam.exceptions.EntityAlreadyExistsException:
-    logger.info(f"Role already exists.")
+    logger.info("Role already exists.")
 
 
 # Get existing attached policies

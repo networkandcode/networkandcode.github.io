@@ -4,7 +4,7 @@ import json
 from arns import S3_BUCKET_ARN
 from get_redshift_wg_arn import REDSHIFT_WORKGROUP_ARN
 from logger import logger
-from vars import AWS_ACCOUNT_ID, AWS_REGION, BEDROCK_KB_IAM_POLICY, GLUE_DB, S3_BUCKET, S3_FOLDER
+from vars import AWS_ACCOUNT_ID, AWS_REGION, BEDROCK_KB_IAM_POLICY, GLUE_DB, S3_FOLDER
 
 GLUE_TABLE = S3_FOLDER
 iam = boto3.client("iam")
@@ -105,10 +105,10 @@ try:
         Description="Permissions for Bedrock Structured KB to query Redshift Serverless."
     )
     
-    logger.info(f"Successfully created policy!")
+    logger.info("Successfully created policy!")
 
 except iam.exceptions.EntityAlreadyExistsException:
-    logger.info(f"Policy already exists, updating it.")
+    logger.info("Policy already exists, updating it.")
     # Get the policy ARN
     policies = iam.list_policies(Scope='Local')
     policy_arn = next(p['Arn'] for p in policies['Policies'] if p['PolicyName'] == BEDROCK_KB_IAM_POLICY)
@@ -119,6 +119,6 @@ except iam.exceptions.EntityAlreadyExistsException:
         PolicyDocument=json.dumps(policy_document),
         SetAsDefault=True
     )
-    logger.info(f"Successfully updated policy!")
+    logger.info("Successfully updated policy!")
 except Exception as e:
     logger.error(f"An error occurred: {e}")

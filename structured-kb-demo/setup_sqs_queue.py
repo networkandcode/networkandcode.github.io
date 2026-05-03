@@ -29,7 +29,7 @@ access_policy = {
 try:
     # Check if queue exists
     sqs.get_queue_url(QueueName=SQS_QUEUE)
-    logger.info(f"Queue already exists.")
+    logger.info("Queue already exists.")
 except sqs.exceptions.QueueDoesNotExist:
     # Create queue if it doesn't exist
     sqs.create_queue(
@@ -38,6 +38,6 @@ except sqs.exceptions.QueueDoesNotExist:
             'Policy': json.dumps(access_policy)
         }
     )
-    logger.info(f"Queue created successfully.")
+    logger.info("Queue created successfully.")
 except Exception as e:
     logger.error(f"Error: {e}")

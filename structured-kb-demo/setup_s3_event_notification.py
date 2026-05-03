@@ -23,6 +23,6 @@ try:
         Bucket=S3_BUCKET,
         NotificationConfiguration=notification_configuration
     )
-    logger.info(f"Successfully added event notifications")
+    logger.info("Successfully added event notifications")
 except Exception as e:
     logger.error(f"Error: {e}")

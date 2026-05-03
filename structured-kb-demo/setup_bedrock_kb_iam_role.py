@@ -41,7 +41,7 @@ try:
         RoleName=BEDROCK_KB_IAM_ROLE,
         PolicyArn=BEDROCK_KB_IAM_POLICY_ARN
     )
-    logger.info(f"Attached IAM policy to BedrockKB IAM role.")
+    logger.info("Attached IAM policy to BedrockKB IAM role.")
 
 except iam.exceptions.EntityAlreadyExistsException:
     logger.warning(f"Role {BEDROCK_KB_IAM_ROLE} already exists.")

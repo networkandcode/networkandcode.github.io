@@ -10,7 +10,7 @@ def run_glue_crawler(crawler_name):
 
     try:
         glue.start_crawler(Name=crawler_name)
-        logger.info(f"Crawler started.")
+        logger.info("Crawler started.")
 
         while True:
             response = glue.get_crawler(Name=crawler_name)
@@ -27,7 +27,7 @@ def run_glue_crawler(crawler_name):
                 break
                 
     except glue.exceptions.CrawlerRunningException:
-        logger.warning(f"Crawler is already running.")
+        logger.warning("Crawler is already running.")
     except Exception as e:
         logger.error(f"Error: {str(e)}")
 

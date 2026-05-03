@@ -43,10 +43,10 @@ try:
         PolicyDocument=json.dumps(policy_document),
         Description='Permissions for Glue Crawler to crawl S3 and use SQS Events'
     )
-    logger.info(f"Policy created successfully!")
+    logger.info("Policy created successfully!")
     
 except iam.exceptions.EntityAlreadyExistsException:
-    logger.info(f"Policy already exists. Updating...")
+    logger.info("Policy already exists. Updating...")
     try:
         # Create a new policy version
         iam.create_policy_version(
@@ -54,7 +54,7 @@ except iam.exceptions.EntityAlreadyExistsException:
             PolicyDocument=json.dumps(policy_document),
             SetAsDefault=True
         )
-        logger.info(f"Policy updated successfully!")
+        logger.info("Policy updated successfully!")
     except Exception as e:
         logger.error(f"Error updating policy: {e}")
         
