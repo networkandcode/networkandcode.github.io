@@ -1,0 +1,175 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { workExperienceAchievements } from '../data/workExperience';
+---
+
+<BaseLayout title="Work Achievements & Experience | Shakir Ahmed Ibrahim" description="Parsed work experience and technical engineering achievements from Shakir Ahmed Ibrahim's career.">
+  <div class="container work-page">
+    <header class="page-header">
+      <div class="header-badge">💼 Career Milestones</div>
+      <h1 class="page-title">Work Achievements</h1>
+      <p class="page-subtitle">
+        Hands-on technical milestones, cloud native deployments, AI engineering, and leadership achievements parsed directly from work experience.
+      </p>
+    </header>
+
+    <div class="experience-timeline">
+      {workExperienceAchievements.map(job => (
+        <div class="glass-card job-card">
+          <div class="job-header">
+            <div>
+              <span class="company-badge">{job.company}</span>
+              <h2 class="job-role">{job.role}</h2>
+            </div>
+            <div class="job-meta">
+              <span class="period-pill">{job.period}</span>
+              <span class="location-text">📍 {job.location}</span>
+            </div>
+          </div>
+
+          <ul class="achievements-list">
+            {job.highlights.map(item => (
+              <li class="achievement-item">
+                <span class="bullet">▹</span>
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .work-page {
+    padding: 3.5rem 1.5rem;
+    max-width: 950px;
+  }
+
+  .page-header {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+
+  .header-badge {
+    display: inline-block;
+    padding: 0.4rem 1rem;
+    border-radius: 9999px;
+    background: rgba(56, 189, 248, 0.12);
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    color: var(--accent-blue);
+    font-weight: 600;
+    font-size: 0.85rem;
+    margin-bottom: 1rem;
+  }
+
+  .page-title {
+    font-size: 2.75rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+  }
+
+  .page-subtitle {
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    max-width: 700px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  .experience-timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .job-card {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 2rem;
+  }
+
+  .job-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    border-bottom: 1px solid var(--border-glass);
+    padding-bottom: 1.25rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .company-badge {
+    display: inline-block;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--accent-blue);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.25rem;
+  }
+
+  .job-role {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--text-main);
+  }
+
+  .job-meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.35rem;
+  }
+
+  .period-pill {
+    background: rgba(129, 140, 248, 0.15);
+    color: var(--accent-indigo);
+    border: 1px solid rgba(129, 140, 248, 0.3);
+    padding: 0.25rem 0.75rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .location-text {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+  }
+
+  .achievements-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+  }
+
+  .achievement-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--text-main);
+  }
+
+  .bullet {
+    color: var(--accent-blue);
+    font-weight: bold;
+    font-size: 1.1rem;
+    line-height: 1.4;
+  }
+
+  @media (max-width: 768px) {
+    .job-header {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .job-meta {
+      align-items: flex-start;
+    }
+  }
+</style>
