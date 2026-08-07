@@ -146,54 +146,7 @@ const totalProjects = featuredProjects.length;
 
 
 
-  <!-- YouTube Tutorials & Open Source Activity -->
-  <section class="section">
-    <div class="container">
-      <div class="two-col-grid">
-        <!-- YouTube Channel Card -->
-        <div class="glass-card flex-col-between">
-          <div>
-            <span class="tag-badge">▶ YouTube Channel</span>
-            <h3 class="card-block-title" style="margin-top: 0.75rem;">@kubetrain Tutorials</h3>
-            <p class="card-block-desc">30 video tutorials covering Kubernetes, Agentic AI, OpenTelemetry, and Docker.</p>
-            <div class="video-preview-list">
-              {youtubeVideos.slice(0, 3).map(v => (
-                <a href={v.url} target="_blank" rel="noopener" class="mini-video-item">
-                  <span class="play-icon">▶</span>
-                  <span class="mini-video-title">{v.title}</span>
-                </a>
-              ))}
-            </div>
-          </div>
-          <a href="/videos" class="btn btn-secondary btn-sm block-btn">Watch All 30 Videos &rarr;</a>
-        </div>
 
-        <!-- GitHub Activity Card -->
-        <div class="glass-card flex-col-between">
-          <div>
-            <span class="tag-badge">🐙 Open Source</span>
-            <h3 class="card-block-title" style="margin-top: 0.75rem;">GitHub Contributions</h3>
-            <p class="card-block-desc">Active contributor across {githubProfileSummary.totalRepos} repositories in TypeScript, Python, and Go.</p>
-            <div class="github-mini-stats">
-              <div class="stat-box">
-                <span class="stat-num">64</span>
-                <span class="stat-lbl">Public Repos</span>
-              </div>
-              <div class="stat-box">
-                <span class="stat-num">42%</span>
-                <span class="stat-lbl">TS / JS</span>
-              </div>
-              <div class="stat-box">
-                <span class="stat-num">28%</span>
-                <span class="stat-lbl">Python</span>
-              </div>
-            </div>
-          </div>
-          <a href="/github" class="btn btn-secondary btn-sm block-btn">View GitHub Contribution Graph &rarr;</a>
-        </div>
-      </div>
-    </div>
-  </section>
 
   <!-- Recent Articles Section -->
   <section id="blog" class="section">
