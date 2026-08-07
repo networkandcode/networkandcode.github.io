@@ -240,26 +240,30 @@ const totalProjects = featuredProjects.length;
   }
 
   .btn-primary {
-    background: linear-gradient(135deg, #0284c7, #4f46e5);
-    color: #ffffff;
-    box-shadow: 0 4px 15px rgba(2, 132, 199, 0.35);
+    background: var(--text-main);
+    color: var(--bg-primary);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   }
 
   .btn-primary:hover {
-    box-shadow: 0 6px 20px rgba(2, 132, 199, 0.5);
-    transform: translateY(-2px);
-    color: #ffffff;
+    opacity: 0.9;
+    transform: translateY(-1px);
+    color: var(--bg-primary);
   }
 
   .btn-secondary {
-    background: rgba(255, 255, 255, 0.05);
+    background: transparent;
     border: 1px solid var(--border-glass);
     color: var(--text-main);
   }
 
   .btn-secondary:hover {
-    background: rgba(255, 255, 255, 0.1);
-    color: var(--accent-blue);
+    border-color: var(--border-hover);
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  [data-theme="light"] .btn-secondary:hover {
+    background: rgba(0, 0, 0, 0.04);
   }
 
   .btn-sm {

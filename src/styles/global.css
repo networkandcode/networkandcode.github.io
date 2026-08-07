@@ -1,23 +1,52 @@
 :root {
-  /* Slate & Deep Indigo Professional Dark Theme */
-  --bg-primary: #0f172a;       /* Deep Slate Blue */
-  --bg-surface: #1e293b;       /* Elevated Surface Slate */
-  --bg-glass: rgba(30, 41, 59, 0.75);
-  --border-glass: rgba(255, 255, 255, 0.08);
+  /* Default Dark Vercel Theme */
+  --bg-primary: #000000;
+  --bg-surface: #0a0a0a;
+  --bg-card: rgba(18, 18, 18, 0.7);
+  --bg-glass: rgba(10, 10, 10, 0.8);
+  --border-glass: rgba(255, 255, 255, 0.12);
+  --border-hover: rgba(255, 255, 255, 0.3);
   
-  --text-main: #f8fafc;        /* High-contrast Slate Light Text */
-  --text-muted: #94a3b8;       /* Soft Muted Subtitles */
+  --text-main: #ededed;
+  --text-muted: #a1a1a1;
+  --text-subtle: #666666;
   
-  /* Refined Enterprise Accent Palette */
-  --accent-blue: #38bdf8;      /* Sky Blue Accent */
-  --accent-indigo: #818cf8;    /* Professional Indigo */
-  --accent-teal: #2dd4bf;      /* Clean Teal Accent */
+  --accent-blue: #ffffff;
+  --accent-indigo: #ededed;
+  --accent-orange: #ffffff;
+  --accent-amber: #a1a1a1;
   
-  --glow-blue: rgba(56, 189, 248, 0.18);
-  --glow-indigo: rgba(129, 140, 248, 0.15);
-  
+  --glow-blue: rgba(255, 255, 255, 0.1);
+  --glow-indigo: rgba(255, 255, 255, 0.08);
+
   --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+
+  color-scheme: dark;
+}
+
+[data-theme="light"] {
+  /* Minimalist Light Vercel Theme */
+  --bg-primary: #ffffff;
+  --bg-surface: #fafafa;
+  --bg-card: rgba(255, 255, 255, 0.9);
+  --bg-glass: rgba(255, 255, 255, 0.85);
+  --border-glass: rgba(0, 0, 0, 0.08);
+  --border-hover: rgba(0, 0, 0, 0.25);
+  
+  --text-main: #171717;
+  --text-muted: #666666;
+  --text-subtle: #999999;
+  
+  --accent-blue: #000000;
+  --accent-indigo: #171717;
+  --accent-orange: #000000;
+  --accent-amber: #666666;
+  
+  --glow-blue: rgba(0, 0, 0, 0.05);
+  --glow-indigo: rgba(0, 0, 0, 0.03);
+
+  color-scheme: light;
 }
 
 * {
@@ -32,43 +61,43 @@ html {
   color: var(--text-main);
   scroll-behavior: smooth;
   line-height: 1.6;
+  transition: background-color 0.25s ease, color 0.25s ease;
 }
 
 body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  background-color: var(--bg-primary);
   background-image: 
-    radial-gradient(circle at 15% 15%, var(--glow-blue) 0%, transparent 45%),
-    radial-gradient(circle at 85% 85%, var(--glow-indigo) 0%, transparent 45%);
+    radial-gradient(circle at 50% 0%, var(--glow-blue) 0%, transparent 60%);
   background-attachment: fixed;
 }
 
 a {
-  color: var(--accent-blue);
+  color: var(--text-main);
   text-decoration: none;
-  transition: color 0.2s ease, text-shadow 0.2s ease;
+  transition: color 0.2s ease, opacity 0.2s ease;
 }
 
 a:hover {
-  color: #7dd3fc;
-  text-shadow: 0 0 12px var(--glow-blue);
+  opacity: 0.8;
 }
 
 .glass-card {
-  background: var(--bg-glass);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: var(--bg-card);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   border: 1px solid var(--border-glass);
-  border-radius: 14px;
+  border-radius: 12px;
   padding: 1.75rem;
-  transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease, box-shadow 0.25s ease;
 }
 
 .glass-card:hover {
-  transform: translateY(-3px);
-  border-color: rgba(56, 189, 248, 0.35);
-  box-shadow: 0 12px 30px -10px rgba(15, 23, 42, 0.8), 0 0 20px var(--glow-blue);
+  transform: translateY(-2px);
+  border-color: var(--border-hover);
+  box-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.3);
 }
 
 .tag-badge {
@@ -77,9 +106,13 @@ a:hover {
   border-radius: 9999px;
   font-size: 0.8rem;
   font-weight: 500;
-  background: rgba(56, 189, 248, 0.1);
-  color: var(--accent-blue);
-  border: 1px solid rgba(56, 189, 248, 0.25);
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-main);
+  border: 1px solid var(--border-glass);
+}
+
+[data-theme="light"] .tag-badge {
+  background: rgba(0, 0, 0, 0.05);
 }
 
 .container {
