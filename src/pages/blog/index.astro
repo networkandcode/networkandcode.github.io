@@ -67,11 +67,35 @@ const categoriesList = ['All', 'Agentic AI & LLMs', 'Kubernetes', 'Observability
           Visit DEV.to Profile &rarr;
         </a>
       </div>
+      <div class="search-container">
+        <div class="search-box glass-card">
+          <span class="search-icon">🔍</span>
+          <input 
+            type="text" 
+            id="blog-search-input" 
+            placeholder="Search articles by title, topic, or keyword (e.g. Kubernetes, Bedrock, OTEL)..." 
+            autocomplete="off"
+          />
+          <button id="clear-search-btn" class="clear-btn" style="display: none;">✕</button>
+        </div>
+
+        <div class="category-filters">
+          {categoriesList.map((cat, idx) => (
+            <button class:list={["filter-chip", { active: idx === 0 }]} data-category={cat}>
+              {cat}
+            </button>
+          ))}
+        </div>
+      </div>
     </header>
 
-    <div class="archive-list">
+    <div id="no-results" class="no-results-msg glass-card" style="display: none;">
+      <p>No articles found matching your search. Try a different query or select "All".</p>
+    </div>
+
+    <div class="archive-list" id="articles-container">
       {processedPosts.map(post => (
-        <article class="glass-card archive-card">
+        <article class="glass-card archive-card" data-title={post.title.toLowerCase()} data-category={post.category}>
           <div class="card-meta">
             <span class="tag-badge">{post.category}</span>
             <div class="meta-right">
@@ -95,6 +119,70 @@ const categoriesList = ['All', 'Agentic AI & LLMs', 'Kubernetes', 'Observability
     </div>
   </div>
 </BaseLayout>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const searchInput = document.getElementById('blog-search-input') as HTMLInputElement;
+    const clearBtn = document.getElementById('clear-search-btn');
+    const filterChips = document.querySelectorAll('.filter-chip');
+    const articles = document.querySelectorAll<HTMLElement>('.archive-card');
+    const noResultsMsg = document.getElementById('no-results');
+
+    let currentCategory = 'All';
+    let currentQuery = '';
+
+    const filterArticles = () => {
+      let visibleCount = 0;
+      articles.forEach(article => {
+        const title = article.getAttribute('data-title') || '';
+        const category = article.getAttribute('data-category') || '';
+
+        const matchesQuery = !currentQuery || title.includes(currentQuery.toLowerCase());
+        const matchesCategory = currentCategory === 'All' || category === currentCategory;
+
+        if (matchesQuery && matchesCategory) {
+          article.style.display = 'flex';
+          visibleCount++;
+        } else {
+          article.style.display = 'none';
+        }
+      });
+
+      if (noResultsMsg) {
+        noResultsMsg.style.display = visibleCount === 0 ? 'block' : 'none';
+      }
+    };
+
+    if (searchInput) {
+      searchInput.addEventListener('input', (e) => {
+        currentQuery = (e.target as HTMLInputElement).value.trim();
+        if (clearBtn) {
+          clearBtn.style.display = currentQuery ? 'block' : 'none';
+        }
+        filterArticles();
+      });
+    }
+
+    if (clearBtn && searchInput) {
+      clearBtn.addEventListener('click', () => {
+        searchInput.value = '';
+        currentQuery = '';
+        clearBtn.style.display = 'none';
+        searchInput.focus();
+        filterArticles();
+      });
+    }
+
+    filterChips.forEach(chip => {
+      chip.addEventListener('click', () => {
+        filterChips.forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        currentCategory = chip.getAttribute('data-category') || 'All';
+        filterArticles();
+      });
+    });
+  });
+</script>
 
 <style>
   .blog-archive-page {
@@ -139,13 +227,109 @@ const categoriesList = ['All', 'Agentic AI & LLMs', 'Kubernetes', 'Observability
     padding: 1rem 1.5rem;
     font-size: 0.95rem;
     max-width: 800px;
-    margin: 0 auto;
+    margin: 0 auto 2rem;
   }
 
   .banner-label {
     color: var(--accent-blue);
     font-weight: 700;
     margin-right: 0.5rem;
+  }
+
+  .search-container {
+    max-width: 800px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .search-box {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1.25rem;
+    border-radius: 12px;
+    background: rgba(15, 23, 42, 0.6);
+  }
+
+  .search-icon {
+    font-size: 1.1rem;
+    opacity: 0.7;
+  }
+
+  .search-box input {
+    width: 100%;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--text-main);
+    font-size: 0.98rem;
+    font-family: inherit;
+  }
+
+  .search-box input::placeholder {
+    color: var(--text-muted);
+    opacity: 0.7;
+  }
+
+  .clear-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: var(--text-muted);
+    border-radius: 50%;
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 0.75rem;
+    transition: all 0.2s ease;
+  }
+
+  .clear-btn:hover {
+    background: rgba(239, 68, 68, 0.2);
+    color: #ef4444;
+  }
+
+  .category-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: center;
+  }
+
+  .filter-chip {
+    padding: 0.4rem 0.9rem;
+    border-radius: 9999px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--border-glass);
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .filter-chip:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--text-main);
+  }
+
+  .filter-chip.active {
+    background: rgba(56, 189, 248, 0.15);
+    border-color: rgba(56, 189, 248, 0.4);
+    color: var(--accent-blue);
+    font-weight: 600;
+  }
+
+  .no-results-msg {
+    text-align: center;
+    padding: 3rem 1.5rem;
+    color: var(--text-muted);
+    font-size: 1.05rem;
+    margin-bottom: 2rem;
   }
 
   .archive-list {
