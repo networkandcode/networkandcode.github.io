@@ -10,16 +10,26 @@ from vars import (
     SQS_QUEUE,
 )
 
-AWS_MANAGED_GLUE_IAM_POLICY_ARN = "arn:aws:iam::aws:policy/service-role/AWSGlueServiceRole"
-AWS_MANAGED_REDSHIFT_IAM_POLICY_ARN = "arn:aws:iam::aws:policy/AmazonRedshiftAllCommandsFullAccess"
+AWS_MANAGED_GLUE_IAM_POLICY_ARN = (
+    "arn:aws:iam::aws:policy/service-role/AWSGlueServiceRole"
+)
+AWS_MANAGED_REDSHIFT_IAM_POLICY_ARN = (
+    "arn:aws:iam::aws:policy/AmazonRedshiftAllCommandsFullAccess"
+)
 
-BEDROCK_KB_IAM_POLICY_ARN = f"arn:aws:iam::{AWS_ACCOUNT_ID}:policy/{BEDROCK_KB_IAM_POLICY}"
+BEDROCK_KB_IAM_POLICY_ARN = (
+    f"arn:aws:iam::{AWS_ACCOUNT_ID}:policy/{BEDROCK_KB_IAM_POLICY}"
+)
 BEDROCK_KB_IAM_ROLE_ARN = f"arn:aws:iam::{AWS_ACCOUNT_ID}:role/{BEDROCK_KB_IAM_ROLE}"
 
 S3_BUCKET_ARN = f"arn:aws:s3:::{S3_BUCKET}"
 
-GLUE_CRAWLER_IAM_POLICY_ARN = f"arn:aws:iam::{AWS_ACCOUNT_ID}:policy/{GLUE_CRAWLER_IAM_POLICY}"
-GLUE_CRAWLER_IAM_ROLE_ARN = f"arn:aws:iam::{AWS_ACCOUNT_ID}:role/{GLUE_CRAWLER_IAM_ROLE}"
+GLUE_CRAWLER_IAM_POLICY_ARN = (
+    f"arn:aws:iam::{AWS_ACCOUNT_ID}:policy/{GLUE_CRAWLER_IAM_POLICY}"
+)
+GLUE_CRAWLER_IAM_ROLE_ARN = (
+    f"arn:aws:iam::{AWS_ACCOUNT_ID}:role/{GLUE_CRAWLER_IAM_ROLE}"
+)
 
 SQS_QUEUE_ARN = f"arn:aws:sqs:{AWS_REGION}:{AWS_ACCOUNT_ID}:{SQS_QUEUE}"
 

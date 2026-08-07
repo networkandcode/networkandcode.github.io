@@ -19,32 +19,26 @@ policy_document = {
             "Action": [
                 "redshift-data:GetStatementResult",
                 "redshift-data:DescribeStatement",
-                "redshift-data:CancelStatement"
+                "redshift-data:CancelStatement",
             ],
             "Resource": ["*"],
             "Condition": {
                 "StringEquals": {
                     "redshift-data:statement-owner-iam-userid": "${aws:userid}"
                 }
-            }
+            },
         },
         {
             "Sid": "RedshiftDataAPIExecutePermissions",
             "Effect": "Allow",
-            "Action": [
-                "redshift-data:ExecuteStatement"
-            ],
-            "Resource": [
-                REDSHIFT_WORKGROUP_ARN
-            ]
+            "Action": ["redshift-data:ExecuteStatement"],
+            "Resource": [REDSHIFT_WORKGROUP_ARN],
         },
         {
             "Sid": "RedshiftServerlessGetCredentials",
             "Effect": "Allow",
             "Action": "redshift-serverless:GetCredentials",
-            "Resource": [
-                REDSHIFT_WORKGROUP_ARN
-            ]
+            "Resource": [REDSHIFT_WORKGROUP_ARN],
         },
         {
             "Sid": "SqlWorkbenchAccess",
@@ -53,17 +47,15 @@ policy_document = {
                 "sqlworkbench:GetSqlRecommendations",
                 "sqlworkbench:PutSqlGenerationContext",
                 "sqlworkbench:GetSqlGenerationContext",
-                "sqlworkbench:DeleteSqlGenerationContext"
+                "sqlworkbench:DeleteSqlGenerationContext",
             ],
-            "Resource": "*"
+            "Resource": "*",
         },
         {
             "Sid": "KbAccess",
             "Effect": "Allow",
-            "Action": [
-                "bedrock:GenerateQuery"
-            ],
-            "Resource": "*"
+            "Action": ["bedrock:GenerateQuery"],
+            "Resource": "*",
         },
         {
             "Sid": "VisualEditor0",
@@ -75,26 +67,20 @@ policy_document = {
                 "glue:GetTable",
                 "glue:GetPartitions",
                 "glue:GetPartition",
-                "glue:SearchTables"
+                "glue:SearchTables",
             ],
             "Resource": [
                 f"arn:aws:glue:{AWS_REGION}:{AWS_ACCOUNT_ID}:table/{GLUE_DB}/{GLUE_TABLE}",
                 f"arn:aws:glue:{AWS_REGION}:{AWS_ACCOUNT_ID}:database/{GLUE_DB}",
-                f"arn:aws:glue:{AWS_REGION}:{AWS_ACCOUNT_ID}:catalog"
-            ]
+                f"arn:aws:glue:{AWS_REGION}:{AWS_ACCOUNT_ID}:catalog",
+            ],
         },
         {
             "Effect": "Allow",
-            "Action": [
-                "s3:ListBucket",
-                "s3:GetObject"
-            ],
-            "Resource": [
-                f"{S3_BUCKET_ARN}",
-                f"{S3_BUCKET_ARN}/*"
-            ]
-        }
-    ]
+            "Action": ["s3:ListBucket", "s3:GetObject"],
+            "Resource": [f"{S3_BUCKET_ARN}", f"{S3_BUCKET_ARN}/*"],
+        },
+    ],
 }
 
 try:
@@ -102,22 +88,26 @@ try:
     response = iam.create_policy(
         PolicyName=BEDROCK_KB_IAM_POLICY,
         PolicyDocument=json.dumps(policy_document),
-        Description="Permissions for Bedrock Structured KB to query Redshift Serverless."
+        Description="Permissions for Bedrock Structured KB to query Redshift Serverless.",
     )
-    
+
     logger.info("Successfully created policy!")
 
 except iam.exceptions.EntityAlreadyExistsException:
     logger.info("Policy already exists, updating it.")
     # Get the policy ARN
-    policies = iam.list_policies(Scope='Local')
-    policy_arn = next(p['Arn'] for p in policies['Policies'] if p['PolicyName'] == BEDROCK_KB_IAM_POLICY)
-    
+    policies = iam.list_policies(Scope="Local")
+    policy_arn = next(
+        p["Arn"]
+        for p in policies["Policies"]
+        if p["PolicyName"] == BEDROCK_KB_IAM_POLICY
+    )
+
     # Create a new version and set it as default
     iam.create_policy_version(
         PolicyArn=policy_arn,
         PolicyDocument=json.dumps(policy_document),
-        SetAsDefault=True
+        SetAsDefault=True,
     )
     logger.info("Successfully updated policy!")
 except Exception as e:

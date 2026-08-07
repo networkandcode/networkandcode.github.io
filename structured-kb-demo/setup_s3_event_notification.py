@@ -10,18 +10,14 @@ notification_configuration = {
     "QueueConfigurations": [
         {
             "QueueArn": SQS_QUEUE_ARN,
-            "Events": [
-                "s3:ObjectCreated:*", 
-                "s3:ObjectRemoved:*"
-            ]
+            "Events": ["s3:ObjectCreated:*", "s3:ObjectRemoved:*"],
         }
     ]
 }
 
 try:
     s3.put_bucket_notification_configuration(
-        Bucket=S3_BUCKET,
-        NotificationConfiguration=notification_configuration
+        Bucket=S3_BUCKET, NotificationConfiguration=notification_configuration
     )
     logger.info("Successfully added event notifications")
 except Exception as e:

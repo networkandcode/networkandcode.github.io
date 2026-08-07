@@ -11,8 +11,4 @@ from vars import (
     MODEL,
 )
 
-search_agent = Agent(
-    name=AGENT_NAME,
-    model=MODEL,
-    tools=[fetch_fruits, greet_user]
-)
+search_agent = Agent(name=AGENT_NAME, model=MODEL, tools=[fetch_fruits, greet_user])

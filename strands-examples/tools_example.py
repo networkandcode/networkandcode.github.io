@@ -4,11 +4,13 @@ from strands_tools import current_time
 
 load_dotenv()
 
+
 def agent_callback(**kwargs):
     event = kwargs
-    if 'result' in event:
-        with open('result.md', 'w') as f:
-            f.write(str(event['result']))
+    if "result" in event:
+        with open("result.md", "w") as f:
+            f.write(str(event["result"]))
+
 
 agent = Agent(
     callback_handler=agent_callback,

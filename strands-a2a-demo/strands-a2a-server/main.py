@@ -5,6 +5,7 @@ from strands_tools import http_request
 
 load_dotenv()
 
+
 def main():
     agent = Agent(
         callback_handler=None,
@@ -15,6 +16,7 @@ def main():
     )
     a2a_server = A2AServer(agent=agent)
     a2a_server.serve()
+
 
 if __name__ == "__main__":
     main()

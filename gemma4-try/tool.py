@@ -1,5 +1,6 @@
 import httpx
 
+
 def fetch_fruits(fruit: str):
     url = f"https://api.example.com/api/fruit/{fruit}"
 

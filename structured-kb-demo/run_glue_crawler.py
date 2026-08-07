@@ -5,6 +5,7 @@ import boto3
 from logger import logger
 from vars import GLUE_CRAWLER, AWS_REGION
 
+
 def run_glue_crawler(crawler_name):
     glue = boto3.client("glue", region_name=AWS_REGION)
 
@@ -15,7 +16,7 @@ def run_glue_crawler(crawler_name):
         while True:
             response = glue.get_crawler(Name=crawler_name)
             status = response["Crawler"]["State"]
-            
+
             if status == "RUNNING":
                 logger.info("Crawler is still running...")
                 time.sleep(30)  # Wait 30 seconds before checking again
@@ -25,10 +26,11 @@ def run_glue_crawler(crawler_name):
             else:
                 logger.info(f"Crawler finished. Final State: {status}")
                 break
-                
+
     except glue.exceptions.CrawlerRunningException:
         logger.warning("Crawler is already running.")
     except Exception as e:
         logger.error(f"Error: {str(e)}")
+
 
 run_glue_crawler(GLUE_CRAWLER)

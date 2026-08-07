@@ -13,23 +13,17 @@ trust_policy = {
     "Statement": [
         {
             "Effect": "Allow",
-            "Principal": {
-                "Service": "glue.amazonaws.com"
-            },
+            "Principal": {"Service": "glue.amazonaws.com"},
             "Action": "sts:AssumeRole",
-            "Condition": {
-                "StringEquals": {
-                    "aws:SourceAccount": AWS_ACCOUNT_ID
-                }
-            }
+            "Condition": {"StringEquals": {"aws:SourceAccount": AWS_ACCOUNT_ID}},
         }
-    ]
+    ],
 }
 
 try:
     iam.create_role(
         RoleName=GLUE_CRAWLER_IAM_ROLE,
-        AssumeRolePolicyDocument=json.dumps(trust_policy)
+        AssumeRolePolicyDocument=json.dumps(trust_policy),
     )
     logger.info("Created role")
 except iam.exceptions.EntityAlreadyExistsException:
@@ -38,12 +32,11 @@ except iam.exceptions.EntityAlreadyExistsException:
 
 # Get existing attached policies
 response = iam.list_attached_role_policies(RoleName=GLUE_CRAWLER_IAM_ROLE)
-attached_policies = [p['PolicyArn'] for p in response.get('AttachedPolicies', [])]
+attached_policies = [p["PolicyArn"] for p in response.get("AttachedPolicies", [])]
 
 if AWS_MANAGED_GLUE_IAM_POLICY_ARN not in attached_policies:
     iam.attach_role_policy(
-        RoleName=GLUE_CRAWLER_IAM_ROLE,
-        PolicyArn=AWS_MANAGED_GLUE_IAM_POLICY_ARN
+        RoleName=GLUE_CRAWLER_IAM_ROLE, PolicyArn=AWS_MANAGED_GLUE_IAM_POLICY_ARN
     )
     logger.info("AWS Glue Service Role policy attached.")
 else:
@@ -51,8 +44,7 @@ else:
 
 if GLUE_CRAWLER_IAM_POLICY_ARN not in attached_policies:
     iam.attach_role_policy(
-        RoleName=GLUE_CRAWLER_IAM_ROLE,
-        PolicyArn=GLUE_CRAWLER_IAM_POLICY_ARN
+        RoleName=GLUE_CRAWLER_IAM_ROLE, PolicyArn=GLUE_CRAWLER_IAM_POLICY_ARN
     )
     logger.info("Custom Glue Crawler policy attached.")
 else:

@@ -19,21 +19,19 @@ sql_statements = [
 try:
     # Execute as a batch
     response = client.batch_execute_statement(
-        WorkgroupName=REDSHIFT_WORKGROUP,
-        Database="awsdatacatalog",
-        Sqls=sql_statements
+        WorkgroupName=REDSHIFT_WORKGROUP, Database="awsdatacatalog", Sqls=sql_statements
     )
-    
-    execution_id = response['Id']
+
+    execution_id = response["Id"]
     logger.info(f"Execution started. ID: {execution_id}")
 
     # (Optional) Wait for completion
     while True:
         status = client.describe_statement(Id=execution_id)
-        state = status['Status']
-        if state in ['FINISHED', 'FAILED', 'ABORTED']:
+        state = status["Status"]
+        if state in ["FINISHED", "FAILED", "ABORTED"]:
             logger.info(f"Final Status: {state}")
-            if state == 'FAILED':
+            if state == "FAILED":
                 logger.error(f"Error: {status.get('Error')}")
             break
         time.sleep(2)

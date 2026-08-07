@@ -7,6 +7,7 @@ import streamlit as st
 
 load_dotenv()
 
+
 async def main():
 
     agent = Agent(
@@ -16,10 +17,10 @@ async def main():
 
     st.title("Strands App")
 
-    if 'messages' not in st.session_state:
-        st.session_state['messages'] = []
+    if "messages" not in st.session_state:
+        st.session_state["messages"] = []
 
-    for message in st.session_state['messages']:
+    for message in st.session_state["messages"]:
         role = message["role"]
         content = message["content"]
 
@@ -42,8 +43,8 @@ async def main():
             stream = agent.stream_async(prompt)
             placeholder = st.empty()
             async for chunk in stream:
-                if 'data' in chunk:
-                    result += chunk['data']
+                if "data" in chunk:
+                    result += chunk["data"]
                     placeholder.markdown(result)
                     time.sleep(0.05)
 
@@ -53,6 +54,7 @@ async def main():
                     "content": result,
                 }
             )
-        st.session_state['messages'] += messages
+        st.session_state["messages"] += messages
+
 
 asyncio.run(main())

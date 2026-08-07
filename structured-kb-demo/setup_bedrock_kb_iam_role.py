@@ -13,33 +13,28 @@ trust_policy = {
         {
             "Sid": "TrustPolicyStatement",
             "Effect": "Allow",
-            "Principal": {
-                "Service": "bedrock.amazonaws.com"
-            },
+            "Principal": {"Service": "bedrock.amazonaws.com"},
             "Action": "sts:AssumeRole",
             "Condition": {
-                "StringEquals": {
-                    "aws:SourceAccount": AWS_ACCOUNT_ID
-                },
+                "StringEquals": {"aws:SourceAccount": AWS_ACCOUNT_ID},
                 "ArnLike": {
                     "aws:SourceArn": f"arn:aws:bedrock:{AWS_REGION}:{AWS_ACCOUNT_ID}:knowledge-base/*"
-                }
-            }
+                },
+            },
         }
-    ]
+    ],
 }
 
 try:
     iam.create_role(
         RoleName=BEDROCK_KB_IAM_ROLE,
         AssumeRolePolicyDocument=json.dumps(trust_policy),
-        Description='IAM Role for Bedrock Knowledge Base to access Redshift Serverless'
+        Description="IAM Role for Bedrock Knowledge Base to access Redshift Serverless",
     )
     logger.info(f"Created role: {BEDROCK_KB_IAM_ROLE}")
 
     iam.attach_role_policy(
-        RoleName=BEDROCK_KB_IAM_ROLE,
-        PolicyArn=BEDROCK_KB_IAM_POLICY_ARN
+        RoleName=BEDROCK_KB_IAM_ROLE, PolicyArn=BEDROCK_KB_IAM_POLICY_ARN
     )
     logger.info("Attached IAM policy to BedrockKB IAM role.")
 

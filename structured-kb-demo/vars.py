@@ -6,8 +6,9 @@ from dotenv import load_dotenv
 
 @lru_cache(maxsize=1)
 def _load_env_once() -> os._Environ[str]:
-	load_dotenv()
-	return os.environ
+    load_dotenv()
+    return os.environ
+
 
 # load all env vars at once as a dictionary
 env_vars = _load_env_once()

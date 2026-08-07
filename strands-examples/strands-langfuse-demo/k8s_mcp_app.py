@@ -4,6 +4,7 @@ import streamlit as st
 
 from k8s_mcp_agent import kubernetes_mcp_agent
 
+
 async def main():
     st.title("Kubernetes MCP App")
 
@@ -12,5 +13,6 @@ async def main():
             st.write(prompt)
         with st.chat_message("assistant"):
             await kubernetes_mcp_agent.send_prompt(prompt)
+
 
 asyncio.run(main())

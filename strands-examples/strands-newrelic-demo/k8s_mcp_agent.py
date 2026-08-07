@@ -8,16 +8,18 @@ import streamlit as st
 from set_telemetry import set_telemetry
 import uuid
 
+
 def remove_html_tags(text_with_html):
     text_with_out_html = re.sub(r"<[^>]+>", "", text_with_html)
     return text_with_out_html
+
 
 async def stream_result(stream):
     result = ""
     placeholder = st.empty()
     async for chunk in stream:
-        if 'data' in chunk:
-            result += chunk['data']
+        if "data" in chunk:
+            result += chunk["data"]
             result = remove_html_tags(result)
             placeholder.write(result)
 
@@ -27,20 +29,13 @@ class KubernetesMCPAgent:
         set_telemetry()
         server_params = {
             "command": "npx",
-            "args": [
-                "-y",
-                "kubernetes-mcp-server@latest"
-            ],
-            "env": {
-                "KUBECONFIG": "k3s.yaml"
-            }
+            "args": ["-y", "kubernetes-mcp-server@latest"],
+            "env": {"KUBECONFIG": "k3s.yaml"},
         }
-        
-        self.stdio_mcp_client = MCPClient(lambda: stdio_client(
-            StdioServerParameters(
-                **server_params
-            )
-        ))
+
+        self.stdio_mcp_client = MCPClient(
+            lambda: stdio_client(StdioServerParameters(**server_params))
+        )
 
         with self.stdio_mcp_client:
             # Get the tools from the MCP server
@@ -56,7 +51,6 @@ class KubernetesMCPAgent:
                 },
             )
 
-    
     async def send_prompt(self, prompt):
         with self.stdio_mcp_client:
             stream = self.agent.stream_async(prompt)

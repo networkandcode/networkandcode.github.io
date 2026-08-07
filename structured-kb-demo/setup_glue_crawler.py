@@ -2,7 +2,7 @@ import boto3
 
 from arns import GLUE_CRAWLER_IAM_ROLE_ARN, SQS_QUEUE_ARN
 from logger import logger
-from vars import  AWS_REGION, GLUE_CRAWLER, GLUE_DB, S3_BUCKET, S3_FOLDER
+from vars import AWS_REGION, GLUE_CRAWLER, GLUE_DB, S3_BUCKET, S3_FOLDER
 
 S3_PATH = f"s3://{S3_BUCKET}/{S3_FOLDER}"
 

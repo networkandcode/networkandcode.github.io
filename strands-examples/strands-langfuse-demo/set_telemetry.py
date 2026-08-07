@@ -12,7 +12,7 @@ def set_telemetry():
     LANGFUSE_AUTH = base64.b64encode(
         f"{os.environ.get('LANGFUSE_PUBLIC_KEY')}:{os.environ.get('LANGFUSE_SECRET_KEY')}".encode()
     ).decode()
-    
+
     # Configure OpenTelemetry endpoint & headers
     os.environ["OTEL_EXPORTER_OTLP_HEADERS"] = f"Authorization=Basic {LANGFUSE_AUTH}"
 

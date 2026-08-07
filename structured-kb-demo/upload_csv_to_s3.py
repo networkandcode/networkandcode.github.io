@@ -5,6 +5,7 @@ from botocore.exceptions import NoCredentialsError
 
 from vars import S3_BUCKET, S3_FOLDER
 
+
 def upload_to_s3(local_file, bucket, s3_file):
     s3 = boto3.client("s3")
 
@@ -15,6 +16,7 @@ def upload_to_s3(local_file, bucket, s3_file):
         print("The file was not found")
     except NoCredentialsError:
         print("Credentials not available")
+
 
 # Usage
 if len(sys.argv) < 2:
