@@ -144,46 +144,7 @@ const totalProjects = featuredProjects.length;
   </section>
 
 
-  <!-- Certifications & Recognition Matrix -->
-  <section class="section bg-surface-blur">
-    <div class="container">
-      <div class="two-col-grid">
-        <!-- Certifications Preview -->
-        <div class="glass-card flex-col-between">
-          <div>
-            <div class="card-badge-header">📜 Verified Accreditations</div>
-            <h3 class="card-block-title">Industry Certifications</h3>
-            <p class="card-block-desc">Credentialed by Google Cloud, AWS, Grafana, GitHub, Neo4j, and TensorFlow.</p>
-            <ul class="cert-compact-list">
-              {accreditations.slice(0, 5).map(c => (
-                <li>
-                  <span class="cert-dot">•</span> <strong>{c.name}</strong> <span class="issuer-text">({c.issuer})</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-          <a href="/accreditations" class="btn btn-secondary btn-sm block-btn">View All 8 Certifications &rarr;</a>
-        </div>
 
-        <!-- Awards Preview -->
-        <div class="glass-card flex-col-between">
-          <div>
-            <div class="card-badge-header">🏆 Honors & Awards</div>
-            <h3 class="card-block-title">Recognitions Vault</h3>
-            <p class="card-block-desc">21 awards including UST Global Pinnacle Performance & Mphasis Individual Excellence awards.</p>
-            <ul class="cert-compact-list">
-              {awardsAndCertificates.slice(0, 5).map(a => (
-                <li>
-                  <span class="cert-dot">•</span> <strong>{a.title}</strong> <span class="issuer-text">({a.organization})</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-          <a href="/awards" class="btn btn-secondary btn-sm block-btn">Explore 21 Awards Catalog &rarr;</a>
-        </div>
-      </div>
-    </div>
-  </section>
 
   <!-- YouTube Tutorials & Open Source Activity -->
   <section class="section">
