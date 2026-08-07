@@ -1,17 +1,23 @@
-export interface ContributionStat {
-  year: string;
-  count: number;
-  level: number;
+export interface ContributedRepo {
+  name: string;
+  fullName: string;
+  url: string;
+  description: string;
+  language: string;
+  role: string;
+  stars?: number;
 }
 
 export interface RepoSummary {
   totalRepos: number;
+  contributedReposCount: number;
   topLanguages: { name: string; percentage: number; color: string }[];
   categories: { name: string; count: number }[];
 }
 
 export const githubProfileSummary: RepoSummary = {
   totalRepos: 64,
+  contributedReposCount: 6,
   topLanguages: [
     { name: "JavaScript / TypeScript", percentage: 42, color: "#f97316" },
     { name: "Python", percentage: 28, color: "#fbbf24" },
@@ -25,6 +31,57 @@ export const githubProfileSummary: RepoSummary = {
     { name: "Full-Stack Web Apps (Next.js, Svelte, Appwrite)", count: 18 }
   ]
 };
+
+export const contributedRepositories: ContributedRepo[] = [
+  {
+    name: "networkandcode.github.io",
+    fullName: "networkandcode/networkandcode.github.io",
+    url: "https://github.com/networkandcode/networkandcode.github.io",
+    description: "Official engineering portfolio & technical notes website built with Astro, TypeScript, and modern responsive styling.",
+    language: "Astro / TypeScript",
+    role: "Maintainer & Lead Developer"
+  },
+  {
+    name: "boutique-bot",
+    fullName: "networkandcode/boutique-bot",
+    url: "https://github.com/networkandcode/boutique-bot",
+    description: "Automated e-commerce & retail bot with real-time stock notifications, instant order alerts via Telegram, and automated inventory sync.",
+    language: "Node.js / JavaScript",
+    role: "Creator & Maintainer"
+  },
+  {
+    name: "brailleboard",
+    fullName: "networkandcode/brailleboard",
+    url: "https://github.com/networkandcode/brailleboard",
+    description: "Text-to-Braille conversion web application built with Appwrite backend, Next.js frontend, and Web Speech API for accessibility.",
+    language: "TypeScript / Next.js",
+    role: "Creator & Lead Developer"
+  },
+  {
+    name: "cricscore",
+    fullName: "networkandcode/cricscore",
+    url: "https://github.com/networkandcode/cricscore",
+    description: "Live cricket match scoring app with real-time score updates, match stats, and database management.",
+    language: "TypeScript / Next.js",
+    role: "Creator & Maintainer"
+  },
+  {
+    name: "notes-app",
+    fullName: "networkandcode/notes-app",
+    url: "https://github.com/networkandcode/notes-app",
+    description: "Full-stack serverless notes application featuring instant search, dynamic tags, and cloud database persistence.",
+    language: "TypeScript / React",
+    role: "Creator & Maintainer"
+  },
+  {
+    name: "sms",
+    fullName: "networkandcode/sms",
+    url: "https://github.com/networkandcode/sms",
+    description: "Comprehensive school administrative dashboard deployed on Linode cloud with student records, attendance, and role-based access.",
+    language: "TypeScript / Next.js",
+    role: "Creator & Maintainer"
+  }
+];
 
 // Generated monthly contribution matrix for activity graph
 export const monthlyContributions = [

@@ -142,36 +142,6 @@ const totalProjects = featuredProjects.length;
     </div>
   </section>
 
-  <!-- Featured Projects & Applications -->
-  <section id="portfolio" class="section">
-    <div class="container">
-      <div class="section-header">
-        <div>
-          <h2 class="section-title">Featured Projects</h2>
-          <p class="section-subtitle">Full-stack applications, accessibility tools, and cloud platforms built by Shakir.</p>
-        </div>
-        <a href="/projects" class="view-all-link">View All Projects &rarr;</a>
-      </div>
-
-      <div class="portfolio-grid">
-        {featuredProjects.map(proj => (
-          <div class="glass-card project-card">
-            <div class="proj-header">
-              <span class="tag-badge">{proj.name}</span>
-            </div>
-            <h3>{proj.title}</h3>
-            <p>{proj.description}</p>
-            <div class="pill-group" style="margin-bottom: 1rem;">
-              {proj.techStack.map(tag => (
-                <span class="tech-tag">{tag}</span>
-              ))}
-            </div>
-            <a href={proj.articleUrl} target="_blank" rel="noopener" class="read-more">Read Technical Case Study &rarr;</a>
-          </div>
-        ))}
-      </div>
-    </div>
-  </section>
 
   <!-- Certifications & Recognition Matrix -->
   <section class="section bg-surface-blur">
