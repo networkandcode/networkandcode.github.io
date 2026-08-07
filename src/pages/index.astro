@@ -59,20 +59,25 @@ const totalAwards = awardsAndCertificates.length;
 const totalProjects = featuredProjects.length;
 ---
 
-<BaseLayout title="Shakir Ahmed Ibrahim | Solution Architect & Lead DevOps Engineer">
+<BaseLayout title="Shakir Ahmed Ibrahim | Cloud Architecture, AI Systems & Systems Engineering Portfolio">
   <!-- Hero Section -->
   <section class="hero-section">
     <div class="container">
-      <div class="hero-badge">👋 Solution Architect & Lead DevOps Engineer</div>
+      <div class="hero-badge">⚡ 15+ Years Multi-Domain Development & Systems Engineering</div>
       <h1 class="hero-title">
         Shakir Ahmed Ibrahim
       </h1>
       <p class="hero-subtitle">
-        Architecting resilient Cloud Infrastructure, Agentic AI Systems, Kubernetes Orchestration, and Observability Pipelines.
+        Architecting resilient Cloud Infrastructure, Agentic AI Systems, Kubernetes Orchestration, and Enterprise Observability Pipelines.
       </p>
 
       <!-- Key Impact Metrics Banner -->
       <div class="metrics-grid glass-card">
+        <div class="metric-item">
+          <span class="metric-num">15+ Yrs</span>
+          <span class="metric-label">Dev & Infra Exp</span>
+        </div>
+        <div class="metric-divider"></div>
         <div class="metric-item">
           <span class="metric-num">{githubProfileSummary.totalRepos}+</span>
           <span class="metric-label">Public Repos</span>
@@ -92,11 +97,6 @@ const totalProjects = featuredProjects.length;
           <span class="metric-num">{totalAwards}</span>
           <span class="metric-label">Honors & Awards</span>
         </div>
-        <div class="metric-divider"></div>
-        <div class="metric-item">
-          <span class="metric-num">{totalVideos}</span>
-          <span class="metric-label">Video Tutorials</span>
-        </div>
       </div>
 
       <div class="hero-actions">
@@ -109,22 +109,35 @@ const totalProjects = featuredProjects.length;
     </div>
   </section>
 
-  <!-- Core Competencies / Pillars -->
-  <section class="section">
+  <!-- Professional Development Experience Overview -->
+  <section class="section bg-surface-blur">
     <div class="container">
-      <div class="section-header text-center">
-        <h2 class="section-title">Core Technical Pillars</h2>
-        <p class="section-subtitle">Specialized domain expertise developed across enterprise cloud engineering and open-source contributions.</p>
-      </div>
-
-      <div class="pillars-grid">
-        {coreCompetencies.map(col => (
-          <div class="glass-card pillar-card">
-            <div class="pillar-icon">{col.icon}</div>
-            <h3 class="pillar-title">{col.title}</h3>
-            <p class="pillar-desc">{col.desc}</p>
+      <div class="glass-card exp-overview-card">
+        <div class="card-badge-header">💻 Development & Systems Engineering Journey</div>
+        <h2 class="card-block-title" style="margin-bottom: 0.75rem;">15+ Years Multi-Disciplinary Experience</h2>
+        <p class="exp-text">
+          Extensive hands-on engineering background spanning <strong>DevOps/SRE</strong>, <strong>Agentic AI & Generative Workflows</strong>, <strong>Fullstack Web Development</strong>, <strong>Network Automation</strong>, and <strong>Technical Team Leadership</strong> across global enterprise environments (UST, Mphasis, Juniper Networks, HCL).
+        </p>
+        <div class="exp-bullets">
+          <div class="exp-bullet-item">
+            <span class="bullet-icon">🤖</span>
+            <div>
+              <strong>Agentic AI & Microservices:</strong> Built conversational AI tools, RAG data analytics agents, Slack Remote MCP Servers, and cost-observability FinOps pipelines with Langfuse and AWS CDK.
+            </div>
           </div>
-        ))}
+          <div class="exp-bullet-item">
+            <span class="bullet-icon">☸️</span>
+            <div>
+              <strong>Cloud Native & Kubernetes:</strong> Deployed Confluent Kafka on K8s (CFK), Istio TLS pass-through, OpenTelemetry (OTEL) stacks, and 200+ reusable monitoring assets across EKS, GKE, and OpenShift.
+            </div>
+          </div>
+          <div class="exp-bullet-item">
+            <span class="bullet-icon">🚀</span>
+            <div>
+              <strong>Fullstack Web Apps & Automation:</strong> Developed Next.js, Appwrite, and HarperDB applications, Python automation tools, and CI/CD pipelines with Jenkins, Spinnaker, and GitHub Actions.
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -624,6 +637,36 @@ const totalProjects = featuredProjects.length;
   .read-more {
     font-size: 0.85rem;
     font-weight: 600;
+  }
+
+  .exp-overview-card {
+    padding: 2.25rem 2rem;
+  }
+
+  .exp-text {
+    font-size: 1.05rem;
+    color: var(--text-muted);
+    line-height: 1.65;
+    margin-bottom: 1.5rem;
+  }
+
+  .exp-bullets {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .exp-bullet-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.85rem;
+    font-size: 0.95rem;
+    line-height: 1.55;
+    color: var(--text-main);
+  }
+
+  .bullet-icon {
+    font-size: 1.25rem;
   }
 
   @media (max-width: 768px) {
