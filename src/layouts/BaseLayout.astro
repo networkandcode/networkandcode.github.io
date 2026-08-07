@@ -61,10 +61,17 @@ const navItems = [
           })}
         </nav>
 
-        <button id="theme-toggle-btn" class="theme-toggle-btn" aria-label="Toggle light and dark theme">
-          <span class="sun-icon">☀️</span>
-          <span class="moon-icon">🌙</span>
-        </button>
+        <div class="header-right">
+          <button id="mobile-menu-btn" class="mobile-menu-btn" aria-label="Toggle navigation menu">
+            <span class="hamburger-icon">☰</span>
+            <span class="close-icon">✕</span>
+          </button>
+
+          <button id="theme-toggle-btn" class="theme-toggle-btn" aria-label="Toggle light and dark theme">
+            <span class="sun-icon">☀️</span>
+            <span class="moon-icon">🌙</span>
+          </button>
+        </div>
       </div>
     </header>
 
@@ -80,6 +87,15 @@ const navItems = [
           const nextTheme = currentTheme === 'dark' ? 'light' : 'dark';
           document.documentElement.setAttribute('data-theme', nextTheme);
           localStorage.setItem('theme', nextTheme);
+        });
+      }
+
+      const menuBtn = document.getElementById('mobile-menu-btn');
+      const navLinks = document.querySelector('.nav-links');
+      if (menuBtn && navLinks) {
+        menuBtn.addEventListener('click', () => {
+          const isOpen = navLinks.classList.toggle('mobile-open');
+          menuBtn.classList.toggle('active', isOpen);
         });
       }
     </script>
@@ -104,6 +120,37 @@ const navItems = [
     justify-content: space-between;
     align-items: center;
   }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .mobile-menu-btn {
+    display: none;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-glass);
+    border-radius: 8px;
+    width: 36px;
+    height: 36px;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--text-main);
+    font-size: 1.1rem;
+    transition: all 0.2s ease;
+  }
+
+  [data-theme="light"] .mobile-menu-btn {
+    background: rgba(0, 0, 0, 0.05);
+  }
+
+  .hamburger-icon { display: block; }
+  .close-icon { display: none; }
+
+  .mobile-menu-btn.active .hamburger-icon { display: none; }
+  .mobile-menu-btn.active .close-icon { display: block; }
 
   .nav-links {
     display: flex;
@@ -188,15 +235,33 @@ const navItems = [
   }
 
   @media (max-width: 768px) {
-    .header-content {
-      gap: 0.75rem;
+    .mobile-menu-btn {
+      display: flex;
     }
+
     .nav-links {
-      gap: 0.25rem;
+      display: none;
+      width: 100%;
+      flex-direction: column;
+      gap: 0.4rem;
+      padding-top: 1rem;
+      margin-top: 0.75rem;
+      border-top: 1px solid var(--border-glass);
     }
+
+    .nav-links.mobile-open {
+      display: flex;
+    }
+
+    .header-content {
+      flex-wrap: wrap;
+    }
+
     .nav-links a {
-      font-size: 0.82rem;
-      padding: 0.3rem 0.6rem;
+      width: 100%;
+      text-align: left;
+      font-size: 0.95rem;
+      padding: 0.6rem 0.85rem;
     }
   }
 </style>
