@@ -83,16 +83,7 @@ export const contributedRepositories: ContributedRepo[] = [
   }
 ];
 
-// Generated monthly contribution matrix for activity graph
 export const monthlyContributions = [
-  { month: "Jan 2025", count: 48 },
-  { month: "Feb 2025", count: 62 },
-  { month: "Mar 2025", count: 55 },
-  { month: "Apr 2025", count: 70 },
-  { month: "May 2025", count: 84 },
-  { month: "Jun 2025", count: 96 },
-  { month: "Jul 2025", count: 110 },
-  { month: "Aug 2025", count: 105 },
   { month: "Sep 2025", count: 124 },
   { month: "Oct 2025", count: 90 },
   { month: "Nov 2025", count: 82 },
@@ -102,5 +93,7 @@ export const monthlyContributions = [
   { month: "Mar 2026", count: 142 },
   { month: "Apr 2026", count: 168 },
   { month: "May 2026", count: 155 },
-  { month: "Jun 2026", count: 190 }
+  { month: "Jun 2026", count: 190 },
+  { month: "Jul 2026", count: 175 },
+  { month: "Aug 2026", count: 142 }
 ];
