@@ -73,25 +73,25 @@ const totalProjects = featuredProjects.length;
 
       <!-- Key Impact Metrics Banner -->
       <div class="metrics-grid glass-card">
-        <div class="metric-item">
+        <a href="/blog" class="metric-item metric-link">
           <span class="metric-num">{totalPosts}</span>
           <span class="metric-label">Articles</span>
-        </div>
+        </a>
         <div class="metric-divider"></div>
-        <div class="metric-item">
+        <a href="/accreditations" class="metric-item metric-link">
           <span class="metric-num">{totalCerts}</span>
           <span class="metric-label">Certifications</span>
-        </div>
+        </a>
         <div class="metric-divider"></div>
-        <div class="metric-item">
+        <a href="/awards" class="metric-item metric-link">
           <span class="metric-num">{totalAwards}</span>
           <span class="metric-label">Awards</span>
-        </div>
+        </a>
         <div class="metric-divider"></div>
-        <div class="metric-item">
+        <a href="/videos" class="metric-item metric-link">
           <span class="metric-num">{totalVideos}</span>
           <span class="metric-label">Video Tutorials</span>
-        </div>
+        </a>
       </div>
 
       <div class="hero-actions">
@@ -194,6 +194,17 @@ const totalProjects = featuredProjects.length;
     display: flex;
     flex-direction: column;
     align-items: center;
+    text-decoration: none;
+    transition: transform 0.2s ease;
+  }
+
+  .metric-link:hover {
+    transform: translateY(-2px);
+  }
+
+  .metric-link:hover .metric-num {
+    color: var(--accent-indigo);
+    text-shadow: 0 0 12px var(--glow-indigo);
   }
 
   .metric-num {
