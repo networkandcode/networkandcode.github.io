@@ -1,6 +1,6 @@
 ---
-title: python > loops
-categories: python
+title: "python > loops"
+categories: "python"
 ---
 
 Loops are common in all programmings languages, they help in executing tasks that are recurring in nature. Lets look at these loops in Python with few examples. The prerequisites are: knowing how to Python code through the Interpreter or as a script in a file.

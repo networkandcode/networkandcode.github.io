@@ -1,6 +1,6 @@
 ---
-title: owasp juice shop >  run as container
-categories: owasp juice shop
+title: "owasp juice shop >  run as container"
+categories: "owasp juice shop"
 ---
 
 Let's run the juice shop as a docker container on our local system, you should have already 

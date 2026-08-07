@@ -1,6 +1,6 @@
 ---
-title: python >  errors and exceptions
-categories: python
+title: "python >  errors and exceptions"
+categories: "python"
 ---
 
 A Python program can break due to various types of Errors. We shall explore few of these errors in the post. To make best use of this post, you should know certain topics in Python3 such as datatypes, expression, pass statement, etc.

@@ -1,9 +1,9 @@
 ---
-canonical_url: https://dev.to/aws-builders/gcp-anthos-cluster-on-aws-19p8
-categories: anthos, aws, gcp, kubernetes
-date: 2022-10-08
-tags: anthos, aws, gcp, kubernetes
-title: GCP Anthos Cluster on AWS
+canonical_url: "https://dev.to/aws-builders/gcp-anthos-cluster-on-aws-19p8"
+categories: "anthos, aws, gcp, kubernetes"
+date: "2022-10-08"
+tags: "anthos, aws, gcp, kubernetes"
+title: "GCP Anthos Cluster on AWS"
 ---
 
 This post first appeared on [dev.to](https://dev.to/aws-builders/gcp-anthos-cluster-on-aws-19p8)

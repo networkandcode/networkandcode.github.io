@@ -1,6 +1,6 @@
 ---
-title: python > functions or methods
-categories: python
+title: "python > functions or methods"
+categories: "python"
 ---
 
 ### Topic

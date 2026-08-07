@@ -1,9 +1,9 @@
 ---
-canonical_url: https://dev.to/aws-builders/nextjs-deployment-via-aws-codecommit-amplify-6oj
-categories: amplify, aws, cicd, nextjs
-date: 2022-03-19
-tags: amplify, aws, cicd, nextjs
-title: NextJS deployment via AWS CodeCommit / Amplify
+canonical_url: "https://dev.to/aws-builders/nextjs-deployment-via-aws-codecommit-amplify-6oj"
+categories: "amplify, aws, cicd, nextjs"
+date: "2022-03-19"
+tags: "amplify, aws, cicd, nextjs"
+title: "NextJS deployment via AWS CodeCommit / Amplify"
 ---
 
 *This post first appeared on [dev.to](https://dev.to/aws-builders/nextjs-deployment-via-aws-codecommit-amplify-6oj/edit)*

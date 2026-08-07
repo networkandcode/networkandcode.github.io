@@ -1,6 +1,6 @@
 ---
-title: kubernetes >  retrieve container image inventory
-categories: kubernetes
+title: "kubernetes >  retrieve container image inventory"
+categories: "kubernetes"
 ---
 We would be using kubectl and then write some Python code to retrieve the list of images of containers 
 running in a GKE Kubernetes cluster. Some familiarity with YAML, Python, Kubectl and fundamentals of 

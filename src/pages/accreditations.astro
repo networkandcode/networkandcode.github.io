@@ -1,0 +1,151 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { accreditations } from '../data/accreditations';
+---
+
+<BaseLayout title="Accreditations & Certifications | networkandcode" description="Verified accreditations across Cloud, Machine Learning, Observability, and DevOps.">
+  <div class="container certs-page">
+    <header class="certs-header">
+      <div class="certs-badge">📜 Verified Credentials</div>
+      <h1 class="certs-title">Accreditations & Certifications</h1>
+      <p class="certs-subtitle">
+        Official industry certifications parsed directly from Google Doc credentials vault.
+      </p>
+
+      <div class="summary-banner glass-card">
+        <div>
+          <span class="banner-label">Credential Verification:</span>
+          <span>Includes Google Cloud ML Engineer, AWS Community Builder, Grafana Solution Architect, Neo4j, and GitHub certifications.</span>
+        </div>
+        <span class="count-badge">{accreditations.length} Verified Badges</span>
+      </div>
+    </header>
+
+    <div class="certs-grid">
+      {accreditations.map(item => (
+        <a href={item.badgeUrl} target="_blank" rel="noopener" class="glass-card cert-card">
+          <div class="cert-top">
+            <span class="tag-badge">{item.category}</span>
+            <span class="issuer-label">{item.issuer}</span>
+          </div>
+          <h2 class="cert-name">{item.name}</h2>
+          <div class="cert-bottom">
+            <span class="verify-link">Verify Credential &rarr;</span>
+          </div>
+        </a>
+      ))}
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .certs-page {
+    padding: 3rem 1.5rem;
+    max-width: 1000px;
+  }
+
+  .certs-header {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+
+  .certs-badge {
+    display: inline-block;
+    padding: 0.4rem 1rem;
+    border-radius: 9999px;
+    background: rgba(249, 115, 22, 0.15);
+    border: 1px solid rgba(249, 115, 22, 0.4);
+    color: var(--accent-orange);
+    font-weight: 600;
+    font-size: 0.85rem;
+    margin-bottom: 1rem;
+  }
+
+  .certs-title {
+    font-size: 2.75rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+  }
+
+  .certs-subtitle {
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    margin-bottom: 1.75rem;
+  }
+
+  .summary-banner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    font-size: 0.95rem;
+  }
+
+  .banner-label {
+    color: var(--accent-orange);
+    font-weight: 700;
+    margin-right: 0.5rem;
+  }
+
+  .count-badge {
+    background: rgba(251, 191, 36, 0.15);
+    color: var(--accent-amber);
+    border: 1px solid rgba(251, 191, 36, 0.3);
+    padding: 0.3rem 0.8rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .certs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .cert-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 1.25rem;
+    color: var(--text-main);
+  }
+
+  .cert-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .issuer-label {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--accent-amber);
+  }
+
+  .cert-name {
+    font-size: 1.2rem;
+    font-weight: 700;
+    line-height: 1.4;
+  }
+
+  .cert-bottom {
+    border-top: 1px solid var(--border-glass);
+    padding-top: 0.75rem;
+  }
+
+  .verify-link {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--accent-orange);
+  }
+
+  @media (max-width: 640px) {
+    .summary-banner {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.75rem;
+    }
+  }
+</style>

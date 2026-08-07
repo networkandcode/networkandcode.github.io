@@ -1,6 +1,6 @@
 ---
-title: kubernetes > add a user with tls
-categories: kubernetes
+title: "kubernetes > add a user with tls"
+categories: "kubernetes"
 ---
 
 In this exercise we would add an extra user to kubeconfig, that uses TLS for authentication. Its good to have some 

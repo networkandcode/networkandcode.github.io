@@ -1,9 +1,9 @@
 ---
-canonical_url: https://dev.to/aws-builders/serverless-backend-setup-for-a-todo-list-in-aws-189l
-categories: api, aws, lambda, serverless
-date: 2022-04-10
-tags: api, aws, lambda, serverless
-title: Serverless backend setup for a todo list in AWS
+canonical_url: "https://dev.to/aws-builders/serverless-backend-setup-for-a-todo-list-in-aws-189l"
+categories: "api, aws, lambda, serverless"
+date: "2022-04-10"
+tags: "api, aws, lambda, serverless"
+title: "Serverless backend setup for a todo list in AWS"
 ---
 
 *This post first appeared on [dev.to](https://dev.to/aws-builders/serverless-backend-setup-for-a-todo-list-in-aws-189l)

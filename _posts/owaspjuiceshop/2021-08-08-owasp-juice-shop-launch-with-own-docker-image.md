@@ -1,6 +1,6 @@
 ---
-title: owasp juice shop > launch with own docker image
-categories: owasp juice shop
+title: "owasp juice shop > launch with own docker image"
+categories: "owasp juice shop"
 ---
 
 There is already an offical docker image for the juice shop application at the repo 

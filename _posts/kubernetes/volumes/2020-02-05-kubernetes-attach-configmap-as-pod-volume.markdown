@@ -1,6 +1,6 @@
 ---
-title: kubernetes > attach config map as pod volume
-categories: kubernetes
+title: "kubernetes > attach config map as pod volume"
+categories: "kubernetes"
 ---
 
 We could create Pod volumes based on Config Maps and mount those into containers. It's good to have some understanding of Config Maps and Volumes to make most use of this post. 

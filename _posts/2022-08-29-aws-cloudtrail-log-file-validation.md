@@ -1,9 +1,9 @@
 ---
-canonical_url: https://dev.to/aws-builders/aws-cloudtrail-log-file-validation-1ehl
-categories: aws, cloudtrail, logging, s3
-date: 2022-08-29
-tags: aws, cloudtrail, logging, s3
-title: AWS CloudTrail log file validation
+canonical_url: "https://dev.to/aws-builders/aws-cloudtrail-log-file-validation-1ehl"
+categories: "aws, cloudtrail, logging, s3"
+date: "2022-08-29"
+tags: "aws, cloudtrail, logging, s3"
+title: "AWS CloudTrail log file validation"
 ---
 
 This post first appeared on [dev.to](https://dev.to/aws-builders/aws-cloudtrail-log-file-validation-1ehl)

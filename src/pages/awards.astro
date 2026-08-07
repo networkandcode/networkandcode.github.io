@@ -1,0 +1,159 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { awardsAndCertificates, DRIVE_FOLDER_URL } from '../data/certificates';
+---
+
+<BaseLayout title="Awards & Recognitions | networkandcode" description="Official awards, stellar recognitions, and achievement certificates.">
+  <div class="container certs-page">
+    <header class="certs-header">
+      <div class="certs-badge">🏆 Honors & Recognition</div>
+      <h1 class="certs-title">Awards & Certificates</h1>
+      <p class="certs-subtitle">
+        Parsed directly from the official verified Google Drive vault of performance, innovation, and leadership awards.
+      </p>
+
+      <div class="drive-banner glass-card">
+        <div>
+          <span class="drive-label">Google Drive Vault:</span>
+          <a href={DRIVE_FOLDER_URL} target="_blank" rel="noopener" class="drive-link">
+            Explore All 20+ PDF/PNG Certificates &rarr;
+          </a>
+        </div>
+        <span class="count-badge">{awardsAndCertificates.length} Awards Logged</span>
+      </div>
+    </header>
+
+    <div class="certs-grid">
+      {awardsAndCertificates.map(cert => (
+        <div class="glass-card cert-card">
+          <div class="cert-top">
+            <span class="tag-badge">{cert.category}</span>
+            <span class="cert-awarder">{cert.awarder}</span>
+          </div>
+          <h2 class="cert-name">{cert.title}</h2>
+          <div class="cert-bottom">
+            <span class="cert-date">📅 {cert.dateStr}</span>
+            <a href={DRIVE_FOLDER_URL} target="_blank" rel="noopener" class="view-cert-link">View File &rarr;</a>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .certs-page {
+    padding: 3rem 1.5rem;
+    max-width: 1000px;
+  }
+
+  .certs-header {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+
+  .certs-badge {
+    display: inline-block;
+    padding: 0.4rem 1rem;
+    border-radius: 9999px;
+    background: rgba(249, 115, 22, 0.15);
+    border: 1px solid rgba(249, 115, 22, 0.4);
+    color: var(--accent-orange);
+    font-weight: 600;
+    font-size: 0.85rem;
+    margin-bottom: 1rem;
+  }
+
+  .certs-title {
+    font-size: 2.75rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+  }
+
+  .certs-subtitle {
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    margin-bottom: 1.75rem;
+  }
+
+  .drive-banner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    font-size: 0.95rem;
+    margin-top: 1rem;
+  }
+
+  .drive-label {
+    color: var(--text-muted);
+    margin-right: 0.5rem;
+  }
+
+  .drive-link {
+    font-weight: 600;
+  }
+
+  .count-badge {
+    background: rgba(251, 191, 36, 0.15);
+    color: var(--accent-amber);
+    border: 1px solid rgba(251, 191, 36, 0.3);
+    padding: 0.3rem 0.8rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+
+  .certs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .cert-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .cert-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .cert-awarder {
+    font-weight: 700;
+    color: var(--accent-amber);
+    font-size: 0.9rem;
+  }
+
+  .cert-name {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-main);
+  }
+
+  .cert-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    border-top: 1px solid var(--border-glass);
+    padding-top: 0.75rem;
+  }
+
+  .view-cert-link {
+    font-weight: 600;
+  }
+
+  @media (max-width: 640px) {
+    .drive-banner {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.75rem;
+    }
+  }
+</style>

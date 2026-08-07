@@ -1,0 +1,305 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { githubProfileSummary, monthlyContributions } from '../data/githubStats';
+
+const maxContrib = Math.max(...monthlyContributions.map(m => m.count));
+---
+
+<BaseLayout title="GitHub Profile & Contributions | networkandcode" description="Detailed breakdown and contribution graph of GitHub activity and repositories.">
+  <div class="container github-page">
+    <header class="page-header">
+      <div class="header-badge">🐙 Open Source Activity</div>
+      <h1 class="page-title">GitHub Profile & Contributions</h1>
+      <p class="page-subtitle">
+        Summary of 64+ public repositories, open-source projects, AI/ML agents, and continuous contribution history.
+      </p>
+
+      <div class="github-action-banner glass-card">
+        <div>
+          <span class="banner-label">Official Profile:</span>
+          <a href="https://github.com/networkandcode" target="_blank" rel="noopener" class="profile-link">
+            github.com/networkandcode &rarr;
+          </a>
+        </div>
+        <span class="count-badge">{githubProfileSummary.totalRepos} Public Repositories</span>
+      </div>
+    </header>
+
+    <!-- Contribution Graph -->
+    <section class="section">
+      <div class="glass-card">
+        <h2 class="section-heading">Contribution Activity Graph (Recent Months)</h2>
+        <p class="subtext">Consistent commits across Cloud Native, Observability, and Agentic AI projects.</p>
+
+        <div class="graph-container">
+          {monthlyContributions.map(item => {
+            const heightPercent = Math.round((item.count / maxContrib) * 100);
+            return (
+              <div class="bar-col">
+                <div class="bar-tooltip">{item.count} commits</div>
+                <div class="bar-wrapper">
+                  <div class="bar" style={`height: ${heightPercent}%`}></div>
+                </div>
+                <span class="bar-label">{item.month.split(' ')[0]}</span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+
+    <!-- Language Breakdown & Category Distribution -->
+    <section class="section grid-split">
+      <div class="glass-card">
+        <h2 class="section-heading">Language Stack Breakdown</h2>
+        <div class="lang-list">
+          {githubProfileSummary.topLanguages.map(lang => (
+            <div class="lang-item">
+              <div class="lang-info">
+                <span class="lang-name">{lang.name}</span>
+                <span class="lang-percent">{lang.percentage}%</span>
+              </div>
+              <div class="progress-track">
+                <div class="progress-fill" style={`width: ${lang.percentage}%; background-color: ${lang.color}`}></div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div class="glass-card">
+        <h2 class="section-heading">Repository Categories</h2>
+        <ul class="cat-list">
+          {githubProfileSummary.categories.map(cat => (
+            <li class="cat-item">
+              <span class="cat-bullet">▹</span>
+              <span class="cat-name">{cat.name}</span>
+              <span class="cat-badge">{cat.count} repos</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .github-page {
+    padding: 3rem 1.5rem;
+    max-width: 1000px;
+  }
+
+  .page-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+  }
+
+  .header-badge {
+    display: inline-block;
+    padding: 0.4rem 1rem;
+    border-radius: 9999px;
+    background: rgba(249, 115, 22, 0.15);
+    border: 1px solid rgba(249, 115, 22, 0.4);
+    color: var(--accent-orange);
+    font-weight: 600;
+    font-size: 0.85rem;
+    margin-bottom: 1rem;
+  }
+
+  .page-title {
+    font-size: 2.75rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+  }
+
+  .page-subtitle {
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    margin-bottom: 1.75rem;
+  }
+
+  .github-action-banner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    font-size: 0.95rem;
+  }
+
+  .banner-label {
+    color: var(--text-muted);
+    margin-right: 0.5rem;
+  }
+
+  .profile-link {
+    font-weight: 700;
+  }
+
+  .count-badge {
+    background: rgba(251, 191, 36, 0.15);
+    color: var(--accent-amber);
+    border: 1px solid rgba(251, 191, 36, 0.3);
+    padding: 0.3rem 0.8rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+
+  .section {
+    margin-bottom: 2rem;
+  }
+
+  .section-heading {
+    font-size: 1.35rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: var(--text-main);
+  }
+
+  .subtext {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    margin-bottom: 1.75rem;
+  }
+
+  /* Contribution Graph Styling */
+  .graph-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    height: 180px;
+    padding-top: 2rem;
+    gap: 0.5rem;
+  }
+
+  .bar-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    height: 100%;
+    position: relative;
+  }
+
+  .bar-wrapper {
+    flex: 1;
+    width: 100%;
+    max-width: 24px;
+    display: flex;
+    align-items: flex-end;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  .bar {
+    width: 100%;
+    background: linear-gradient(to top, #ea580c, #f97316);
+    border-radius: 4px;
+    transition: height 0.4s ease;
+  }
+
+  .bar-col:hover .bar {
+    background: linear-gradient(to top, #f97316, #fbbf24);
+    box-shadow: 0 0 12px var(--glow-orange);
+  }
+
+  .bar-tooltip {
+    position: absolute;
+    top: -28px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-glass);
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    pointer-events: none;
+  }
+
+  .bar-col:hover .bar-tooltip {
+    opacity: 1;
+  }
+
+  .bar-label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-top: 0.5rem;
+  }
+
+  .grid-split {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .lang-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    margin-top: 1rem;
+  }
+
+  .lang-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.95rem;
+    font-weight: 500;
+    margin-bottom: 0.35rem;
+  }
+
+  .progress-track {
+    height: 8px;
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: 9999px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    border-radius: 9999px;
+  }
+
+  .cat-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+
+  .cat-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    font-size: 0.95rem;
+  }
+
+  .cat-bullet {
+    color: var(--accent-orange);
+    font-weight: bold;
+  }
+
+  .cat-name {
+    flex: 1;
+    color: #e2e8f0;
+  }
+
+  .cat-badge {
+    background: rgba(249, 115, 22, 0.1);
+    color: var(--accent-orange);
+    padding: 0.2rem 0.6rem;
+    border-radius: 6px;
+    font-size: 0.8rem;
+  }
+
+  @media (max-width: 640px) {
+    .github-action-banner {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.75rem;
+    }
+  }
+</style>

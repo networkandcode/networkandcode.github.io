@@ -1,6 +1,6 @@
 ---
-title: kubernetes > launch a cluster with kind
-categories: kind
+title: "kubernetes > launch a cluster with kind"
+categories: "kind"
 ---
 
 We can launch a cluster easily with kind on our Linux system. Lets see how to do it.

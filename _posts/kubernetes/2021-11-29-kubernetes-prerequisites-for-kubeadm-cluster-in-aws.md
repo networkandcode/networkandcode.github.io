@@ -1,6 +1,6 @@
 ---
-categories: kubernetes
-title: kubernetes > prerequisites for kubeadm cluster in aws
+categories: "kubernetes"
+title: "kubernetes > prerequisites for kubeadm cluster in aws"
 ---
 
 [kubeadm](https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/) is one of the popular tools used for bootstrapping kubernetes, here we would be setting up the [prerequisites](https://theithollow.com/2020/01/13/deploy-kubernetes-on-aws/) on AWS that are essential before launching the cluster.

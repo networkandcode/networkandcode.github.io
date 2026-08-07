@@ -1,6 +1,6 @@
 ---
-title: kubernetes > container probes
-categories: kubernetes
+title: "kubernetes > container probes"
+categories: "kubernetes"
 ---
 
 Kubelets runnig on nodes, can periodically probe containers that are launched on those nodes, and ensure the app is running as it is intended to. In this post we are going to see 2 such standard probes used in production environments, namely liveness and readiness probes, and the standard HttpGetAction handler these probes use, to peform period health checks on web apps.

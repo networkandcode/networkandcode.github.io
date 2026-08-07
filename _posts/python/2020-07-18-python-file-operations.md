@@ -1,6 +1,6 @@
 ---
-title: python > file operations
-categories: python
+title: "python > file operations"
+categories: "python"
 ---
 
 Python's inbuilt open function could be used to interact with the file system of the underlying operating system. Let's see more on this. You 

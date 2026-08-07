@@ -1,6 +1,6 @@
 ---
-title: kubernetes > about the cluster-admin cluster role binding
-categories: kubernetes
+title: "kubernetes > about the cluster-admin cluster role binding"
+categories: "kubernetes"
 ---
 
 When a cluster is launched with kubeadm, the kubeconfig is set to use the default 'kubernetes-admin' user that has 

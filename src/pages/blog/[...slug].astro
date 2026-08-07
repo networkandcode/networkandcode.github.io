@@ -1,0 +1,130 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  return posts.map((post) => {
+    const slug = post.id.replace(/\.(md|markdown|html)$/, '');
+    return {
+      params: { slug },
+      props: { post },
+    };
+  });
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+
+const title = post.data.title || post.id.split('/').pop()?.replace(/\.(md|markdown|html)$/, '').replaceAll('-', ' ') || 'Blog Post';
+---
+
+<BaseLayout title={`${title} | networkandcode`} description={`Read ${title} on networkandcode.`}>
+  <article class="container post-container">
+    <header class="post-header">
+      <div class="header-nav">
+        <a href="/blog" class="back-link">&larr; Back to all blogs</a>
+      </div>
+      <h1 class="post-main-title">{title}</h1>
+      {post.data.date && <time class="post-pub-date">{String(post.data.date).slice(0, 10)}</time>}
+    </header>
+
+    <div class="glass-card post-body">
+      <Content />
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .post-container {
+    padding: 3rem 1.5rem;
+    max-width: 840px;
+  }
+
+  .post-header {
+    margin-bottom: 2rem;
+  }
+
+  .back-link {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+    display: inline-block;
+  }
+
+  .post-main-title {
+    font-size: 2.25rem;
+    font-weight: 800;
+    line-height: 1.3;
+    margin-top: 0.5rem;
+  }
+
+  .post-pub-date {
+    display: block;
+    margin-top: 0.5rem;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+  }
+
+  .post-body {
+    line-height: 1.8;
+    color: #e2e8f0;
+    font-size: 1.05rem;
+  }
+
+  /* Styling for Markdown content rendered inside post-body */
+  .post-body :global(h1),
+  .post-body :global(h2),
+  .post-body :global(h3) {
+    color: var(--text-main);
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    font-weight: 700;
+  }
+
+  .post-body :global(h2) {
+    font-size: 1.5rem;
+    border-bottom: 1px solid var(--border-glass);
+    padding-bottom: 0.5rem;
+  }
+
+  .post-body :global(p) {
+    margin-bottom: 1.25rem;
+  }
+
+  .post-body :global(code) {
+    font-family: var(--font-mono);
+    background: rgba(15, 23, 42, 0.8);
+    padding: 0.2rem 0.4rem;
+    border-radius: 6px;
+    font-size: 0.9em;
+    color: var(--accent-cyan);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .post-body :global(pre) {
+    background: #0f172a !important;
+    padding: 1.25rem;
+    border-radius: 12px;
+    overflow-x: auto;
+    margin: 1.5rem 0;
+    border: 1px solid var(--border-glass);
+  }
+
+  .post-body :global(pre code) {
+    background: transparent;
+    padding: 0;
+    color: inherit;
+    border: none;
+  }
+
+  .post-body :global(ul), .post-body :global(ol) {
+    margin-left: 1.5rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .post-body :global(li) {
+    margin-bottom: 0.4rem;
+  }
+</style>

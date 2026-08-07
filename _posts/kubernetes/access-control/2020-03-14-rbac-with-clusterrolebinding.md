@@ -1,6 +1,6 @@
 ---
-title: kubernetes > rbac with clusterrolebinding
-categories: kubernetes
+title: "kubernetes > rbac with clusterrolebinding"
+categories: "kubernetes"
 ---
 
 A cluster role binding could be used to bind a user with a cluster role which is bound to a cluster irrespective of 

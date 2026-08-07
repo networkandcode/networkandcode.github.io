@@ -1,10 +1,10 @@
 ---
-canonical_url: https://dev.to/networkandcode/query-harperdbs-rest-api-via-apollo-graphql-21n1
-date: 2023-02-17
-title: Query HarperDB's REST API via Apollo GraphQL
-categories: apolloserver, graphql, harperdb, rest
-cover_image: https://source.unsplash.com/featured/?coding
-tags: apolloserver, graphql, harperdb, rest
+canonical_url: "https://dev.to/networkandcode/query-harperdbs-rest-api-via-apollo-graphql-21n1"
+date: "2023-02-17"
+title: "Query HarperDB's REST API via Apollo GraphQL"
+categories: "apolloserver, graphql, harperdb, rest"
+cover_image: "https://source.unsplash.com/featured/?coding"
+tags: "apolloserver, graphql, harperdb, rest"
 ---
 
 **This post first appeared on [dev.to](https://dev.to/networkandcode/query-harperdbs-rest-api-via-apollo-graphql-21n1)

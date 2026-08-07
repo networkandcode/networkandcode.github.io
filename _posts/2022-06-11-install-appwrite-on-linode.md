@@ -1,9 +1,9 @@
 ---
-canonical_url: https://networkandcode.hashnode.dev/install-appwrite-on-linode
-categories: appwrite, docker, linode, linux
-date: 2022-06-11
-tags: appwrite, docker, linode, linux
-title: Install Appwrite on Linode
+canonical_url: "https://networkandcode.hashnode.dev/install-appwrite-on-linode"
+categories: "appwrite, docker, linode, linux"
+date: "2022-06-11"
+tags: "appwrite, docker, linode, linux"
+title: "Install Appwrite on Linode"
 ---
 
 *This post first appeared on [hashnode.dev](https://networkandcode.hashnode.dev/install-appwrite-on-linode)*

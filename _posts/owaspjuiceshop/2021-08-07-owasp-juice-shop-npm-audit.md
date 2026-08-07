@@ -1,6 +1,6 @@
 ---
-title: owasp juice shop > npm audit
-categories: owasp juice shop
+title: "owasp juice shop > npm audit"
+categories: "owasp juice shop"
 ---
 In this post, we will audit the OWASP juice shop app with npm. You should have already cloned the juice 
 shop code and installed the modules with NPM. Some familiarity with jq for filtering json is assumed.

@@ -1,9 +1,9 @@
 ---
-canonical_url: https://dev.to/networkandcode/harperdb-helm-chart-on-artifact-hub-3066
-categories: eks, harperdb, helm, kubernetes
-date: 2023-02-03
-tags: eks, harperdb, helm, kubernetes
-title: HarperDB Helm chart on Artifact Hub
+canonical_url: "https://dev.to/networkandcode/harperdb-helm-chart-on-artifact-hub-3066"
+categories: "eks, harperdb, helm, kubernetes"
+date: "2023-02-03"
+tags: "eks, harperdb, helm, kubernetes"
+title: "HarperDB Helm chart on Artifact Hub"
 ---
 
 This post first appeared on [dev.to](https://dev.to/networkandcode/harperdb-helm-chart-on-artifact-hub-3066)

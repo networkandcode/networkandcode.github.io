@@ -1,0 +1,189 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { youtubeVideos, YOUTUBE_CHANNEL_URL } from '../data/videos';
+---
+
+<BaseLayout title="YouTube Video Tutorials | networkandcode (@kubetrain)" description="Watch Kubernetes, Agentic AI, OpenTelemetry, and Docker video guides.">
+  <div class="container videos-page">
+    <header class="videos-header">
+      <div class="videos-badge">▶ YouTube Channel Tutorials</div>
+      <h1 class="videos-title">Video Tutorials & Guides</h1>
+      <p class="videos-subtitle">
+        Hands-on technical video guides covering Agentic AI, Kubernetes internals, OpenTelemetry, and Cloud Native DevOps.
+      </p>
+
+      <div class="yt-banner glass-card">
+        <div>
+          <span class="yt-label">YouTube Channel:</span>
+          <a href={YOUTUBE_CHANNEL_URL} target="_blank" rel="noopener" class="yt-link">
+            youtube.com/@kubetrain &rarr;
+          </a>
+        </div>
+        <span class="count-badge">{youtubeVideos.length} Video Tutorials</span>
+      </div>
+    </header>
+
+    <div class="videos-grid">
+      {youtubeVideos.map(video => (
+        <a href={video.url} target="_blank" rel="noopener" class="glass-card video-card">
+          <div class="thumb-container">
+            <img src={video.thumbnail} alt={video.title} loading="lazy" />
+            <div class="play-overlay">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M8 5v14l11-7z"/>
+              </svg>
+            </div>
+          </div>
+          <div class="video-info">
+            <span class="tag-badge">{video.category}</span>
+            <h2 class="video-title">{video.title}</h2>
+            <span class="watch-link">Watch on YouTube &rarr;</span>
+          </div>
+        </a>
+      ))}
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .videos-page {
+    padding: 3rem 1.5rem;
+    max-width: 1100px;
+  }
+
+  .videos-header {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+
+  .videos-badge {
+    display: inline-block;
+    padding: 0.4rem 1rem;
+    border-radius: 9999px;
+    background: rgba(249, 115, 22, 0.15);
+    border: 1px solid rgba(249, 115, 22, 0.4);
+    color: var(--accent-orange);
+    font-weight: 600;
+    font-size: 0.85rem;
+    margin-bottom: 1rem;
+  }
+
+  .videos-title {
+    font-size: 2.75rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+  }
+
+  .videos-subtitle {
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    margin-bottom: 1.75rem;
+  }
+
+  .yt-banner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    font-size: 0.95rem;
+  }
+
+  .yt-label {
+    color: var(--text-muted);
+    margin-right: 0.5rem;
+  }
+
+  .yt-link {
+    font-weight: 700;
+  }
+
+  .count-badge {
+    background: rgba(251, 191, 36, 0.15);
+    color: var(--accent-amber);
+    border: 1px solid rgba(251, 191, 36, 0.3);
+    padding: 0.3rem 0.8rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+
+  .videos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .video-card {
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    overflow: hidden;
+    color: var(--text-main);
+  }
+
+  .thumb-container {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background: #000;
+    overflow: hidden;
+  }
+
+  .thumb-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+
+  .video-card:hover .thumb-container img {
+    transform: scale(1.05);
+  }
+
+  .play-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.4);
+    color: #ffffff;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .video-card:hover .play-overlay {
+    opacity: 1;
+    color: var(--accent-orange);
+  }
+
+  .video-info {
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    flex: 1;
+    justify-content: space-between;
+  }
+
+  .video-title {
+    font-size: 1.05rem;
+    font-weight: 600;
+    line-height: 1.4;
+    color: #f1f5f9;
+  }
+
+  .watch-link {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--accent-orange);
+  }
+
+  @media (max-width: 640px) {
+    .yt-banner {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.75rem;
+    }
+  }
+</style>

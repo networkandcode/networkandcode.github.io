@@ -1,6 +1,6 @@
 ---
-title: owasp juice shop > scan container with trivy
-categories: owasp juice shop
+title: "owasp juice shop > scan container with trivy"
+categories: "owasp juice shop"
 ---
 
 In this post, we would be using an opensource container scanning tool called Trivy, developed by 

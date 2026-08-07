@@ -1,6 +1,6 @@
 ---
-title: kubernetes > add a kubectl user with token
-categories: kubernetes
+title: "kubernetes > add a kubectl user with token"
+categories: "kubernetes"
 ---
 
 We are going to see how to add an extra kubectl user. 

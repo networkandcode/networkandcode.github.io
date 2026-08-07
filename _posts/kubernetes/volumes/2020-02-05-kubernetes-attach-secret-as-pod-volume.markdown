@@ -1,8 +1,8 @@
 ---
-layout: page
+layout: "page"
 title: "kubernetes > attach secret as pod volume"
-date: 2020-02-05 
-categories: kubernetes
+date: "2020-02-05"
+categories: "kubernetes"
 ---
 
 We could create Pod volumes based on Secrets and mount those into containers. It's good to have some understanding of Secrets and Volumes to make most use of this post.

@@ -1,6 +1,6 @@
 ---
-title: owasp juice shop > run the app locally
-categories: owasp juice shop
+title: "owasp juice shop > run the app locally"
+categories: "owasp juice shop"
 ---
 
 OWASP juice shop is an open source AngularJS application developed with known vulnerabilities 

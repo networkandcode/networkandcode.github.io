@@ -1,6 +1,6 @@
 ---
-title: kubernetes > configure hard node affinity
-categories: kubernetes
+title: "kubernetes > configure hard node affinity"
+categories: "kubernetes"
 ---
 
 We are going to see how to specify hard requirements for Pod(s) to select a Node using ```spec.affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution```. With this the Pods could be only launched on the Node(s) that matches with the configuration

@@ -1,11 +1,10 @@
 ---
-canonical_url: https://dev.to/aws-builders/send-messages-from-aws-iot-to-influxdb-via-native-mqtt-subscription-3366
-categories: aws, influxdb, iot, mqtt
-cover_image: 
-https://images.unsplash.com/photo-1545259741-2ea3ebf61fa3?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80
-date: 2022-11-20
-tags: aws, influxdb, iot, mqtt
-title: Subscribe to AWS IoT topic on InfluxDB
+canonical_url: "https://dev.to/aws-builders/send-messages-from-aws-iot-to-influxdb-via-native-mqtt-subscription-3366"
+categories: "aws, influxdb, iot, mqtt"
+cover_image: "https://images.unsplash.com/photo-1545259741-2ea3ebf61fa3?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80"
+date: "2022-11-20"
+tags: "aws, influxdb, iot, mqtt"
+title: "Subscribe to AWS IoT topic on InfluxDB"
 ---
 
 This post first appeared on [dev.to](https://dev.to/aws-builders/harperdb-on-eks-1bcb)

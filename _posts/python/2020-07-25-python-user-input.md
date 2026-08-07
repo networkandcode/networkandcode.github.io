@@ -1,6 +1,6 @@
 ---
-title: python > user input
-categories: python
+title: "python > user input"
+categories: "python"
 ---
 
 Sometimes its necessary to take some input from the user and pass it to 

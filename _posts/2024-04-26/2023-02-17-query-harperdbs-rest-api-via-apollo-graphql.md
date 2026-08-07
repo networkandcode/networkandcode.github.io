@@ -1,10 +1,10 @@
 ---
-canonical_url: https://dev.to/aws-builders/tracing-demo-with-aws-x-ray-and-grafana-1pb5
-date: 2024-04-26
-title: OTEL Tracing demo with AWS X-Ray and Grafana
-categories: aws, grafana, otel, xray
-cover_image: https://source.unsplash.com/featured?trace
-tags: aws, grafana, kubernetes, otel
+canonical_url: "https://dev.to/aws-builders/tracing-demo-with-aws-x-ray-and-grafana-1pb5"
+date: "2024-04-26"
+title: "OTEL Tracing demo with AWS X-Ray and Grafana"
+categories: "aws, grafana, otel, xray"
+cover_image: "https://source.unsplash.com/featured?trace"
+tags: "aws, grafana, kubernetes, otel"
 ---
 
 **This post first appeared on [dev.to](https://dev.to/aws-builders/tracing-demo-with-aws-x-ray-and-grafana-1pb5)**

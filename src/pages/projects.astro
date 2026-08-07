@@ -1,0 +1,187 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { featuredProjects } from '../data/projects';
+---
+
+<BaseLayout title="Projects & Applications | Shakir Ahmed Ibrahim" description="Web applications, serverless tools, and open-source projects built by Shakir Ahmed Ibrahim.">
+  <div class="container projects-page">
+    <header class="page-header">
+      <div class="header-badge">🚀 Built Applications</div>
+      <h1 class="page-title">Featured Projects</h1>
+      <p class="page-subtitle">
+        Hands-on web applications, accessibility tools, and full-stack projects parsed directly from official credentials.
+      </p>
+
+      <div class="summary-banner glass-card">
+        <div>
+          <span class="banner-label">Parsed CV Projects:</span>
+          <span>BrailleBoard, CricScore, Notes App, School Admin System, and Online Shop.</span>
+        </div>
+        <span class="count-badge">{featuredProjects.length} Built Projects</span>
+      </div>
+    </header>
+
+    <div class="projects-grid">
+      {featuredProjects.map(proj => (
+        <div class="glass-card project-card">
+          <div class="card-top">
+            <span class="tag-badge">{proj.name}</span>
+            <div class="pill-group">
+              {proj.techStack.map(tech => (
+                <span class="tech-pill">{tech}</span>
+              ))}
+            </div>
+          </div>
+          <h2 class="project-title">{proj.title}</h2>
+          <p class="project-desc">{proj.description}</p>
+          <div class="card-bottom">
+            <a href={proj.articleUrl} target="_blank" rel="noopener" class="btn btn-primary btn-sm">
+              Read Technical Case Study &rarr;
+            </a>
+            {proj.repoUrl && (
+              <a href={proj.repoUrl} target="_blank" rel="noopener" class="repo-link">
+                Source Code &rarr;
+              </a>
+            )}
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .projects-page {
+    padding: 3rem 1.5rem;
+    max-width: 1050px;
+  }
+
+  .page-header {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+
+  .header-badge {
+    display: inline-block;
+    padding: 0.4rem 1rem;
+    border-radius: 9999px;
+    background: rgba(56, 189, 248, 0.12);
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    color: var(--accent-blue);
+    font-weight: 600;
+    font-size: 0.85rem;
+    margin-bottom: 1rem;
+  }
+
+  .page-title {
+    font-size: 2.75rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+  }
+
+  .page-subtitle {
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    margin-bottom: 1.75rem;
+  }
+
+  .summary-banner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    font-size: 0.95rem;
+  }
+
+  .banner-label {
+    color: var(--accent-blue);
+    font-weight: 700;
+    margin-right: 0.5rem;
+  }
+
+  .count-badge {
+    background: rgba(129, 140, 248, 0.15);
+    color: var(--accent-indigo);
+    border: 1px solid rgba(129, 140, 248, 0.3);
+    padding: 0.3rem 0.8rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .project-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 1.25rem;
+  }
+
+  .card-top {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .pill-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .tech-pill {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 6px;
+    border: 1px solid var(--border-glass);
+  }
+
+  .project-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    line-height: 1.35;
+    color: var(--text-main);
+  }
+
+  .project-desc {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+
+  .card-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid var(--border-glass);
+    padding-top: 1rem;
+
+  }
+
+  .btn-sm {
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+  }
+
+  .repo-link {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--accent-indigo);
+  }
+
+  @media (max-width: 640px) {
+    .summary-banner {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.75rem;
+    }
+  }
+</style>

@@ -1,5 +1,5 @@
 ---
-title: python > define network configuration in yaml
-categories: python
+title: "python > define network configuration in yaml"
+categories: "python"
 ---
 

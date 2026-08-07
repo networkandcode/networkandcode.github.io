@@ -1,8 +1,8 @@
 ---
-layout: page
+layout: "page"
 title: "kubernetes > launch a cluster with kubeadm and gcloud shell"
-date: 2020-02-13 07:56:00 +0530
-categories: kubernetes gcp
+date: "2020-02-13 07:56:00 +0530"
+categories: "kubernetes gcp"
 ---
 
 Task: Create a Kubernetes cluster using VMs with kubeadm, not GKE

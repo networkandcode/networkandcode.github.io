@@ -1,9 +1,9 @@
 ---
-canonical_url: https://dev.to/networkandcode/harperdb-with-anthos-on-gke-2nef
-categories: anthos, gke, harperdb, kubernetes
-date: 2023-01-18
-tags: anthos, gke, harperdb, kubernetes
-title: HarperDB with Anthos on GKE
+canonical_url: "https://dev.to/networkandcode/harperdb-with-anthos-on-gke-2nef"
+categories: "anthos, gke, harperdb, kubernetes"
+date: "2023-01-18"
+tags: "anthos, gke, harperdb, kubernetes"
+title: "HarperDB with Anthos on GKE"
 ---
 
 This post first appeared on [dev.to](https://dev.to/networkandcode/harperdb-with-anthos-on-gke-2nef)

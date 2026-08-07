@@ -1,9 +1,9 @@
 ---
-date: 2022-06-26
-canonical_url: https://networkandcode.hashnode.dev/school-admin-app-with-nextjs-on-linode
-categories: linode, nextjs, tailwindcss, typescript
-tags: linode, nextjs, tailwindcss, typescript
-title: School admin app with NextJS on Linode
+date: "2022-06-26"
+canonical_url: "https://networkandcode.hashnode.dev/school-admin-app-with-nextjs-on-linode"
+categories: "linode, nextjs, tailwindcss, typescript"
+tags: "linode, nextjs, tailwindcss, typescript"
+title: "School admin app with NextJS on Linode"
 ---
 
 *This post first appeared on [hashnode.dev](https://networkandcode.hashnode.dev/school-admin-app-with-nextjs-on-linode)*

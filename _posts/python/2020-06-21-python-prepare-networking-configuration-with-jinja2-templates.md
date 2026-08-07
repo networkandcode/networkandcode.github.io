@@ -1,6 +1,6 @@
 ---
-categories: python
-title: python > prepare networking configuration with jinja2 templates
+categories: "python"
+title: "python > prepare networking configuration with jinja2 templates"
 ---
 ### Topic
 Jinja2 is a templating language used within Python, and we are going to 

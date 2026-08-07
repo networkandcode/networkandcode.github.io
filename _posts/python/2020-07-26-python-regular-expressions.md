@@ -1,6 +1,6 @@
 ---
-title: python > regular expressions
-categories: python
+title: "python > regular expressions"
+categories: "python"
 ---
 
 Let's learn some bits of regular expression here, hope you are already familiar with strings in Python.

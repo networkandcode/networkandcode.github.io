@@ -1,6 +1,6 @@
 ---
-title: python > lists, tuples, and sets
-categories: python
+title: "python > lists, tuples, and sets"
+categories: "python"
 ---
 
 A comparitive study of Lists, Tuples, and Sets should help in better understanding of these objects as they look kind 

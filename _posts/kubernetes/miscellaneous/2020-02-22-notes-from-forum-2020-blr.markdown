@@ -1,6 +1,6 @@
 ---
-title: kubernetes > notes from forum 2020 in bangalore, india
-categories: kubernetes
+title: "kubernetes > notes from forum 2020 in bangalore, india"
+categories: "kubernetes"
 ---
 
 I had the privilege of getting sponsored by the company for attending the Kubernetes forum 2020 in Bangalore, India. I wanted 

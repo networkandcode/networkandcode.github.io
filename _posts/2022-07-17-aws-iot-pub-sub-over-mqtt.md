@@ -1,10 +1,10 @@
 ---
-canonical_url: https://dev.to/aws-builders/aws-iot-pubsub-over-mqtt-1oig
-categories: aws, ios, python, mqtt
-cover_image: https://source.unsplash.com/featured/?device
-date: 2022-07-17
-tags: aws, ios, python, mqtt
-title: AWS IoT pub/sub over MQTT
+canonical_url: "https://dev.to/aws-builders/aws-iot-pubsub-over-mqtt-1oig"
+categories: "aws, ios, python, mqtt"
+cover_image: "https://source.unsplash.com/featured/?device"
+date: "2022-07-17"
+tags: "aws, ios, python, mqtt"
+title: "AWS IoT pub/sub over MQTT"
 ---
 
 *This post first appeared on [dev.to](https://dev.to/aws-builders/aws-iot-pubsub-over-mqtt-1oig)*

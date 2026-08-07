@@ -1,6 +1,6 @@
 ---
-title: python > string methods and functions
-categories: python
+title: "python > string methods and functions"
+categories: "python"
 ---
 
 Strings are one of the most used datatypes, and some practice on string 

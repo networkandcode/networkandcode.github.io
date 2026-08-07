@@ -1,6 +1,6 @@
 ---
-title: python > dictionaries
-categories: python
+title: "python > dictionaries"
+categories: "python"
 ---
 Dictionaries are datastructure objects that can store information in a key value pair format, in this post, we will explore some information about 
 dictionaries and their associated methods. The prerequisites are knowledge of boolean, exceptions, float, integers, methods, strings, etc.

@@ -1,6 +1,6 @@
 ---
-title: owasp juice shop > run as kubernetes service
-categories: owasp juice shop
+title: "owasp juice shop > run as kubernetes service"
+categories: "owasp juice shop"
 ---
 
 Hello, we shall run the OWASP juice shop as a deployment, and expose it as a service in a local 

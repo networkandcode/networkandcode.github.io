@@ -1,6 +1,6 @@
 ---
-title: aws iam > setup user via cli
-categories: aws
+title: "aws iam > setup user via cli"
+categories: "aws"
 ---
 
 Hey all, :wave: we shall see the following in this post: :scroll:

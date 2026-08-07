@@ -1,6 +1,6 @@
 ---
-title: kubernetes > modify kubelet config
-categories: kubernetes
+title: "kubernetes > modify kubelet config"
+categories: "kubernetes"
 ---
 
 We are going to see, some overview of kubelet and its config. The prerequisites are to have basic understanding of kubeadm, kubeconfig and jsonpath.

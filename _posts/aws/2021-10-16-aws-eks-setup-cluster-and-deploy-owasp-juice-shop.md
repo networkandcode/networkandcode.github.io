@@ -1,6 +1,6 @@
 ---
-categories: aws eks
-title: aws eks > setup cluster and deploy owasp juice shop
+categories: "aws eks"
+title: "aws eks > setup cluster and deploy owasp juice shop"
 ---
 
 Let's setup an EKS cluster and then install the 

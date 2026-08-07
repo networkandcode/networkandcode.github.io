@@ -1,9 +1,9 @@
 ---
-canonical_url: https://networkandcode.hashnode.dev/online-shop-with-nextjs-and-harperdb
-categories: harperdb, material-ui, nextjs, stripe
-date: 2021-06-30
-tags: harperdb, material-ui, nextjs, stripe
-title: Online shop with NextJS and HarperDB
+canonical_url: "https://networkandcode.hashnode.dev/online-shop-with-nextjs-and-harperdb"
+categories: "harperdb, material-ui, nextjs, stripe"
+date: "2021-06-30"
+tags: "harperdb, material-ui, nextjs, stripe"
+title: "Online shop with NextJS and HarperDB"
 ---
 
 *This post appeared on [hashnode.dev](https://networkandcode.hashnode.dev/online-shop-with-nextjs-and-harperdb)*

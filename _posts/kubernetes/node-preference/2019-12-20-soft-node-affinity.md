@@ -1,6 +1,6 @@
 ---
-title: kubernetes > configure soft node affinity
-categories: kubernetes
+title: "kubernetes > configure soft node affinity"
+categories: "kubernetes"
 ---
 
 The Node Affinity feature we are going to see here helps the Pod(s) to prefer launching on Node(s) of choice, the associated section in the Pod manifest is ```spec.affinity.nodeAffinity.preferredDuringSchedulingIgnoredDuringExecution```

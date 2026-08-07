@@ -1,7 +1,7 @@
 ---
-title: python > classes and instances
-categories: python
-...
+title: "python > classes and instances"
+categories: "python"
+---
 
 We are going to see some object oriented programming here. 
 Its nice to have fundamental understanding of Python functions or methods, datatypes for better understanding of this post.

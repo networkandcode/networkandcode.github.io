@@ -1,6 +1,6 @@
 ---
-title: python > import modules
-categories: python
+title: "python > import modules"
+categories: "python"
 ---
 
 There could be tasks that we intend to perform in Python, which are not doable straightway by a builtin function or class method, we would have to import specific 

@@ -1,9 +1,9 @@
 ---
-canonical_url: https://dev.to/aws-builders/harperdb-on-eks-1bcb
-categories: aws, eks, harperdb, kubernetes
-date: 2023-01-09
-tags: aws, eks, harperdb, kubernetes
-title: HarperDB on EKS
+canonical_url: "https://dev.to/aws-builders/harperdb-on-eks-1bcb"
+categories: "aws, eks, harperdb, kubernetes"
+date: "2023-01-09"
+tags: "aws, eks, harperdb, kubernetes"
+title: "HarperDB on EKS"
 ---
 
 This post first appeared on [dev.to](https://dev.to/aws-builders/harperdb-on-eks-1bcb)

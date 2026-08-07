@@ -1,6 +1,6 @@
 ---
-title: kubernetes > set user and group with security context
-categories: kubernetes
+title: "kubernetes > set user and group with security context"
+categories: "kubernetes"
 ---
 
 We are going to enhance security in a running container with the use of security context, by setting the user and group for running processes and filesystem in the container.

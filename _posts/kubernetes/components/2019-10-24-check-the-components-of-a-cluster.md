@@ -1,6 +1,6 @@
 ---
-title: kubernetes > check the components of a cluster
-categories: kubernetes
+title: "kubernetes > check the components of a cluster"
+categories: "kubernetes"
 ---
 
 We are going to see the installed components of a Kubernetes cluster

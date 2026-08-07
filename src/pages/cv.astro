@@ -1,0 +1,123 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import cvData from '../data/cv.json';
+
+const { updatedAt, url } = cvData;
+---
+
+<BaseLayout title="Curriculum Vitae | Shakir Ahmed Ibrahim" description="Official Curriculum Vitae link and live Google Doc document.">
+  <div class="container cv-page">
+    <header class="cv-header">
+      <div class="cv-badge">📄 Official Curriculum Vitae</div>
+      <h1 class="cv-title">Curriculum Vitae</h1>
+      <p class="cv-subtitle">
+        Access the live, auto-updated Google Doc document for Shakir Ahmed Ibrahim.
+      </p>
+    </header>
+
+    <main class="cv-card glass-card">
+      <div class="cv-icon">
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+          <polyline points="14 2 14 8 20 8"></polyline>
+          <line x1="16" y1="13" x2="8" y2="13"></line>
+          <line x1="16" y1="17" x2="8" y2="17"></line>
+          <polyline points="10 9 9 9 8 9"></polyline>
+        </svg>
+      </div>
+
+      <div class="cv-info">
+        <h2>Live Google Doc Resume</h2>
+        <p>Maintained live and synced with real-time updates.</p>
+        <span class="meta-date">Last Synced: {new Date(updatedAt).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' })}</span>
+      </div>
+
+      <div class="cv-actions">
+        <a href={url} target="_blank" rel="noopener" class="btn btn-primary btn-lg">
+          Open Official Google Doc CV &rarr;
+        </a>
+      </div>
+    </main>
+  </div>
+</BaseLayout>
+
+<style>
+  .cv-page {
+    padding: 4rem 1.5rem;
+    max-width: 720px;
+  }
+
+  .cv-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+  }
+
+  .cv-badge {
+    display: inline-block;
+    padding: 0.4rem 1rem;
+    border-radius: 9999px;
+    background: rgba(56, 189, 248, 0.12);
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    color: var(--accent-blue);
+    font-weight: 600;
+    font-size: 0.85rem;
+    margin-bottom: 1rem;
+  }
+
+  .cv-title {
+    font-size: 2.75rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+  }
+
+  .cv-subtitle {
+    color: var(--text-muted);
+    font-size: 1.1rem;
+  }
+
+  .cv-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 3.5rem 2rem;
+    gap: 1.5rem;
+  }
+
+  .cv-icon {
+    color: var(--accent-blue);
+    background: rgba(56, 189, 248, 0.1);
+    padding: 1.25rem;
+    border-radius: 20px;
+    border: 1px solid rgba(56, 189, 248, 0.25);
+  }
+
+  .cv-info h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+
+  .cv-info p {
+    color: var(--text-muted);
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .meta-date {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--accent-indigo);
+    font-weight: 500;
+  }
+
+  .cv-actions {
+    margin-top: 1rem;
+  }
+
+  .btn-lg {
+    padding: 0.9rem 2.25rem;
+    font-size: 1.05rem;
+    border-radius: 12px;
+  }
+</style>

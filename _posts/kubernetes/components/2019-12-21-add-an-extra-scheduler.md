@@ -1,6 +1,6 @@
 ---
-title: kubernetes > add an extra scheduler
-categories: kubernetes
+title: "kubernetes > add an extra scheduler"
+categories: "kubernetes"
 ---
 The kube-scheduler is responsible for scheduling Pods on Nodes, i.e. it would assign Pods to available Nodes, however it is not responsible for running the Pods, which is kubelet's job. A cluster needs to have atleast one scheduler, and its also possible to run multiple schedulers based on the need
 

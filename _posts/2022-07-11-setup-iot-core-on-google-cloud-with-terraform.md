@@ -1,9 +1,9 @@
 ---
-canonical_url: https://dev.to/networkandcode/setup-iot-core-on-google-cloud-with-terraform-4h6a
-categories: cloud, googlecloud, iot, terraform
-cover_image: https://source.unsplash.com/featured/?iot
-tags: cloud, googlecloud, iot, terraform
-title: Setup IoT core on Google cloud with Terraform
+canonical_url: "https://dev.to/networkandcode/setup-iot-core-on-google-cloud-with-terraform-4h6a"
+categories: "cloud, googlecloud, iot, terraform"
+cover_image: "https://source.unsplash.com/featured/?iot"
+tags: "cloud, googlecloud, iot, terraform"
+title: "Setup IoT core on Google cloud with Terraform"
 ---
 
 *This post first appeared on [dev.to](https://dev.to/networkandcode/setup-iot-core-on-google-cloud-with-terraform-4h6a)*

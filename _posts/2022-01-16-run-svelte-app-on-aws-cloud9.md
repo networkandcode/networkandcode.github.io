@@ -1,9 +1,9 @@
 ---
-canonical_url: https://dev.to/aws-builders/run-svelte-app-on-aws-cloud9-4j5b
-categories: aws, cloud, solidjs, svelte
-date: 2022-01-16
-tags: aws, cloud, solidjs, svelte
-title: Run Svelte/Solid app on AWS Cloud9
+canonical_url: "https://dev.to/aws-builders/run-svelte-app-on-aws-cloud9-4j5b"
+categories: "aws, cloud, solidjs, svelte"
+date: "2022-01-16"
+tags: "aws, cloud, solidjs, svelte"
+title: "Run Svelte/Solid app on AWS Cloud9"
 ---
 
 *This post first appeared on [dev.to](https://dev.to/aws-builders/run-svelte-app-on-aws-cloud9-4j5b)

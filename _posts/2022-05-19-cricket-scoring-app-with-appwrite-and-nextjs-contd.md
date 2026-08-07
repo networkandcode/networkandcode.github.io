@@ -1,9 +1,9 @@
 ---
-canonical_url: https://dev.to/networkandcode/cricket-scoring-app-with-appwrite-and-nextjscontd-2k64
-categories: appwrite, nextjs, react, tailwindcss
-date: 2022-05-19
-tags: appwrite, nextjs, react, tailwindcss
-title: Cricket scoring app with Appwrite and NextJS(contd.)
+canonical_url: "https://dev.to/networkandcode/cricket-scoring-app-with-appwrite-and-nextjscontd-2k64"
+categories: "appwrite, nextjs, react, tailwindcss"
+date: "2022-05-19"
+tags: "appwrite, nextjs, react, tailwindcss"
+title: "Cricket scoring app with Appwrite and NextJS(contd.)"
 ---
 
 *This post first appeared on [dev.to](https://dev.to/networkandcode/cricket-scoring-app-with-appwrite-and-nextjscontd-2k64/edit)*

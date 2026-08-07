@@ -1,6 +1,6 @@
 ---
-title: kubernetes > backup and restore the master
-categories: kubernetes
+title: "kubernetes > backup and restore the master"
+categories: "kubernetes"
 ---
 
 This post covers information about how to backup and restore a Kubernetes master. The prerequisite is to have knowledge of launching a cluster using kubeadm.

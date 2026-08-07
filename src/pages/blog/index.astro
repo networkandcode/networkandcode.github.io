@@ -1,0 +1,235 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const posts = await getCollection('blog');
+
+const processedPosts = posts.map((post) => {
+  const pathParts = post.id.split('/');
+  const filename = pathParts[pathParts.length - 1];
+  const dateMatch = filename.match(/^(\d{4}-\d{2}-\d{2})-(.+)$/);
+  
+  let dateStr = '2024-01-01';
+  let cleanTitle = post.data.title || filename.replace(/\.(md|markdown|html)$/, '').replaceAll('-', ' ');
+
+  if (post.data.date) {
+    dateStr = String(post.data.date).slice(0, 10);
+  } else if (dateMatch) {
+    dateStr = dateMatch[1];
+  }
+
+  let category = 'Cloud & DevOps';
+  const postStr = (post.id + ' ' + (post.data.tags || '') + ' ' + (post.data.categories || '')).toLowerCase();
+
+  if (postStr.includes('agent') || postStr.includes('ai') || postStr.includes('mcp') || postStr.includes('bedrock') || postStr.includes('gemma')) {
+    category = 'Agentic AI & LLMs';
+  } else if (postStr.includes('kubernetes') || postStr.includes('k8s') || postStr.includes('helm') || postStr.includes('eks')) {
+    category = 'Kubernetes';
+  } else if (postStr.includes('otel') || postStr.includes('grafana') || postStr.includes('tracing') || postStr.includes('logging')) {
+    category = 'Observability & OTEL';
+  } else if (postStr.includes('aws') || postStr.includes('gcp') || postStr.includes('serverless')) {
+    category = 'Cloud Architecture';
+  } else if (postStr.includes('python')) {
+    category = 'Python Automation';
+  }
+
+  const isDevTo = post.data.canonical_url || post.body?.includes('dev.to');
+
+  return {
+    id: post.id,
+    title: cleanTitle,
+    dateStr,
+    category,
+    isDevTo: Boolean(isDevTo),
+    canonicalUrl: post.data.canonical_url || 'https://dev.to/networkandcode',
+    slug: post.id.replace(/\.(md|markdown|html)$/, '')
+  };
+}).sort((a, b) => (a.dateStr > b.dateStr ? -1 : 1));
+
+const categoriesList = ['All', 'Agentic AI & LLMs', 'Kubernetes', 'Observability & OTEL', 'Cloud Architecture', 'Python Automation', 'Cloud & DevOps'];
+---
+
+<BaseLayout title="Blog Archives & Articles | Shakir Ahmed Ibrahim" description="Technical articles, DEV.to posts, Kubernetes guides, and AI Agent tutorials by Shakir Ahmed Ibrahim.">
+  <div class="container blog-archive-page">
+    <header class="archive-header">
+      <div class="header-badge">✍️ Technical Writing & Blog</div>
+      <h1 class="archive-title">Blog & Article Archives</h1>
+      <p class="archive-subtitle">
+        Explore all {processedPosts.length} technical articles written across Agentic AI, Kubernetes, OpenTelemetry, AWS, and Cloud Automation.
+      </p>
+
+      <div class="devto-banner glass-card">
+        <div>
+          <span class="banner-label">DEV.to Partner Profile:</span>
+          <span>Official articles synced live from dev.to/networkandcode.</span>
+        </div>
+        <a href="https://dev.to/networkandcode" target="_blank" rel="noopener" class="btn btn-primary btn-sm">
+          Visit DEV.to Profile &rarr;
+        </a>
+      </div>
+    </header>
+
+    <div class="archive-list">
+      {processedPosts.map(post => (
+        <article class="glass-card archive-card">
+          <div class="card-meta">
+            <span class="tag-badge">{post.category}</span>
+            <div class="meta-right">
+              {post.isDevTo && <span class="devto-badge">DEV.to</span>}
+              <time class="post-date">{post.dateStr}</time>
+            </div>
+          </div>
+          <h2 class="card-title">
+            <a href={`/blog/${post.slug}`}>{post.title}</a>
+          </h2>
+          <div class="card-footer">
+            <a href={`/blog/${post.slug}`} class="read-link">Read Post &rarr;</a>
+            {post.canonicalUrl && (
+              <a href={post.canonicalUrl} target="_blank" rel="noopener" class="canonical-link">
+                DEV.to &rarr;
+              </a>
+            )}
+          </div>
+        </article>
+      ))}
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .blog-archive-page {
+    padding: 3rem 1.5rem;
+    max-width: 1100px;
+  }
+
+  .archive-header {
+    margin-bottom: 3rem;
+    text-align: center;
+  }
+
+  .header-badge {
+    display: inline-block;
+    padding: 0.4rem 1rem;
+    border-radius: 9999px;
+    background: rgba(56, 189, 248, 0.12);
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    color: var(--accent-blue);
+    font-weight: 600;
+    font-size: 0.85rem;
+    margin-bottom: 1rem;
+  }
+
+  .archive-title {
+    font-size: 2.75rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+  }
+
+  .archive-subtitle {
+    color: var(--text-muted);
+    max-width: 680px;
+    margin: 0 auto 1.5rem;
+    font-size: 1.1rem;
+  }
+
+  .devto-banner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    font-size: 0.95rem;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .banner-label {
+    color: var(--accent-blue);
+    font-weight: 700;
+    margin-right: 0.5rem;
+  }
+
+  .archive-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .archive-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .card-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .meta-right {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .devto-badge {
+    background: rgba(129, 140, 248, 0.15);
+    color: var(--accent-indigo);
+    border: 1px solid rgba(129, 140, 248, 0.3);
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 0.15rem 0.4rem;
+    border-radius: 4px;
+  }
+
+  .post-date {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+  }
+
+  .card-title {
+    font-size: 1.15rem;
+    font-weight: 600;
+    line-height: 1.45;
+  }
+
+  .card-title a {
+    color: var(--text-main);
+  }
+
+  .card-title a:hover {
+    color: var(--accent-blue);
+  }
+
+  .card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid var(--border-glass);
+    padding-top: 0.75rem;
+    font-size: 0.85rem;
+  }
+
+  .read-link {
+    font-weight: 600;
+    color: var(--accent-blue);
+  }
+
+  .canonical-link {
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+
+  .canonical-link:hover {
+    color: var(--accent-indigo);
+  }
+
+  @media (max-width: 640px) {
+    .devto-banner {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.75rem;
+    }
+  }
+</style>

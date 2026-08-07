@@ -1,6 +1,6 @@
 ---
-title: kubernetes > role of docker
-categories: kubernetes
+title: "kubernetes > role of docker"
+categories: "kubernetes"
 ---
 
 The fundamental API object in kubernetes is a pod which contains one or more containers in it.

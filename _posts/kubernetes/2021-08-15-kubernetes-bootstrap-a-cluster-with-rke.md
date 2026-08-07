@@ -1,7 +1,7 @@
 ---
-title: kubernetes > bootstrap a cluster with rke
-categories: kubernetes
-...
+title: "kubernetes > bootstrap a cluster with rke"
+categories: "kubernetes"
+---
 
 Rancher Kubernetes Engine ( RKE ) is a popular tool using which we can bootstrap kubernetes clusters 
 quickly. We are going to excatly see that in this post. Please ensure kubectl is installed in your 

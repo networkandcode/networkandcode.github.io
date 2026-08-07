@@ -1,6 +1,6 @@
 ---
-categories: aws ec2
-title: aws ec2 > launch instances the hard way with cli
+categories: "aws ec2"
+title: "aws ec2 > launch instances the hard way with cli"
 ---
 
 Hey All :wave:, in this post we shall launch 3 AWS EC2 instances and test SSH connectivity to those...

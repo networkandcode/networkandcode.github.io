@@ -1,9 +1,9 @@
 ---
-canonical_url: https://dev.to/aws-builders/harperdb-with-helm-on-eks-3fb9
-categories: aws, harperdb, helm, kubernetes
-date: 2023-01-13
-tags: aws, harperdb, helm, kubernetes
-title: HarperDB with Helm on EKS
+canonical_url: "https://dev.to/aws-builders/harperdb-with-helm-on-eks-3fb9"
+categories: "aws, harperdb, helm, kubernetes"
+date: "2023-01-13"
+tags: "aws, harperdb, helm, kubernetes"
+title: "HarperDB with Helm on EKS"
 ---
 
 This post first appeared on [dev.to](https://dev.to/aws-builders/harperdb-with-helm-on-eks-3fb9)

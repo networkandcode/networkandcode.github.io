@@ -1,9 +1,9 @@
 ---
-canonical_url: https://dev.to/networkandcode/cricket-scoring-app-using-appwrite-nextjs-3730
-categories: appwritehack, cricker, nextjs, webdev
-date: 2022-05-12
-tags: appwritehack, cricker, nextjs, webdev
-title: Cricket scoring app using Appwrite & NextJS
+canonical_url: "https://dev.to/networkandcode/cricket-scoring-app-using-appwrite-nextjs-3730"
+categories: "appwritehack, cricker, nextjs, webdev"
+date: "2022-05-12"
+tags: "appwritehack, cricker, nextjs, webdev"
+title: "Cricket scoring app using Appwrite & NextJS"
 ---
 
 *This post first appeared on [dev.to](https://dev.to/networkandcode/cricket-scoring-app-using-appwrite-nextjs-3730)

@@ -1,6 +1,6 @@
 ---
-title: kubernetes > rbac with rolebinding
-categories: kubernetes
+title: "kubernetes > rbac with rolebinding"
+categories: "kubernetes"
 ---
 
 RBAC(Role Based Access Control) is one of the authorization modes supported by the Kube api server. And in this post we would see 
