@@ -148,30 +148,7 @@ const totalProjects = featuredProjects.length;
 
 
 
-  <!-- Recent Articles Section -->
-  <section id="blog" class="section">
-    <div class="container">
-      <div class="section-header">
-        <div>
-          <h2 class="section-title">Latest Articles & Engineering Notes</h2>
-          <p class="section-subtitle">Technical guides synced live from dev.to/networkandcode.</p>
-        </div>
-        <a href="/blog" class="view-all-link">All {totalPosts} Articles &rarr;</a>
-      </div>
 
-      <div class="recent-posts-grid">
-        {recentPosts.map(post => (
-          <article class="glass-card post-card">
-            <time class="post-date">{post.dateStr}</time>
-            <h3 class="post-title">
-              <a href={`/blog/${post.slug}`}>{post.title}</a>
-            </h3>
-            <a href={`/blog/${post.slug}`} class="read-more">Read Article &rarr;</a>
-          </article>
-        ))}
-      </div>
-    </div>
-  </section>
 </BaseLayout>
 
 <style>
