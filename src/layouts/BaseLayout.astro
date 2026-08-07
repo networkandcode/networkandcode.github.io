@@ -10,6 +10,26 @@ const {
   title = "Shakir Ahmed Ibrahim | Cloud Native, DevOps & Systems Engineering Portfolio", 
   description = "Engineering portfolio & technical notes by Shakir Ahmed Ibrahim. Cloud architecture, Kubernetes guides, and AI/ML systems." 
 } = Astro.props;
+
+const currentPath = Astro.url.pathname;
+const isActive = (path: string) => {
+  if (path === '/') return currentPath === '/';
+  if (path.startsWith('/#')) return currentPath === '/';
+  return currentPath === path || currentPath.startsWith(`${path}/`);
+};
+
+const navItems = [
+  { href: '/', label: 'Home' },
+  { href: '/cv', label: 'CV / Resume' },
+  { href: '/projects', label: 'Projects' },
+  { href: '/accreditations', label: 'Certifications' },
+  { href: '/awards', label: 'Awards' },
+  { href: '/videos', label: 'Videos' },
+  { href: '/github', label: 'GitHub Activity' },
+  { href: '/#skills', label: 'Skills' },
+  { href: '/blog', label: 'Blog' },
+  { href: '/about', label: 'About' },
+];
 ---
 
 <!DOCTYPE html>
@@ -27,16 +47,14 @@ const {
     <header class="site-header">
       <div class="container header-content">
         <nav class="nav-links">
-          <a href="/">Home</a>
-          <a href="/cv">CV / Resume</a>
-          <a href="/projects">Projects</a>
-          <a href="/accreditations">Certifications</a>
-          <a href="/awards">Awards</a>
-          <a href="/videos">Videos</a>
-          <a href="/github">GitHub Activity</a>
-          <a href="/#skills">Skills</a>
-          <a href="/blog">Blog</a>
-          <a href="/about">About</a>
+          {navItems.map((item) => {
+            const active = isActive(item.href);
+            return (
+              <a href={item.href} class:list={[{ active }]}>
+                {item.label}
+              </a>
+            );
+          })}
         </nav>
       </div>
     </header>
@@ -71,44 +89,44 @@ const {
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
     border-bottom: 1px solid var(--border-glass);
-    padding: 1rem 0;
+    padding: 0.75rem 0;
   }
 
   .header-content {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
-  }
-
-  .brand {
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: var(--text-main);
-    font-family: var(--font-mono);
-    text-decoration: none;
-  }
-
-  .brand-accent {
-    color: var(--accent-blue);
-  }
-
-  .brand-code {
-    color: var(--accent-indigo);
   }
 
   .nav-links {
     display: flex;
-    gap: 1.5rem;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    justify-content: center;
   }
 
   .nav-links a {
+    padding: 0.4rem 0.85rem;
+    border-radius: 8px;
     color: var(--text-muted);
     font-weight: 500;
-    font-size: 0.95rem;
+    font-size: 0.92rem;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
   }
 
   .nav-links a:hover {
+    color: var(--text-main);
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.08);
+  }
+
+  .nav-links a.active {
     color: var(--accent-blue);
+    background: rgba(56, 189, 248, 0.12);
+    border-color: rgba(56, 189, 248, 0.3);
+    font-weight: 600;
+    box-shadow: 0 0 12px rgba(56, 189, 248, 0.15);
   }
 
   .site-main {
@@ -142,9 +160,11 @@ const {
       gap: 1rem;
     }
     .nav-links {
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 1rem;
+      gap: 0.35rem;
+    }
+    .nav-links a {
+      font-size: 0.85rem;
+      padding: 0.35rem 0.65rem;
     }
   }
 </style>
