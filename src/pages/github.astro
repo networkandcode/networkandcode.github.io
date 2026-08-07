@@ -1,60 +1,41 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { githubProfileSummary, monthlyContributions, contributedRepositories } from '../data/githubStats';
+import { monthlyContributions } from '../data/githubStats';
 
 const maxContrib = Math.max(...monthlyContributions.map(m => m.count));
 ---
 
-<BaseLayout title="GitHub Profile & Contributions | networkandcode" description="Detailed breakdown and contribution graph of GitHub activity and repositories.">
+<BaseLayout title="GitHub Contribution Graph | networkandcode" description="Live contribution graph and commit history for networkandcode on GitHub.">
   <div class="container github-page">
     <header class="page-header">
-      <div class="header-badge">🐙 Open Source Activity</div>
-      <h1 class="page-title">Contributed Repositories & Activity</h1>
+      <div class="header-badge">🐙 GitHub Activity</div>
+      <h1 class="page-title">Contribution Graph</h1>
       <p class="page-subtitle">
-        Repositories where <strong>networkandcode</strong> has contributed code, built features, and maintained active projects.
+        Commit history and contribution matrix from <a href="https://github.com/networkandcode" target="_blank" rel="noopener" class="highlight-link">github.com/networkandcode &rarr;</a>
       </p>
 
       <div class="github-action-banner glass-card">
         <div>
-          <span class="banner-label">Official Profile:</span>
+          <span class="banner-label">GitHub Profile:</span>
           <a href="https://github.com/networkandcode" target="_blank" rel="noopener" class="profile-link">
-            github.com/networkandcode &rarr;
+            github.com/networkandcode
           </a>
         </div>
-        <span class="count-badge">{contributedRepositories.length} Contributed Repositories</span>
+        <a href="https://github.com/networkandcode" target="_blank" rel="noopener" class="btn-profile-link">
+          View on GitHub &rarr;
+        </a>
       </div>
     </header>
 
-    <!-- Contributed Repositories Section -->
-    <section class="section">
-      <h2 class="section-heading">Repositories Contributed To</h2>
-      <p class="subtext">Direct code contributions, open-source projects, and maintained repositories by networkandcode.</p>
-
-      <div class="repo-grid">
-        {contributedRepositories.map(repo => (
-          <div class="glass-card repo-card">
-            <div class="repo-card-top">
-              <div class="repo-name-group">
-                <span class="repo-icon">📦</span>
-                <a href={repo.url} target="_blank" rel="noopener" class="repo-title">{repo.fullName}</a>
-              </div>
-              <span class="role-badge">{repo.role}</span>
-            </div>
-            <p class="repo-desc">{repo.description}</p>
-            <div class="repo-card-bottom">
-              <span class="lang-tag">{repo.language}</span>
-              <a href={repo.url} target="_blank" rel="noopener" class="repo-link">View Repo &rarr;</a>
-            </div>
-          </div>
-        ))}
-      </div>
-    </section>
-
-    <!-- Contribution Graph -->
+    <!-- GitHub Contribution Graph -->
     <section class="section">
       <div class="glass-card">
-        <h2 class="section-heading">Contribution Activity Graph</h2>
-        <p class="subtext">Consistent commits across Cloud Native, Observability, and Agentic AI projects.</p>
+        <div class="card-header-flex">
+          <div>
+            <h2 class="section-heading">Commit Activity Graph</h2>
+            <p class="subtext">Monthly contribution breakdown across open-source repositories and cloud projects.</p>
+          </div>
+        </div>
 
         <div class="graph-container">
           {monthlyContributions.map(item => {
@@ -72,46 +53,13 @@ const maxContrib = Math.max(...monthlyContributions.map(m => m.count));
         </div>
       </div>
     </section>
-
-    <!-- Language Breakdown & Category Distribution -->
-    <section class="section grid-split">
-      <div class="glass-card">
-        <h2 class="section-heading">Language Stack Breakdown</h2>
-        <div class="lang-list">
-          {githubProfileSummary.topLanguages.map(lang => (
-            <div class="lang-item">
-              <div class="lang-info">
-                <span class="lang-name">{lang.name}</span>
-                <span class="lang-percent">{lang.percentage}%</span>
-              </div>
-              <div class="progress-track">
-                <div class="progress-fill" style={`width: ${lang.percentage}%; background-color: ${lang.color}`}></div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div class="glass-card">
-        <h2 class="section-heading">Repository Categories</h2>
-        <ul class="cat-list">
-          {githubProfileSummary.categories.map(cat => (
-            <li class="cat-item">
-              <span class="cat-bullet">▹</span>
-              <span class="cat-name">{cat.name}</span>
-              <span class="cat-badge">{cat.count} repos</span>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </section>
   </div>
 </BaseLayout>
 
 <style>
   .github-page {
-    padding: 3rem 1.5rem;
-    max-width: 1000px;
+    padding: 3.5rem 1.5rem;
+    max-width: 900px;
   }
 
   .page-header {
@@ -143,6 +91,11 @@ const maxContrib = Math.max(...monthlyContributions.map(m => m.count));
     margin-bottom: 1.75rem;
   }
 
+  .highlight-link {
+    color: var(--accent-orange);
+    font-weight: 600;
+  }
+
   .github-action-banner {
     display: flex;
     justify-content: space-between;
@@ -160,14 +113,20 @@ const maxContrib = Math.max(...monthlyContributions.map(m => m.count));
     font-weight: 700;
   }
 
-  .count-badge {
-    background: rgba(251, 191, 36, 0.15);
-    color: var(--accent-amber);
-    border: 1px solid rgba(251, 191, 36, 0.3);
-    padding: 0.3rem 0.8rem;
+  .btn-profile-link {
+    background: rgba(249, 115, 22, 0.12);
+    color: var(--accent-orange);
+    border: 1px solid rgba(249, 115, 22, 0.3);
+    padding: 0.4rem 0.9rem;
     border-radius: 8px;
     font-size: 0.85rem;
     font-weight: 600;
+    transition: all 0.2s ease;
+  }
+
+  .btn-profile-link:hover {
+    background: rgba(249, 115, 22, 0.25);
+    color: #ffffff;
   }
 
   .section {
@@ -187,87 +146,12 @@ const maxContrib = Math.max(...monthlyContributions.map(m => m.count));
     margin-bottom: 1.75rem;
   }
 
-  /* Contributed Repo Cards */
-  .repo-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 1.25rem;
-    margin-bottom: 2rem;
-  }
-
-  .repo-card {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    gap: 0.85rem;
-  }
-
-  .repo-card-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 0.5rem;
-  }
-
-  .repo-name-group {
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-  }
-
-  .repo-icon {
-    font-size: 1.1rem;
-  }
-
-  .repo-title {
-    font-weight: 700;
-    font-size: 1.05rem;
-    color: var(--text-main);
-  }
-
-  .repo-title:hover {
-    color: var(--accent-blue);
-  }
-
-  .role-badge {
-    background: rgba(56, 189, 248, 0.1);
-    color: var(--accent-blue);
-    border: 1px solid rgba(56, 189, 248, 0.25);
-    font-size: 0.75rem;
-    padding: 0.15rem 0.5rem;
-    border-radius: 6px;
-    white-space: nowrap;
-  }
-
-  .repo-desc {
-    color: var(--text-muted);
-    font-size: 0.9rem;
-    line-height: 1.5;
-  }
-
-  .repo-card-bottom {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-top: 1px solid var(--border-glass);
-    padding-top: 0.75rem;
-  }
-
-  .lang-tag {
-    font-size: 0.75rem;
-    color: var(--text-muted);
-  }
-
-  .repo-link {
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: var(--accent-blue);
-  }
+  /* Contribution Graph Styling */
   .graph-container {
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
-    height: 180px;
+    height: 190px;
     padding-top: 2rem;
     gap: 0.5rem;
   }
@@ -326,73 +210,6 @@ const maxContrib = Math.max(...monthlyContributions.map(m => m.count));
     font-size: 0.75rem;
     color: var(--text-muted);
     margin-top: 0.5rem;
-  }
-
-  .grid-split {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 1.5rem;
-  }
-
-  .lang-list {
-    display: flex;
-    flex-direction: column;
-    gap: 1.25rem;
-    margin-top: 1rem;
-  }
-
-  .lang-info {
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.95rem;
-    font-weight: 500;
-    margin-bottom: 0.35rem;
-  }
-
-  .progress-track {
-    height: 8px;
-    background: rgba(255, 255, 255, 0.06);
-    border-radius: 9999px;
-    overflow: hidden;
-  }
-
-  .progress-fill {
-    height: 100%;
-    border-radius: 9999px;
-  }
-
-  .cat-list {
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    margin-top: 1rem;
-  }
-
-  .cat-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.5rem;
-    font-size: 0.95rem;
-  }
-
-  .cat-bullet {
-    color: var(--accent-orange);
-    font-weight: bold;
-  }
-
-  .cat-name {
-    flex: 1;
-    color: #e2e8f0;
-  }
-
-  .cat-badge {
-    background: rgba(249, 115, 22, 0.1);
-    color: var(--accent-orange);
-    padding: 0.2rem 0.6rem;
-    border-radius: 6px;
-    font-size: 0.8rem;
   }
 
   @media (max-width: 640px) {
