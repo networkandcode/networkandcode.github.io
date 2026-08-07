@@ -15,7 +15,7 @@ export const featuredProjects: Project[] = [
     description: "Automated e-commerce & retail bot with real-time stock notifications, instant order alerts via Telegram, and automated inventory sync.",
     articleUrl: "https://www.youtube.com/watch?v=LjT4EP2kYHo",
     repoUrl: "https://github.com/networkandcode/boutique-bot",
-    image: "/images/projects/boutique_bot_screenshot_1786124950528.jpg",
+    image: "/images/projects/boutique_bot_screenshot.jpg",
     techStack: ["Node.js", "Telegram Bot API", "E-Commerce", "Automation"]
   },
   {
@@ -33,7 +33,7 @@ export const featuredProjects: Project[] = [
     description: "Live cricket match scoring app with real-time score updates, match stats, and database management.",
     articleUrl: "https://dev.to/networkandcode/cricket-scoring-app-using-appwrite-nextjs-3730",
     repoUrl: "https://github.com/networkandcode/cricscore",
-    image: "/images/projects/cricscore_screenshot_1786124994883.jpg",
+    image: "/images/projects/cricscore_screenshot.png",
     techStack: ["Next.js", "Appwrite", "TailwindCSS", "Node.js"]
   },
   {
