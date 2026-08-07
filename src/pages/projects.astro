@@ -24,6 +24,11 @@ import { featuredProjects } from '../data/projects';
     <div class="projects-grid">
       {featuredProjects.map(proj => (
         <div class="glass-card project-card">
+          {proj.image && (
+            <div class="card-image-wrapper">
+              <img src={proj.image} alt={`${proj.title} Screenshot`} class="project-image" loading="lazy" />
+            </div>
+          )}
           <div class="card-top">
             <span class="tag-badge">{proj.name}</span>
             <div class="pill-group">
@@ -36,7 +41,7 @@ import { featuredProjects } from '../data/projects';
           <p class="project-desc">{proj.description}</p>
           <div class="card-bottom">
             <a href={proj.articleUrl} target="_blank" rel="noopener" class="btn btn-primary btn-sm">
-              Read Technical Case Study &rarr;
+              {proj.articleUrl.includes('youtube') ? 'Watch Demo Video →' : 'Read Case Study →'}
             </a>
             {proj.repoUrl && (
               <a href={proj.repoUrl} target="_blank" rel="noopener" class="repo-link">
@@ -121,6 +126,27 @@ import { featuredProjects } from '../data/projects';
     flex-direction: column;
     justify-content: space-between;
     gap: 1.25rem;
+    overflow: hidden;
+  }
+
+  .card-image-wrapper {
+    width: calc(100% + 3.5rem);
+    margin: -1.75rem -1.75rem 0.5rem -1.75rem;
+    height: 180px;
+    overflow: hidden;
+    background: rgba(15, 23, 42, 0.6);
+    border-bottom: 1px solid var(--border-glass);
+  }
+
+  .project-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+  }
+
+  .project-card:hover .project-image {
+    transform: scale(1.04);
   }
 
   .card-top {
