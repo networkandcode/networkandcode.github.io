@@ -69,8 +69,10 @@ const title = post.data.title || post.id.split('/').pop()?.replace(/\.(md|markdo
 
   .post-body {
     line-height: 1.8;
-    color: #e2e8f0;
+    color: var(--text-main);
     font-size: 1.05rem;
+    overflow-x: hidden;
+    word-break: break-word;
   }
 
   /* Styling for Markdown content rendered inside post-body */
@@ -95,16 +97,16 @@ const title = post.data.title || post.id.split('/').pop()?.replace(/\.(md|markdo
 
   .post-body :global(code) {
     font-family: var(--font-mono);
-    background: rgba(15, 23, 42, 0.8);
+    background: rgba(255, 255, 255, 0.06);
     padding: 0.2rem 0.4rem;
     border-radius: 6px;
     font-size: 0.9em;
-    color: var(--accent-cyan);
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    color: var(--text-main);
+    border: 1px solid var(--border-glass);
   }
 
   .post-body :global(pre) {
-    background: #0f172a !important;
+    background: var(--bg-surface) !important;
     padding: 1.25rem;
     border-radius: 12px;
     overflow-x: auto;
@@ -117,6 +119,30 @@ const title = post.data.title || post.id.split('/').pop()?.replace(/\.(md|markdo
     padding: 0;
     color: inherit;
     border: none;
+  }
+
+  .post-body :global(img),
+  .post-body :global(picture),
+  .post-body :global(svg) {
+    max-width: 100% !important;
+    height: auto !important;
+    display: block;
+    margin: 1.5rem auto;
+    border-radius: 8px;
+    border: 1px solid var(--border-glass);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  }
+
+  .post-body :global(figure) {
+    max-width: 100% !important;
+    margin: 1.5rem 0;
+    overflow-x: auto;
+  }
+
+  .post-body :global(iframe),
+  .post-body :global(video) {
+    max-width: 100% !important;
+    border-radius: 8px;
   }
 
   .post-body :global(ul), .post-body :global(ol) {
