@@ -250,12 +250,19 @@ const categoriesList = ['All', 'Agentic AI & LLMs', 'Kubernetes', 'Observability
     gap: 0.75rem;
     padding: 0.75rem 1.25rem;
     border-radius: 12px;
-    background: rgba(15, 23, 42, 0.6);
+    background: var(--bg-card);
+    border: 1px solid var(--border-glass);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .search-box:focus-within {
+    border-color: var(--border-hover);
+    box-shadow: 0 0 0 2px var(--glow-blue);
   }
 
   .search-icon {
     font-size: 1.1rem;
-    opacity: 0.7;
+    opacity: 0.6;
   }
 
   .search-box input {
@@ -270,7 +277,7 @@ const categoriesList = ['All', 'Agentic AI & LLMs', 'Kubernetes', 'Observability
 
   .search-box input::placeholder {
     color: var(--text-muted);
-    opacity: 0.7;
+    opacity: 0.6;
   }
 
   .clear-btn {
@@ -286,6 +293,10 @@ const categoriesList = ['All', 'Agentic AI & LLMs', 'Kubernetes', 'Observability
     cursor: pointer;
     font-size: 0.75rem;
     transition: all 0.2s ease;
+  }
+
+  [data-theme="light"] .clear-btn {
+    background: rgba(0, 0, 0, 0.08);
   }
 
   .clear-btn:hover {
@@ -312,15 +323,24 @@ const categoriesList = ['All', 'Agentic AI & LLMs', 'Kubernetes', 'Observability
     transition: all 0.2s ease;
   }
 
+  [data-theme="light"] .filter-chip {
+    background: rgba(0, 0, 0, 0.03);
+  }
+
   .filter-chip:hover {
     background: rgba(255, 255, 255, 0.08);
     color: var(--text-main);
+    border-color: var(--border-hover);
+  }
+
+  [data-theme="light"] .filter-chip:hover {
+    background: rgba(0, 0, 0, 0.06);
   }
 
   .filter-chip.active {
-    background: rgba(56, 189, 248, 0.15);
-    border-color: rgba(56, 189, 248, 0.4);
-    color: var(--accent-blue);
+    background: var(--text-main);
+    border-color: var(--text-main);
+    color: var(--bg-primary);
     font-weight: 600;
   }
 
