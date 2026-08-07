@@ -16,11 +16,6 @@ import { featuredProjects } from '../data/projects';
     <div class="projects-grid">
       {featuredProjects.map(proj => (
         <div class="glass-card project-card">
-          {proj.image && (
-            <div class="card-image-wrapper">
-              <img src={proj.image} alt={`${proj.title} Screenshot`} class="project-image" loading="lazy" />
-            </div>
-          )}
           <div class="card-top">
             <span class="tag-badge">{proj.name}</span>
             <div class="pill-group">
