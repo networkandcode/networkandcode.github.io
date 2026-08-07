@@ -4,189 +4,271 @@ import { getCollection } from 'astro:content';
 import cvData from '../data/cv.json';
 import { awardsAndCertificates } from '../data/certificates';
 import { featuredProjects } from '../data/projects';
+import { accreditations } from '../data/accreditations';
+import { youtubeVideos } from '../data/videos';
+import { githubProfileSummary } from '../data/githubStats';
 
 const posts = await getCollection('blog');
 
-const processedPosts = posts.map((post) => {
-  const pathParts = post.id.split('/');
-  const filename = pathParts[pathParts.length - 1];
-  const dateMatch = filename.match(/^(\d{4}-\d{2}-\d{2})-(.+)$/);
-  
-  let dateStr = '2022-01-01';
-  let cleanTitle = post.data.title || filename.replace(/\.(md|markdown|html)$/, '').replaceAll('-', ' ');
+const recentPosts = posts
+  .map((post) => {
+    const filename = post.id.split('/').pop() || '';
+    const dateMatch = filename.match(/^(\d{4}-\d{2}-\d{2})-(.+)$/);
+    let dateStr = '2024-01-01';
+    if (post.data.date) {
+      dateStr = String(post.data.date).slice(0, 10);
+    } else if (dateMatch) {
+      dateStr = dateMatch[1];
+    }
+    return {
+      title: post.data.title || filename.replace(/\.(md|markdown)$/, '').replaceAll('-', ' '),
+      dateStr,
+      slug: post.id.replace(/\.(md|markdown)$/, ''),
+    };
+  })
+  .sort((a, b) => (a.dateStr > b.dateStr ? -1 : 1))
+  .slice(0, 4);
 
-  if (dateMatch) {
-    dateStr = dateMatch[1];
-  } else if (post.data.date) {
-    dateStr = String(post.data.date).slice(0, 10);
+const coreCompetencies = [
+  {
+    title: "Cloud Native & DevOps",
+    icon: "☁️",
+    desc: "Amazon EKS, Google Anthos GKE, Terraform, Ansible, OpenTelemetry, Helm, Argo CD canary deployments."
+  },
+  {
+    title: "Agentic AI & LLMs",
+    icon: "🤖",
+    desc: "Strands Agents, AWS Bedrock KB, Google ADK Gemma 4, CrewAI screening bots, Model Context Protocol (MCP)."
+  },
+  {
+    title: "Observability & Telemetry",
+    icon: "📊",
+    desc: "Grafana Cloud, OpenTelemetry (OTEL) Collector, AWS X-Ray, CloudWatch, Langfuse tracing, New Relic."
+  },
+  {
+    title: "Full-Stack & Graph Databases",
+    icon: "⚡",
+    desc: "Next.js, TypeScript, Appwrite, HarperDB, Neo4j Graph DB, Python FastAPI, GraphQL Apollo."
   }
-
-  let category = 'Cloud & DevOps';
-  if (post.id.includes('kubernetes')) category = 'Kubernetes';
-  else if (post.id.includes('aws')) category = 'AWS';
-  else if (post.id.includes('python')) category = 'Python & Automation';
-  else if (post.id.includes('otel')) category = 'Observability';
-
-  return {
-    id: post.id,
-    title: cleanTitle,
-    dateStr,
-    category,
-    slug: post.id.replace(/\.(md|markdown|html)$/, '')
-  };
-}).sort((a, b) => (a.dateStr > b.dateStr ? -1 : 1));
-
-const featuredPosts = processedPosts.slice(0, 6);
-
-const cvHighlights = [
-  "Solution Architect & Lead DevOps Engineer with 10+ years across Cloud Native, AI/ML, Infrastructure & Observability.",
-  "Led development of Generative & Agentic AI solutions (Observability agents, FinOps cost management, Slack integrations).",
-  "Architected OpenTelemetry observability stacks with 200+ assets across AWS, GCP, and Kubernetes ecosystems.",
-  "Led multi-disciplinary teams in DevOps, SRE, Network Automation, and Fullstack Web Application Development."
 ];
 
-const techStack = [
-  { category: "Cloud & Infrastructure", items: ["AWS", "Google Cloud (GCP)", "Terraform", "Ansible", "OpenStack"] },
-  { category: "Containers & Orchestration", items: ["Kubernetes (EKS/GKE)", "Docker", "Helm", "Kubeadm", "Kind / MicroK8s"] },
-  { category: "Backend & Systems", items: ["Python", "Go (Golang)", "Next.js / Node.js", "GraphQL / REST APIs", "HarperDB & Neo4j"] },
-  { category: "Networking & Observability", items: ["BGP / OSPF / Cumulus Linux", "OpenTelemetry (OTEL)", "Grafana / InfluxDB", "TCP/IP & Wireshark"] }
-];
+const totalPosts = posts.length;
+const totalVideos = youtubeVideos.length;
+const totalCerts = accreditations.length;
+const totalAwards = awardsAndCertificates.length;
+const totalProjects = featuredProjects.length;
 ---
 
-<BaseLayout title="Shakir Ahmed Ibrahim | Portfolio & Technical Blog">
+<BaseLayout title="Shakir Ahmed Ibrahim | Solution Architect & Lead DevOps Engineer">
   <!-- Hero Section -->
   <section class="hero-section">
     <div class="container">
       <div class="hero-badge">👋 Solution Architect & Lead DevOps Engineer</div>
       <h1 class="hero-title">
-        Hi, I'm <span class="gradient-text">Shakir Ahmed Ibrahim</span>
+        Shakir Ahmed Ibrahim
       </h1>
       <p class="hero-subtitle">
         Architecting resilient Cloud Infrastructure, Agentic AI Systems, Kubernetes Orchestration, and Observability Pipelines.
       </p>
+
+      <!-- Key Impact Metrics Banner -->
+      <div class="metrics-grid glass-card">
+        <div class="metric-item">
+          <span class="metric-num">{githubProfileSummary.totalRepos}+</span>
+          <span class="metric-label">Public Repos</span>
+        </div>
+        <div class="metric-divider"></div>
+        <div class="metric-item">
+          <span class="metric-num">{totalPosts}</span>
+          <span class="metric-label">Articles</span>
+        </div>
+        <div class="metric-divider"></div>
+        <div class="metric-item">
+          <span class="metric-num">{totalCerts}</span>
+          <span class="metric-label">Certifications</span>
+        </div>
+        <div class="metric-divider"></div>
+        <div class="metric-item">
+          <span class="metric-num">{totalAwards}</span>
+          <span class="metric-label">Honors & Awards</span>
+        </div>
+        <div class="metric-divider"></div>
+        <div class="metric-item">
+          <span class="metric-num">{totalVideos}</span>
+          <span class="metric-label">Video Tutorials</span>
+        </div>
+      </div>
+
       <div class="hero-actions">
-        <a href="/cv" class="btn btn-primary">View Live CV / Resume &rarr;</a>
-        <a href="/awards" class="btn btn-secondary">Awards & Recognitions ({awardsAndCertificates.length})</a>
-        <a href="#portfolio" class="btn btn-secondary">Explore Projects</a>
-        <a href="#blogs" class="btn btn-secondary">Blog Posts ({processedPosts.length})</a>
+        <a href={cvData.url} target="_blank" rel="noopener" class="btn btn-primary">
+          Open Official CV (Google Doc) &rarr;
+        </a>
+        <a href="/projects" class="btn btn-secondary">Explore Projects</a>
+        <a href="/accreditations" class="btn btn-secondary">Certifications</a>
       </div>
     </div>
   </section>
 
-  <!-- Awards Section Preview -->
-  <section id="awards" class="section">
+  <!-- Core Competencies / Pillars -->
+  <section class="section">
     <div class="container">
-      <div class="section-header">
-        <div>
-          <h2 class="section-title">Awards & Recognitions</h2>
-          <p class="section-subtitle">Parsed from official Google Drive certificate repository ({awardsAndCertificates.length} Total).</p>
-        </div>
-        <a href="/awards" class="view-all-link">View All Awards &rarr;</a>
+      <div class="section-header text-center">
+        <h2 class="section-title">Core Technical Pillars</h2>
+        <p class="section-subtitle">Specialized domain expertise developed across enterprise cloud engineering and open-source contributions.</p>
       </div>
 
-      <div class="skills-grid">
-        {awardsAndCertificates.slice(0, 4).map(cert => (
-          <div class="glass-card skill-card">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
-              <span class="tag-badge">{cert.category}</span>
-              <span style="color: var(--accent-amber); font-weight: bold; font-size: 0.85rem;">{cert.awarder}</span>
-            </div>
-            <h3 style="font-size: 1.1rem; margin-bottom: 0.5rem;">{cert.title}</h3>
-            <p style="color: var(--text-muted); font-size: 0.85rem;">📅 {cert.dateStr}</p>
+      <div class="pillars-grid">
+        {coreCompetencies.map(col => (
+          <div class="glass-card pillar-card">
+            <div class="pillar-icon">{col.icon}</div>
+            <h3 class="pillar-title">{col.title}</h3>
+            <p class="pillar-desc">{col.desc}</p>
           </div>
         ))}
       </div>
     </div>
   </section>
 
-  <!-- Live CV Section Preview -->
-  <section id="cv" class="section">
-    <div class="container">
-      <div class="glass-card cv-preview-card">
-        <div class="cv-preview-content">
-          <div>
-            <span class="cv-badge-small">Curriculum Vitae</span>
-            <h2 style="font-size: 1.5rem; font-weight: 700; margin: 0.5rem 0;">Shakir Ahmed Ibrahim's Official CV</h2>
-            <p style="color: var(--text-muted);">Maintained live on Google Docs. Access complete work experience, skills, and projects.</p>
-          </div>
-          <div class="cv-preview-footer">
-            <a href="https://docs.google.com/document/d/e/2PACX-1vRB5hdZs7dKLFRZonRdw9I_l5JfhQLJ4jMGtwLcaNmM_kEs3f1t_up7WdjieEWC08Q9jVdpfBeoB4K7/pub" target="_blank" rel="noopener" class="btn btn-primary">
-              Open Google Doc CV &rarr;
-            </a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Skills Matrix Section -->
-  <section id="skills" class="section">
-    <div class="container">
-      <h2 class="section-title">Technical Expertise</h2>
-      <div class="skills-grid">
-        {techStack.map(stack => (
-          <div class="glass-card skill-card">
-            <h3>{stack.category}</h3>
-            <div class="pill-group">
-              {stack.items.map(item => (
-                <span class="tag-badge">{item}</span>
-              ))}
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  </section>
-
-  <!-- Portfolio Section -->
+  <!-- Featured Projects & Applications -->
   <section id="portfolio" class="section">
     <div class="container">
       <div class="section-header">
         <div>
-          <h2 class="section-title">Featured Engineering Projects</h2>
-          <p class="section-subtitle">Web applications and full-stack projects built by Shakir Ahmed Ibrahim.</p>
+          <h2 class="section-title">Featured Projects</h2>
+          <p class="section-subtitle">Full-stack applications, accessibility tools, and cloud platforms built by Shakir.</p>
         </div>
         <a href="/projects" class="view-all-link">View All Projects &rarr;</a>
       </div>
+
       <div class="portfolio-grid">
         {featuredProjects.map(proj => (
           <div class="glass-card project-card">
+            <div class="proj-header">
+              <span class="tag-badge">{proj.name}</span>
+            </div>
             <h3>{proj.title}</h3>
             <p>{proj.description}</p>
             <div class="pill-group" style="margin-bottom: 1rem;">
               {proj.techStack.map(tag => (
-                <span class="tag-badge">{tag}</span>
+                <span class="tech-tag">{tag}</span>
               ))}
             </div>
-            <a href={proj.articleUrl} target="_blank" rel="noopener" class="read-more">Read Case Study &rarr;</a>
+            <a href={proj.articleUrl} target="_blank" rel="noopener" class="read-more">Read Technical Case Study &rarr;</a>
           </div>
         ))}
       </div>
     </div>
   </section>
 
-  <!-- Blog Section -->
-  <section id="blogs" class="section">
+  <!-- Certifications & Recognition Matrix -->
+  <section class="section bg-surface-blur">
+    <div class="container">
+      <div class="two-col-grid">
+        <!-- Certifications Preview -->
+        <div class="glass-card flex-col-between">
+          <div>
+            <div class="card-badge-header">📜 Verified Accreditations</div>
+            <h3 class="card-block-title">Industry Certifications</h3>
+            <p class="card-block-desc">Credentialed by Google Cloud, AWS, Grafana, GitHub, Neo4j, and TensorFlow.</p>
+            <ul class="cert-compact-list">
+              {accreditations.slice(0, 5).map(c => (
+                <li>
+                  <span class="cert-dot">•</span> <strong>{c.name}</strong> <span class="issuer-text">({c.issuer})</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <a href="/accreditations" class="btn btn-secondary btn-sm block-btn">View All 8 Certifications &rarr;</a>
+        </div>
+
+        <!-- Awards Preview -->
+        <div class="glass-card flex-col-between">
+          <div>
+            <div class="card-badge-header">🏆 Honors & Awards</div>
+            <h3 class="card-block-title">Recognitions Vault</h3>
+            <p class="card-block-desc">21 awards including UST Global Pinnacle Performance & Mphasis Individual Excellence awards.</p>
+            <ul class="cert-compact-list">
+              {awardsAndCertificates.slice(0, 5).map(a => (
+                <li>
+                  <span class="cert-dot">•</span> <strong>{a.title}</strong> <span class="issuer-text">({a.organization})</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <a href="/awards" class="btn btn-secondary btn-sm block-btn">Explore 21 Awards Catalog &rarr;</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- YouTube Tutorials & Open Source Activity -->
+  <section class="section">
+    <div class="container">
+      <div class="two-col-grid">
+        <!-- YouTube Channel Card -->
+        <div class="glass-card flex-col-between">
+          <div>
+            <span class="tag-badge">▶ YouTube Channel</span>
+            <h3 class="card-block-title" style="margin-top: 0.75rem;">@kubetrain Tutorials</h3>
+            <p class="card-block-desc">30 video tutorials covering Kubernetes, Agentic AI, OpenTelemetry, and Docker.</p>
+            <div class="video-preview-list">
+              {youtubeVideos.slice(0, 3).map(v => (
+                <a href={v.url} target="_blank" rel="noopener" class="mini-video-item">
+                  <span class="play-icon">▶</span>
+                  <span class="mini-video-title">{v.title}</span>
+                </a>
+              ))}
+            </div>
+          </div>
+          <a href="/videos" class="btn btn-secondary btn-sm block-btn">Watch All 30 Videos &rarr;</a>
+        </div>
+
+        <!-- GitHub Activity Card -->
+        <div class="glass-card flex-col-between">
+          <div>
+            <span class="tag-badge">🐙 Open Source</span>
+            <h3 class="card-block-title" style="margin-top: 0.75rem;">GitHub Contributions</h3>
+            <p class="card-block-desc">Active contributor across {githubProfileSummary.totalRepos} repositories in TypeScript, Python, and Go.</p>
+            <div class="github-mini-stats">
+              <div class="stat-box">
+                <span class="stat-num">64</span>
+                <span class="stat-lbl">Public Repos</span>
+              </div>
+              <div class="stat-box">
+                <span class="stat-num">42%</span>
+                <span class="stat-lbl">TS / JS</span>
+              </div>
+              <div class="stat-box">
+                <span class="stat-num">28%</span>
+                <span class="stat-lbl">Python</span>
+              </div>
+            </div>
+          </div>
+          <a href="/github" class="btn btn-secondary btn-sm block-btn">View GitHub Contribution Graph &rarr;</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Recent Articles Section -->
+  <section id="blog" class="section">
     <div class="container">
       <div class="section-header">
         <div>
-          <h2 class="section-title">Technical Writings & Guides</h2>
-          <p class="section-subtitle">Practical hands-on notes from cloud setup, networking, and system automation.</p>
+          <h2 class="section-title">Latest Articles & Engineering Notes</h2>
+          <p class="section-subtitle">Technical guides synced live from dev.to/networkandcode.</p>
         </div>
-        <a href="/blog" class="view-all-link">View All {processedPosts.length} Posts &rarr;</a>
+        <a href="/blog" class="view-all-link">All {totalPosts} Articles &rarr;</a>
       </div>
 
-      <div class="blog-grid">
-        {featuredPosts.map(post => (
+      <div class="recent-posts-grid">
+        {recentPosts.map(post => (
           <article class="glass-card post-card">
-            <div class="post-meta">
-              <span class="tag-badge">{post.category}</span>
-              <time>{post.dateStr}</time>
-            </div>
+            <time class="post-date">{post.dateStr}</time>
             <h3 class="post-title">
               <a href={`/blog/${post.slug}`}>{post.title}</a>
             </h3>
-            <a href={`/blog/${post.slug}`} class="read-more">Read Guide &rarr;</a>
+            <a href={`/blog/${post.slug}`} class="read-more">Read Article &rarr;</a>
           </article>
         ))}
       </div>
@@ -196,13 +278,13 @@ const techStack = [
 
 <style>
   .hero-section {
-    padding: 5rem 0 3rem;
+    padding: 4.5rem 0 3.5rem;
     text-align: center;
   }
 
   .hero-badge {
     display: inline-block;
-    padding: 0.4rem 1rem;
+    padding: 0.4rem 1.1rem;
     border-radius: 9999px;
     background: rgba(56, 189, 248, 0.12);
     border: 1px solid rgba(56, 189, 248, 0.3);
@@ -213,24 +295,54 @@ const techStack = [
   }
 
   .hero-title {
-    font-size: 3.25rem;
+    font-size: 3.5rem;
     font-weight: 800;
-    line-height: 1.2;
-    max-width: 900px;
-    margin: 0 auto 1.5rem;
-  }
-
-  .gradient-text {
-    background: linear-gradient(135deg, var(--accent-blue), var(--accent-indigo));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    line-height: 1.15;
+    margin-bottom: 1.25rem;
+    color: var(--text-main);
   }
 
   .hero-subtitle {
-    font-size: 1.2rem;
+    font-size: 1.25rem;
     color: var(--text-muted);
-    max-width: 680px;
+    max-width: 720px;
     margin: 0 auto 2.5rem;
+    line-height: 1.6;
+  }
+
+  .metrics-grid {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    max-width: 900px;
+    margin: 0 auto 2.5rem;
+    padding: 1.5rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .metric-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .metric-num {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: var(--accent-blue);
+  }
+
+  .metric-label {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+
+  .metric-divider {
+    width: 1px;
+    height: 36px;
+    background: var(--border-glass);
   }
 
   .hero-actions {
@@ -272,17 +384,11 @@ const techStack = [
 
   .btn-sm {
     padding: 0.5rem 1.25rem;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
   }
 
   .section {
     padding: 4rem 0;
-  }
-
-  .section-title {
-    font-size: 2rem;
-    font-weight: 700;
-    margin-bottom: 0.5rem;
   }
 
   .section-header {
@@ -292,8 +398,20 @@ const techStack = [
     margin-bottom: 2rem;
   }
 
+  .text-center {
+    text-align: center;
+  }
+
+  .section-title {
+    font-size: 2rem;
+    font-weight: 800;
+
+  }
+
   .section-subtitle {
     color: var(--text-muted);
+    margin-top: 0.4rem;
+    font-size: 1rem;
   }
 
   .view-all-link {
@@ -301,68 +419,179 @@ const techStack = [
     font-size: 0.95rem;
   }
 
-  .cv-preview-card {
-    display: flex;
-    flex-direction: column;
-    gap: 1.25rem;
+  .pillars-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 1.5rem;
+
   }
 
-  .cv-badge-small {
-    color: var(--accent-amber);
-    font-size: 0.85rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
+  .pillar-card {
+    text-align: center;
+    padding: 2rem 1.5rem;
   }
 
-  .cv-preview-list {
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
+  .pillar-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
   }
 
-  .cv-preview-list li {
-    color: #e2e8f0;
+  .pillar-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+
+  .pillar-desc {
+    color: var(--text-muted);
+    font-size: 0.9rem;
     line-height: 1.5;
   }
 
-  .orange-dot {
-    color: var(--accent-orange);
-    font-weight: bold;
-    margin-right: 0.5rem;
-  }
-
-  .cv-preview-footer {
-    margin-top: 0.5rem;
-  }
-
-  .skills-grid, .portfolio-grid {
+  .portfolio-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
     gap: 1.5rem;
   }
 
-  .skill-card h3, .project-card h3 {
-    font-size: 1.15rem;
-    margin-bottom: 1rem;
+  .project-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 0.75rem;
+  }
+
+  .project-card h3 {
+    font-size: 1.2rem;
+    font-weight: 700;
   }
 
   .project-card p {
     color: var(--text-muted);
-    font-size: 0.95rem;
-    margin-bottom: 1.25rem;
+    font-size: 0.92rem;
   }
 
   .pill-group {
     display: flex;
+    gap: 0.4rem;
     flex-wrap: wrap;
-    gap: 0.5rem;
   }
 
-  .blog-grid {
+  .tech-tag {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-glass);
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 6px;
+  }
+
+  .two-col-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
+    gap: 1.75rem;
+  }
+
+  .flex-col-between {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 1.5rem;
+  }
+
+  .card-badge-header {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--accent-blue);
+    margin-bottom: 0.25rem;
+  }
+
+  .card-block-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+  }
+
+  .card-block-desc {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-top: 0.25rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .cert-compact-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    font-size: 0.9rem;
+  }
+
+  .cert-dot {
+    color: var(--accent-blue);
+    margin-right: 0.4rem;
+  }
+
+  .issuer-text {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+  }
+
+  .block-btn {
+    align-self: flex-start;
+    text-align: center;
+  }
+
+  .video-preview-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  .mini-video-item {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 0.9rem;
+    color: var(--text-main);
+  }
+
+  .mini-video-item:hover {
+    color: var(--accent-blue);
+  }
+
+  .play-icon {
+    color: var(--accent-indigo);
+    font-size: 0.75rem;
+  }
+
+  .github-mini-stats {
+    display: flex;
+    gap: 1.25rem;
+  }
+
+  .stat-box {
+    display: flex;
+    flex-direction: column;
+    background: rgba(255, 255, 255, 0.04);
+    padding: 0.75rem 1rem;
+    border-radius: 10px;
+    border: 1px solid var(--border-glass);
+  }
+
+  .stat-num {
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: var(--accent-blue);
+  }
+
+  .stat-lbl {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+  }
+
+  .recent-posts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
     gap: 1.5rem;
   }
 
@@ -370,21 +599,17 @@ const techStack = [
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    gap: 0.75rem;
   }
 
-  .post-meta {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1rem;
-    font-size: 0.85rem;
+  .post-date {
+    font-size: 0.8rem;
     color: var(--text-muted);
   }
 
   .post-title {
-    font-size: 1.1rem;
+    font-size: 1.05rem;
     font-weight: 600;
-    margin-bottom: 1.25rem;
     line-height: 1.4;
   }
 
@@ -393,17 +618,27 @@ const techStack = [
   }
 
   .post-title a:hover {
-    color: var(--accent-orange);
+    color: var(--accent-blue);
   }
 
   .read-more {
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     font-weight: 600;
   }
 
   @media (max-width: 768px) {
-    .hero-title { font-size: 2.25rem; }
-    .hero-actions { flex-direction: column; }
-    .section-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
+    .hero-title {
+      font-size: 2.5rem;
+    }
+    .two-col-grid {
+      grid-template-columns: 1fr;
+    }
+    .metrics-grid {
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .metric-divider {
+      display: none;
+    }
   }
 </style>
