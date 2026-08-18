@@ -9,7 +9,7 @@ interface PostItem {
   title: string;
   dateStr: string;
   category: string;
-  source: 'devto' | 'hashnode' | 'archive';
+  source: 'devto' | 'hashnode' | 'local';
   url: string;
   description?: string;
   tags?: string[];
@@ -52,7 +52,7 @@ const processedLocalPosts: PostItem[] = localPosts.map((post) => {
     title: cleanTitle,
     dateStr,
     category,
-    source: 'archive',
+    source: 'local',
     url: `/blog/${post.id.replace(/\.(md|markdown|html)$/, '')}`,
     tags: Array.isArray(post.data.tags) ? post.data.tags : typeof post.data.tags === 'string' ? [post.data.tags] : [],
   };
@@ -183,7 +183,6 @@ const categoriesList = ['All', 'Agentic AI & LLMs', 'Kubernetes', 'Observability
             <div class="meta-right">
               {post.source === 'devto' && <span class="devto-badge">DEV.to</span>}
               {post.source === 'hashnode' && <span class="hashnode-badge">Hashnode</span>}
-              {post.source === 'archive' && <span class="local-badge">Archive</span>}
               <time class="post-date">{post.dateStr}</time>
             </div>
           </div>
@@ -192,8 +191,8 @@ const categoriesList = ['All', 'Agentic AI & LLMs', 'Kubernetes', 'Observability
             <h2 class="card-title">
               <a 
                 href={post.url} 
-                target={post.source !== 'archive' ? "_blank" : "_self"} 
-                rel={post.source !== 'archive' ? "noopener noreferrer" : ""}
+                target={post.source !== 'local' ? "_blank" : "_self"} 
+                rel={post.source !== 'local' ? "noopener noreferrer" : ""}
               >
                 {post.title}
               </a>
@@ -206,13 +205,13 @@ const categoriesList = ['All', 'Agentic AI & LLMs', 'Kubernetes', 'Observability
           <div class="card-footer">
             <a 
               href={post.url} 
-              target={post.source !== 'archive' ? "_blank" : "_self"} 
-              rel={post.source !== 'archive' ? "noopener noreferrer" : ""}
+              target={post.source !== 'local' ? "_blank" : "_self"} 
+              rel={post.source !== 'local' ? "noopener noreferrer" : ""}
               class="read-link"
             >
               {post.source === 'devto' && 'Read on DEV.to ↗'}
               {post.source === 'hashnode' && 'Read on Hashnode ↗'}
-              {post.source === 'archive' && 'Read Archive →'}
+              {post.source === 'local' && 'Read Post →'}
             </a>
             {post.source === 'devto' && (
               <span class="source-indicator">dev.to/networkandcode</span>
