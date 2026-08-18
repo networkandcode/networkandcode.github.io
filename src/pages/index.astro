@@ -35,7 +35,9 @@ const coreCompetencies = [
   }
 ];
 
-const totalPosts = posts.length + (devtoData as any[]).length + (hashnodeData as any[]).length;
+const validDevTo = (devtoData as any[]).filter(a => !((a.description || '').toLowerCase().includes('networkandcode.github.io')));
+const validHashnode = (hashnodeData as any[]).filter(a => !((a.description || '').toLowerCase().includes('networkandcode.github.io')));
+const totalPosts = posts.length + validDevTo.length + validHashnode.length;
 const totalVideos = youtubeVideos.length;
 const totalCerts = accreditations.length;
 const totalAwards = awardsAndCertificates.length;

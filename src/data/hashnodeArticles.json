@@ -28,13 +28,6 @@
     "description": "Introduction Appwrite is a backend server that can be leveraged for integrating services such as authentication, storage, database etc. to our frontend application. It can be launc..."
   },
   {
-    "id": "https://networkandcode.hashnode.dev/run-owasp-juice-shop-as-a-kubernetes-service",
-    "title": "Run OWASP juice shop as a Kubernetes service",
-    "url": "https://networkandcode.hashnode.dev/run-owasp-juice-shop-as-a-kubernetes-service",
-    "published_at": "2021-08-07",
-    "description": "This article first appeared on https://networkandcode.github.io/owasp/juice/shop/2021/08/08/owasp-juice-shop-run-as-kubernetes-service.html Hello, we shall run the OWASP juice shop..."
-  },
-  {
     "id": "https://networkandcode.hashnode.dev/online-shop-with-nextjs-and-harperdb",
     "title": "Online shop with NextJS and HarperDB",
     "url": "https://networkandcode.hashnode.dev/online-shop-with-nextjs-and-harperdb",

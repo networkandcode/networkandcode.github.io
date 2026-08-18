@@ -46,10 +46,17 @@ export function syncHashnodePosts(): AstroIntegration {
             const descMatch = itemContent.match(/<description><!\[CDATA\[([\s\S]*?)\]\]><\/description>/);
             const guidMatch = itemContent.match(/<guid[^>]*>(.*?)<\/guid>/);
 
-            let description = '';
+            let rawDescription = '';
             if (descMatch) {
-              description = descMatch[1].replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim().slice(0, 180) + '...';
+              rawDescription = descMatch[1].replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
             }
+
+            // Rule: Exclude posts that first appeared on networkandcode.github.io
+            if (rawDescription.toLowerCase().includes('networkandcode.github.io') || rawDescription.toLowerCase().includes('first appeared on https://networkandcode')) {
+              continue;
+            }
+
+            const description = rawDescription.length > 180 ? rawDescription.slice(0, 180) + '...' : rawDescription;
 
             if (titleMatch && linkMatch) {
               items.push({

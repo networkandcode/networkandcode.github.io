@@ -58,7 +58,13 @@ const processedLocalPosts: PostItem[] = localPosts.map((post) => {
   };
 });
 
-const processedDevToPosts: PostItem[] = (devtoData as any[]).map((art) => {
+const processedDevToPosts: PostItem[] = (devtoData as any[])
+  .filter((art) => {
+    const desc = (art.description || '').toLowerCase();
+    const url = (art.url || '').toLowerCase();
+    return !desc.includes('networkandcode.github.io') && !url.includes('networkandcode.github.io');
+  })
+  .map((art) => {
   const dateStr = art.published_at ? art.published_at.slice(0, 10) : '2024-01-01';
   const tagsStr = (art.tag_list || []).join(' ').toLowerCase();
   const textStr = (art.title + ' ' + tagsStr).toLowerCase();
@@ -89,7 +95,13 @@ const processedDevToPosts: PostItem[] = (devtoData as any[]).map((art) => {
   };
 });
 
-const processedHashnodePosts: PostItem[] = (hashnodeData as any[]).map((art) => {
+const processedHashnodePosts: PostItem[] = (hashnodeData as any[])
+  .filter((art) => {
+    const desc = (art.description || '').toLowerCase();
+    const url = (art.url || '').toLowerCase();
+    return !desc.includes('networkandcode.github.io') && !url.includes('networkandcode.github.io');
+  })
+  .map((art) => {
   const dateStr = art.published_at ? art.published_at.slice(0, 10) : '2022-06-01';
   const textStr = (art.title + ' ' + (art.description || '')).toLowerCase();
 

@@ -44,18 +44,25 @@ export function syncDevToPosts(): AstroIntegration {
           const dataFilePath = path.resolve(process.cwd(), 'src/data/devtoArticles.json');
 
           if (Array.isArray(articles) && articles.length > 0) {
-            const formatted: DevToArticle[] = articles.map((art: any) => ({
-              id: art.id,
-              title: art.title,
-              description: art.description || '',
-              url: art.url,
-              published_at: art.published_at,
-              tag_list: art.tag_list || [],
-              cover_image: art.cover_image || null,
-              reading_time_minutes: art.reading_time_minutes,
-              positive_reactions_count: art.positive_reactions_count,
-              comments_count: art.comments_count,
-            }));
+            const formatted: DevToArticle[] = articles
+              .filter((art: any) => {
+                const desc = (art.description || '').toLowerCase();
+                const canon = (art.canonical_url || '').toLowerCase();
+                // Exclude posts that first appeared on networkandcode.github.io
+                return !desc.includes('networkandcode.github.io') && !canon.includes('networkandcode.github.io');
+              })
+              .map((art: any) => ({
+                id: art.id,
+                title: art.title,
+                description: art.description || '',
+                url: art.url,
+                published_at: art.published_at,
+                tag_list: art.tag_list || [],
+                cover_image: art.cover_image || null,
+                reading_time_minutes: art.reading_time_minutes,
+                positive_reactions_count: art.positive_reactions_count,
+                comments_count: art.comments_count,
+              }));
 
             fs.writeFileSync(dataFilePath, JSON.stringify(formatted, null, 2), 'utf-8');
             console.log(`[sync-devto] Synced ${formatted.length} DEV.to articles metadata to src/data/devtoArticles.json`);
