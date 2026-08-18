@@ -1,29 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import cvData from '../data/cv.json';
-
-const coreCompetencies = [
-  {
-    title: "Cloud Native & DevOps",
-    icon: "☁️",
-    desc: "Amazon EKS, Google Anthos GKE, Terraform, Ansible, OpenTelemetry, Helm, Argo CD canary deployments."
-  },
-  {
-    title: "Agentic AI & LLMs",
-    icon: "🤖",
-    desc: "Strands Agents, AWS Bedrock KB, Google ADK Gemma 4, CrewAI screening bots, Model Context Protocol (MCP)."
-  },
-  {
-    title: "Observability & Telemetry",
-    icon: "📊",
-    desc: "Grafana Cloud, OpenTelemetry (OTEL) Collector, AWS X-Ray, CloudWatch, Langfuse tracing, New Relic."
-  },
-  {
-    title: "Full-Stack & Graph Databases",
-    icon: "⚡",
-    desc: "Next.js, TypeScript, Appwrite, HarperDB, Neo4j Graph DB, Python FastAPI, GraphQL Apollo."
-  }
-];
 ---
 
 <BaseLayout title="Shakir Ahmed Ibrahim | Cloud Architecture, AI Systems & Systems Engineering Portfolio">
@@ -77,28 +54,6 @@ const coreCompetencies = [
             </div>
           </div>
         </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Core Competencies Section -->
-  <section class="section">
-    <div class="container">
-      <div class="section-header text-center">
-        <div>
-          <h2 class="section-title">Core Engineering Domains</h2>
-          <p class="section-subtitle">Deep specialization in scalable systems, AI orchestration, cloud platforms, and full-stack software.</p>
-        </div>
-      </div>
-
-      <div class="competencies-grid">
-        {coreCompetencies.map((comp) => (
-          <div class="glass-card competency-card">
-            <div class="comp-icon">{comp.icon}</div>
-            <h3 class="comp-title">{comp.title}</h3>
-            <p class="comp-desc">{comp.desc}</p>
-          </div>
-        ))}
       </div>
     </div>
   </section>
@@ -179,63 +134,8 @@ const coreCompetencies = [
     background: rgba(0, 0, 0, 0.04);
   }
 
-  .btn-sm {
-    padding: 0.5rem 1.25rem;
-    font-size: 0.85rem;
-  }
-
   .section {
     padding: 4rem 0;
-  }
-
-  .section-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    margin-bottom: 2rem;
-  }
-
-  .text-center {
-    text-align: center;
-  }
-
-  .section-title {
-    font-size: 2rem;
-    font-weight: 800;
-  }
-
-  .section-subtitle {
-    color: var(--text-muted);
-    margin-top: 0.4rem;
-    font-size: 1rem;
-  }
-
-  .competencies-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 1.5rem;
-  }
-
-  .competency-card {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-    padding: 2rem;
-  }
-
-  .comp-icon {
-    font-size: 2.25rem;
-  }
-
-  .comp-title {
-    font-size: 1.25rem;
-    font-weight: 700;
-  }
-
-  .comp-desc {
-    color: var(--text-muted);
-    font-size: 0.95rem;
-    line-height: 1.6;
   }
 
   .exp-overview-card {
