@@ -2,13 +2,14 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
 import devtoData from '../../data/devtoArticles.json';
+import hashnodeData from '../../data/hashnodeArticles.json';
 
 interface PostItem {
   id: string | number;
   title: string;
   dateStr: string;
   category: string;
-  isDevTo: boolean;
+  source: 'devto' | 'hashnode' | 'archive';
   url: string;
   description?: string;
   tags?: string[];
@@ -51,7 +52,7 @@ const processedLocalPosts: PostItem[] = localPosts.map((post) => {
     title: cleanTitle,
     dateStr,
     category,
-    isDevTo: false,
+    source: 'archive',
     url: `/blog/${post.id.replace(/\.(md|markdown|html)$/, '')}`,
     tags: Array.isArray(post.data.tags) ? post.data.tags : typeof post.data.tags === 'string' ? [post.data.tags] : [],
   };
@@ -80,7 +81,7 @@ const processedDevToPosts: PostItem[] = (devtoData as any[]).map((art) => {
     title: art.title,
     dateStr,
     category,
-    isDevTo: true,
+    source: 'devto',
     url: art.url,
     description: art.description,
     tags: art.tag_list || [],
@@ -88,28 +89,64 @@ const processedDevToPosts: PostItem[] = (devtoData as any[]).map((art) => {
   };
 });
 
-const allPosts: PostItem[] = [...processedDevToPosts, ...processedLocalPosts].sort((a, b) => (a.dateStr > b.dateStr ? -1 : 1));
+const processedHashnodePosts: PostItem[] = (hashnodeData as any[]).map((art) => {
+  const dateStr = art.published_at ? art.published_at.slice(0, 10) : '2022-06-01';
+  const textStr = (art.title + ' ' + (art.description || '')).toLowerCase();
 
-const categoriesList = ['All', 'Agentic AI & LLMs', 'Kubernetes', 'Observability & OTEL', 'Cloud Architecture', 'Python Automation', 'Cloud & DevOps'];
+  let category = 'Cloud & DevOps';
+  if (textStr.includes('braille') || textStr.includes('speech') || textStr.includes('appwrite') || textStr.includes('nextjs') || textStr.includes('shop')) {
+    category = 'Full-Stack & Cloud Apps';
+  } else if (textStr.includes('kubernetes') || textStr.includes('juice')) {
+    category = 'Kubernetes';
+  } else if (textStr.includes('harperdb') || textStr.includes('database')) {
+    category = 'Cloud Architecture';
+  }
+
+  return {
+    id: art.id,
+    title: art.title,
+    dateStr,
+    category,
+    source: 'hashnode',
+    url: art.url,
+    description: art.description,
+  };
+});
+
+const allPosts: PostItem[] = [...processedDevToPosts, ...processedHashnodePosts, ...processedLocalPosts].sort((a, b) => (a.dateStr > b.dateStr ? -1 : 1));
+
+const categoriesList = ['All', 'Agentic AI & LLMs', 'Kubernetes', 'Observability & OTEL', 'Full-Stack & Cloud Apps', 'Cloud Architecture', 'Python Automation', 'Cloud & DevOps'];
 ---
 
-<BaseLayout title="Technical Writing & Articles | Shakir Ahmed Ibrahim" description="Technical articles, DEV.to publications, Kubernetes guides, and AI Agent tutorials by Shakir Ahmed Ibrahim.">
+<BaseLayout title="Blog Posts & Technical Articles | Shakir Ahmed Ibrahim" description="Technical blog posts from DEV.to, Hashnode, Kubernetes guides, and AI Agent tutorials by Shakir Ahmed Ibrahim.">
   <div class="container blog-archive-page">
     <header class="archive-header">
-      <div class="header-badge">✍️ Technical Writing & Publications</div>
-      <h1 class="archive-title">Articles & Publications</h1>
+      <div class="header-badge">✍️ Technical Blog & Posts</div>
+      <h1 class="archive-title">Blog Posts & Articles</h1>
       <p class="archive-subtitle">
-        Explore {allPosts.length} technical articles across Agentic AI, Kubernetes, OpenTelemetry, AWS, and Cloud Automation.
+        Explore {allPosts.length} technical blog posts across Agentic AI, Kubernetes, OpenTelemetry, AWS, Fullstack, and Cloud Automation.
       </p>
 
-      <div class="devto-banner glass-card">
-        <div class="banner-content">
-          <span class="banner-label">DEV.to Publications</span>
-          <span class="banner-sub">Primary publication platform: articles link directly to DEV.to</span>
+      <div class="channels-banner glass-card">
+        <div class="channel-col">
+          <div class="channel-info">
+            <span class="channel-tag devto">DEV.to</span>
+            <span class="channel-desc">{devtoData.length} Cloud, AI & Observability Articles</span>
+          </div>
+          <a href="https://dev.to/networkandcode" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-sm">
+            dev.to/networkandcode &rarr;
+          </a>
         </div>
-        <a href="https://dev.to/networkandcode" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm">
-          Visit DEV.to Profile &rarr;
-        </a>
+        <div class="channel-divider"></div>
+        <div class="channel-col">
+          <div class="channel-info">
+            <span class="channel-tag hashnode">Hashnode</span>
+            <span class="channel-desc">{hashnodeData.length} Web Apps & Fullstack Guides</span>
+          </div>
+          <a href="https://networkandcode.hashnode.dev" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-sm">
+            networkandcode.hashnode.dev &rarr;
+          </a>
+        </div>
       </div>
 
       <div class="search-container">
@@ -118,7 +155,7 @@ const categoriesList = ['All', 'Agentic AI & LLMs', 'Kubernetes', 'Observability
           <input 
             type="text" 
             id="blog-search-input" 
-            placeholder="Search articles by title or keyword (e.g. Kubernetes, Bedrock, OTEL, Strands)..." 
+            placeholder="Search articles by title or keyword (e.g. Kubernetes, Bedrock, OTEL, Appwrite, NextJS)..." 
             autocomplete="off"
           />
           <button id="clear-search-btn" class="clear-btn" style="display: none;">✕</button>
@@ -144,11 +181,9 @@ const categoriesList = ['All', 'Agentic AI & LLMs', 'Kubernetes', 'Observability
           <div class="card-meta">
             <span class="tag-badge">{post.category}</span>
             <div class="meta-right">
-              {post.isDevTo ? (
-                <span class="devto-badge">DEV.to</span>
-              ) : (
-                <span class="local-badge">Archive</span>
-              )}
+              {post.source === 'devto' && <span class="devto-badge">DEV.to</span>}
+              {post.source === 'hashnode' && <span class="hashnode-badge">Hashnode</span>}
+              {post.source === 'archive' && <span class="local-badge">Archive</span>}
               <time class="post-date">{post.dateStr}</time>
             </div>
           </div>
@@ -157,8 +192,8 @@ const categoriesList = ['All', 'Agentic AI & LLMs', 'Kubernetes', 'Observability
             <h2 class="card-title">
               <a 
                 href={post.url} 
-                target={post.isDevTo ? "_blank" : "_self"} 
-                rel={post.isDevTo ? "noopener noreferrer" : ""}
+                target={post.source !== 'archive' ? "_blank" : "_self"} 
+                rel={post.source !== 'archive' ? "noopener noreferrer" : ""}
               >
                 {post.title}
               </a>
@@ -171,14 +206,19 @@ const categoriesList = ['All', 'Agentic AI & LLMs', 'Kubernetes', 'Observability
           <div class="card-footer">
             <a 
               href={post.url} 
-              target={post.isDevTo ? "_blank" : "_self"} 
-              rel={post.isDevTo ? "noopener noreferrer" : ""}
+              target={post.source !== 'archive' ? "_blank" : "_self"} 
+              rel={post.source !== 'archive' ? "noopener noreferrer" : ""}
               class="read-link"
             >
-              {post.isDevTo ? 'Read on DEV.to ↗' : 'Read Post →'}
+              {post.source === 'devto' && 'Read on DEV.to ↗'}
+              {post.source === 'hashnode' && 'Read on Hashnode ↗'}
+              {post.source === 'archive' && 'Read Archive →'}
             </a>
-            {post.isDevTo && (
+            {post.source === 'devto' && (
               <span class="source-indicator">dev.to/networkandcode</span>
+            )}
+            {post.source === 'hashnode' && (
+              <span class="source-indicator">networkandcode.hashnode.dev</span>
             )}
           </div>
         </article>
@@ -287,31 +327,60 @@ const categoriesList = ['All', 'Agentic AI & LLMs', 'Kubernetes', 'Observability
     font-size: 1.1rem;
   }
 
-  .devto-banner {
+  .channels-banner {
     display: flex;
-    justify-content: space-between;
+    justify-content: space-around;
     align-items: center;
-    padding: 1rem 1.5rem;
+    padding: 1.25rem 1.5rem;
     font-size: 0.95rem;
-    max-width: 800px;
+    max-width: 900px;
     margin: 0 auto 2rem;
+    gap: 1.5rem;
   }
 
-  .banner-content {
+  .channel-col {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.25rem;
+    flex: 1;
+  }
+
+  .channel-info {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: 0.2rem;
+    gap: 0.25rem;
   }
 
-  .banner-label {
-    color: var(--accent-blue);
+  .channel-tag {
+    font-size: 0.75rem;
     font-weight: 700;
+    padding: 0.15rem 0.5rem;
+    border-radius: 4px;
   }
 
-  .banner-sub {
-    color: var(--text-muted);
+  .channel-tag.devto {
+    background: rgba(129, 140, 248, 0.15);
+    color: var(--accent-indigo);
+    border: 1px solid rgba(129, 140, 248, 0.3);
+  }
+
+  .channel-tag.hashnode {
+    background: rgba(59, 130, 246, 0.15);
+    color: #3b82f6;
+    border: 1px solid rgba(59, 130, 246, 0.3);
+  }
+
+  .channel-desc {
     font-size: 0.85rem;
+    color: var(--text-muted);
+  }
+
+  .channel-divider {
+    width: 1px;
+    height: 40px;
+    background: var(--border-glass);
   }
 
   .search-container {
@@ -465,6 +534,16 @@ const categoriesList = ['All', 'Agentic AI & LLMs', 'Kubernetes', 'Observability
     border-radius: 4px;
   }
 
+  .hashnode-badge {
+    background: rgba(59, 130, 246, 0.15);
+    color: #3b82f6;
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 0.15rem 0.45rem;
+    border-radius: 4px;
+  }
+
   .local-badge {
     background: rgba(148, 163, 184, 0.12);
     color: var(--text-muted);
@@ -538,11 +617,20 @@ const categoriesList = ['All', 'Agentic AI & LLMs', 'Kubernetes', 'Observability
     opacity: 0.75;
   }
 
-  @media (max-width: 640px) {
-    .devto-banner {
+  @media (max-width: 768px) {
+    .channels-banner {
       flex-direction: column;
-      align-items: flex-start;
-      gap: 0.75rem;
+      align-items: stretch;
+      gap: 1.25rem;
+    }
+
+    .channel-divider {
+      width: 100%;
+      height: 1px;
+    }
+
+    .channel-col {
+      justify-content: space-between;
     }
   }
 </style>

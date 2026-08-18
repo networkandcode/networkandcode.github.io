@@ -3,6 +3,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
 import cvData from '../data/cv.json';
 import devtoData from '../data/devtoArticles.json';
+import hashnodeData from '../data/hashnodeArticles.json';
 import { awardsAndCertificates } from '../data/certificates';
 import { featuredProjects } from '../data/projects';
 import { accreditations } from '../data/accreditations';
@@ -34,7 +35,7 @@ const coreCompetencies = [
   }
 ];
 
-const totalPosts = posts.length + (devtoData as any[]).length;
+const totalPosts = posts.length + (devtoData as any[]).length + (hashnodeData as any[]).length;
 const totalVideos = youtubeVideos.length;
 const totalCerts = accreditations.length;
 const totalAwards = awardsAndCertificates.length;
