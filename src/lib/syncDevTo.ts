@@ -3,57 +3,65 @@ import fs from 'node:fs';
 import path from 'node:path';
 import https from 'node:https';
 
+export interface DevToArticle {
+  id: number;
+  title: string;
+  description: string;
+  url: string;
+  published_at: string;
+  tag_list: string[];
+  cover_image: string | null;
+  reading_time_minutes?: number;
+  positive_reactions_count?: number;
+  comments_count?: number;
+}
+
 export function syncDevToPosts(): AstroIntegration {
   return {
     name: 'sync-devto-posts',
     hooks: {
       'astro:config:setup': async () => {
-        console.log('[sync-devto] Checking for DEV.to posts updates...');
+        console.log('[sync-devto] Syncing DEV.to article metadata...');
         try {
           const fetchJson = (url: string) => {
             return new Promise<any>((resolve, reject) => {
               const req = https.get(url, { headers: { 'User-Agent': 'AstroSync' } }, (res) => {
                 let data = '';
                 res.on('data', (c) => (data += c));
-                res.on('end', () => resolve(JSON.parse(data)));
+                res.on('end', () => {
+                  try {
+                    resolve(JSON.parse(data));
+                  } catch (e) {
+                    reject(e);
+                  }
+                });
               });
               req.on('error', reject);
             });
           };
 
           const articles = await fetchJson('https://dev.to/api/articles?username=networkandcode&per_page=100');
-          const postsDir = path.resolve(process.cwd(), '_posts');
+          const dataFilePath = path.resolve(process.cwd(), 'src/data/devtoArticles.json');
 
-          for (const art of articles) {
-            const dateStr = art.published_at.slice(0, 10);
-            const subfolder = path.join(postsDir, dateStr);
-            fs.mkdirSync(subfolder, { recursive: true });
+          if (Array.isArray(articles) && articles.length > 0) {
+            const formatted: DevToArticle[] = articles.map((art: any) => ({
+              id: art.id,
+              title: art.title,
+              description: art.description || '',
+              url: art.url,
+              published_at: art.published_at,
+              tag_list: art.tag_list || [],
+              cover_image: art.cover_image || null,
+              reading_time_minutes: art.reading_time_minutes,
+              positive_reactions_count: art.positive_reactions_count,
+              comments_count: art.comments_count,
+            }));
 
-            const slug = art.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-            const filepath = path.join(subfolder, `${dateStr}-${slug}.md`);
-
-            if (!fs.existsSync(filepath)) {
-              console.log(`[sync-devto] Fetching body for new post: ${art.title}`);
-              const detail = await fetchJson(`https://dev.to/api/articles/${art.id}`);
-              let bodyMd = detail.body_markdown || '';
-
-              if (bodyMd.startsWith('---')) {
-                const parts = bodyMd.split('---');
-                if (parts.length >= 3) {
-                  bodyMd = parts.slice(2).join('---');
-                }
-              }
-
-              const cover = art.cover_image ? `cover_image: "${art.cover_image}"\n` : '';
-              const tags = art.tag_list?.length ? `tags: "${art.tag_list.join(', ')}"\ncategories: "${art.tag_list.join(', ')}"\n` : '';
-              const frontmatter = `---\ncanonical_url: "${art.url}"\ndate: "${dateStr}"\ntitle: "${art.title.replace(/"/g, '\\"')}"\n${cover}${tags}---\n\n**This post first appeared on [dev.to](${art.url})**\n\n`;
-
-              fs.writeFileSync(filepath, frontmatter + bodyMd.trim() + '\n', 'utf-8');
-            }
+            fs.writeFileSync(dataFilePath, JSON.stringify(formatted, null, 2), 'utf-8');
+            console.log(`[sync-devto] Synced ${formatted.length} DEV.to articles metadata to src/data/devtoArticles.json`);
           }
-          console.log('[sync-devto] All DEV.to posts synced.');
         } catch (err) {
-          console.error('[sync-devto] DEV.to sync check skipped or failed:', err);
+          console.error('[sync-devto] DEV.to sync skipped or failed (using cached json if present):', err);
         }
       },
     },

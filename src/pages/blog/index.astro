@@ -1,15 +1,28 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
+import devtoData from '../../data/devtoArticles.json';
 
-const posts = await getCollection('blog');
+interface PostItem {
+  id: string | number;
+  title: string;
+  dateStr: string;
+  category: string;
+  isDevTo: boolean;
+  url: string;
+  description?: string;
+  tags?: string[];
+  readingTime?: number;
+}
 
-const processedPosts = posts.map((post) => {
+const localPosts = await getCollection('blog');
+
+const processedLocalPosts: PostItem[] = localPosts.map((post) => {
   const pathParts = post.id.split('/');
   const filename = pathParts[pathParts.length - 1];
   const dateMatch = filename.match(/^(\d{4}-\d{2}-\d{2})-(.+)$/);
-  
-  let dateStr = '2024-01-01';
+
+  let dateStr = '2021-01-01';
   let cleanTitle = post.data.title || filename.replace(/\.(md|markdown|html)$/, '').replaceAll('-', ' ');
 
   if (post.data.date) {
@@ -33,47 +46,79 @@ const processedPosts = posts.map((post) => {
     category = 'Python Automation';
   }
 
-  const isDevTo = post.data.canonical_url || post.body?.includes('dev.to');
-
   return {
     id: post.id,
     title: cleanTitle,
     dateStr,
     category,
-    isDevTo: Boolean(isDevTo),
-    canonicalUrl: post.data.canonical_url || 'https://dev.to/networkandcode',
-    slug: post.id.replace(/\.(md|markdown|html)$/, '')
+    isDevTo: false,
+    url: `/blog/${post.id.replace(/\.(md|markdown|html)$/, '')}`,
+    tags: Array.isArray(post.data.tags) ? post.data.tags : typeof post.data.tags === 'string' ? [post.data.tags] : [],
   };
-}).sort((a, b) => (a.dateStr > b.dateStr ? -1 : 1));
+});
+
+const processedDevToPosts: PostItem[] = (devtoData as any[]).map((art) => {
+  const dateStr = art.published_at ? art.published_at.slice(0, 10) : '2024-01-01';
+  const tagsStr = (art.tag_list || []).join(' ').toLowerCase();
+  const textStr = (art.title + ' ' + tagsStr).toLowerCase();
+
+  let category = 'Cloud & DevOps';
+  if (textStr.includes('agent') || textStr.includes('ai') || textStr.includes('mcp') || textStr.includes('bedrock') || textStr.includes('gemma') || textStr.includes('llm') || textStr.includes('strands') || textStr.includes('rag')) {
+    category = 'Agentic AI & LLMs';
+  } else if (textStr.includes('kubernetes') || textStr.includes('k8s') || textStr.includes('helm') || textStr.includes('eks')) {
+    category = 'Kubernetes';
+  } else if (textStr.includes('otel') || textStr.includes('grafana') || textStr.includes('tracing') || textStr.includes('observability') || textStr.includes('newrelic') || textStr.includes('langfuse')) {
+    category = 'Observability & OTEL';
+  } else if (textStr.includes('aws') || textStr.includes('gcp') || textStr.includes('serverless') || textStr.includes('cloud')) {
+    category = 'Cloud Architecture';
+  } else if (textStr.includes('python')) {
+    category = 'Python Automation';
+  }
+
+  return {
+    id: art.id,
+    title: art.title,
+    dateStr,
+    category,
+    isDevTo: true,
+    url: art.url,
+    description: art.description,
+    tags: art.tag_list || [],
+    readingTime: art.reading_time_minutes,
+  };
+});
+
+const allPosts: PostItem[] = [...processedDevToPosts, ...processedLocalPosts].sort((a, b) => (a.dateStr > b.dateStr ? -1 : 1));
 
 const categoriesList = ['All', 'Agentic AI & LLMs', 'Kubernetes', 'Observability & OTEL', 'Cloud Architecture', 'Python Automation', 'Cloud & DevOps'];
 ---
 
-<BaseLayout title="Blog Archives & Articles | Shakir Ahmed Ibrahim" description="Technical articles, DEV.to posts, Kubernetes guides, and AI Agent tutorials by Shakir Ahmed Ibrahim.">
+<BaseLayout title="Technical Writing & Articles | Shakir Ahmed Ibrahim" description="Technical articles, DEV.to publications, Kubernetes guides, and AI Agent tutorials by Shakir Ahmed Ibrahim.">
   <div class="container blog-archive-page">
     <header class="archive-header">
-      <div class="header-badge">✍️ Technical Writing & Blog</div>
-      <h1 class="archive-title">Blog & Article Archives</h1>
+      <div class="header-badge">✍️ Technical Writing & Publications</div>
+      <h1 class="archive-title">Articles & Publications</h1>
       <p class="archive-subtitle">
-        Explore all {processedPosts.length} technical articles written across Agentic AI, Kubernetes, OpenTelemetry, AWS, and Cloud Automation.
+        Explore {allPosts.length} technical articles across Agentic AI, Kubernetes, OpenTelemetry, AWS, and Cloud Automation.
       </p>
 
       <div class="devto-banner glass-card">
-        <div>
-          <span class="banner-label">DEV.to Articles:</span>
-          <span>Synced live from dev.to/networkandcode.</span>
+        <div class="banner-content">
+          <span class="banner-label">DEV.to Publications</span>
+          <span class="banner-sub">Primary publication platform: articles link directly to DEV.to</span>
         </div>
-        <a href="https://dev.to/networkandcode" target="_blank" rel="noopener" class="btn btn-primary btn-sm">
+        <a href="https://dev.to/networkandcode" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm">
           Visit DEV.to Profile &rarr;
         </a>
       </div>
+
       <div class="search-container">
         <div class="search-box glass-card">
           <span class="search-icon">🔍</span>
           <input 
             type="text" 
             id="blog-search-input" 
-            placeholder="Search articles by title, topic, or keyword (e.g. Kubernetes, Bedrock, OTEL)..." 
+            placeholder="Search articles by title or keyword (e.g. Kubernetes, Bedrock, OTEL, Strands)..." 
             autocomplete="off"
           />
           <button id="clear-search-btn" class="clear-btn" style="display: none;">✕</button>
@@ -94,24 +139,46 @@ const categoriesList = ['All', 'Agentic AI & LLMs', 'Kubernetes', 'Observability
     </div>
 
     <div class="archive-list" id="articles-container">
-      {processedPosts.map(post => (
+      {allPosts.map((post) => (
         <article class="glass-card archive-card" data-title={post.title.toLowerCase()} data-category={post.category}>
           <div class="card-meta">
             <span class="tag-badge">{post.category}</span>
             <div class="meta-right">
-              {post.isDevTo && <span class="devto-badge">DEV.to</span>}
+              {post.isDevTo ? (
+                <span class="devto-badge">DEV.to</span>
+              ) : (
+                <span class="local-badge">Archive</span>
+              )}
               <time class="post-date">{post.dateStr}</time>
             </div>
           </div>
-          <h2 class="card-title">
-            <a href={`/blog/${post.slug}`}>{post.title}</a>
-          </h2>
-          <div class="card-footer">
-            <a href={`/blog/${post.slug}`} class="read-link">Read Post &rarr;</a>
-            {post.canonicalUrl && (
-              <a href={post.canonicalUrl} target="_blank" rel="noopener" class="canonical-link">
-                DEV.to &rarr;
+
+          <div class="card-main">
+            <h2 class="card-title">
+              <a 
+                href={post.url} 
+                target={post.isDevTo ? "_blank" : "_self"} 
+                rel={post.isDevTo ? "noopener noreferrer" : ""}
+              >
+                {post.title}
               </a>
+            </h2>
+            {post.description && (
+              <p class="card-desc">{post.description}</p>
+            )}
+          </div>
+
+          <div class="card-footer">
+            <a 
+              href={post.url} 
+              target={post.isDevTo ? "_blank" : "_self"} 
+              rel={post.isDevTo ? "noopener noreferrer" : ""}
+              class="read-link"
+            >
+              {post.isDevTo ? 'Read on DEV.to ↗' : 'Read Post →'}
+            </a>
+            {post.isDevTo && (
+              <span class="source-indicator">dev.to/networkandcode</span>
             )}
           </div>
         </article>
@@ -133,7 +200,7 @@ const categoriesList = ['All', 'Agentic AI & LLMs', 'Kubernetes', 'Observability
 
     const filterArticles = () => {
       let visibleCount = 0;
-      articles.forEach(article => {
+      articles.forEach((article) => {
         const title = article.getAttribute('data-title') || '';
         const category = article.getAttribute('data-category') || '';
 
@@ -173,9 +240,9 @@ const categoriesList = ['All', 'Agentic AI & LLMs', 'Kubernetes', 'Observability
       });
     }
 
-    filterChips.forEach(chip => {
+    filterChips.forEach((chip) => {
       chip.addEventListener('click', () => {
-        filterChips.forEach(c => c.classList.remove('active'));
+        filterChips.forEach((c) => c.classList.remove('active'));
         chip.classList.add('active');
         currentCategory = chip.getAttribute('data-category') || 'All';
         filterArticles();
@@ -230,10 +297,21 @@ const categoriesList = ['All', 'Agentic AI & LLMs', 'Kubernetes', 'Observability
     margin: 0 auto 2rem;
   }
 
+  .banner-content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.2rem;
+  }
+
   .banner-label {
     color: var(--accent-blue);
     font-weight: 700;
-    margin-right: 0.5rem;
+  }
+
+  .banner-sub {
+    color: var(--text-muted);
+    font-size: 0.85rem;
   }
 
   .search-container {
@@ -383,13 +461,30 @@ const categoriesList = ['All', 'Agentic AI & LLMs', 'Kubernetes', 'Observability
     border: 1px solid rgba(129, 140, 248, 0.3);
     font-size: 0.7rem;
     font-weight: 700;
-    padding: 0.15rem 0.4rem;
+    padding: 0.15rem 0.45rem;
+    border-radius: 4px;
+  }
+
+  .local-badge {
+    background: rgba(148, 163, 184, 0.12);
+    color: var(--text-muted);
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 0.15rem 0.45rem;
     border-radius: 4px;
   }
 
   .post-date {
     font-size: 0.85rem;
     color: var(--text-muted);
+  }
+
+  .card-main {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    flex-grow: 1;
   }
 
   .card-title {
@@ -400,10 +495,22 @@ const categoriesList = ['All', 'Agentic AI & LLMs', 'Kubernetes', 'Observability
 
   .card-title a {
     color: var(--text-main);
+    text-decoration: none;
+    transition: color 0.2s ease;
   }
 
   .card-title a:hover {
     color: var(--accent-blue);
+  }
+
+  .card-desc {
+    font-size: 0.88rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
 
   .card-footer {
@@ -418,15 +525,17 @@ const categoriesList = ['All', 'Agentic AI & LLMs', 'Kubernetes', 'Observability
   .read-link {
     font-weight: 600;
     color: var(--accent-blue);
+    text-decoration: none;
   }
 
-  .canonical-link {
+  .read-link:hover {
+    text-decoration: underline;
+  }
+
+  .source-indicator {
+    font-size: 0.78rem;
     color: var(--text-muted);
-    font-weight: 500;
-  }
-
-  .canonical-link:hover {
-    color: var(--accent-indigo);
+    opacity: 0.75;
   }
 
   @media (max-width: 640px) {

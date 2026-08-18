@@ -2,6 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
 import cvData from '../data/cv.json';
+import devtoData from '../data/devtoArticles.json';
 import { awardsAndCertificates } from '../data/certificates';
 import { featuredProjects } from '../data/projects';
 import { accreditations } from '../data/accreditations';
@@ -9,25 +10,6 @@ import { youtubeVideos } from '../data/videos';
 import { githubProfileSummary } from '../data/githubStats';
 
 const posts = await getCollection('blog');
-
-const recentPosts = posts
-  .map((post) => {
-    const filename = post.id.split('/').pop() || '';
-    const dateMatch = filename.match(/^(\d{4}-\d{2}-\d{2})-(.+)$/);
-    let dateStr = '2024-01-01';
-    if (post.data.date) {
-      dateStr = String(post.data.date).slice(0, 10);
-    } else if (dateMatch) {
-      dateStr = dateMatch[1];
-    }
-    return {
-      title: post.data.title || filename.replace(/\.(md|markdown)$/, '').replaceAll('-', ' '),
-      dateStr,
-      slug: post.id.replace(/\.(md|markdown)$/, ''),
-    };
-  })
-  .sort((a, b) => (a.dateStr > b.dateStr ? -1 : 1))
-  .slice(0, 4);
 
 const coreCompetencies = [
   {
@@ -52,7 +34,7 @@ const coreCompetencies = [
   }
 ];
 
-const totalPosts = posts.length;
+const totalPosts = posts.length + (devtoData as any[]).length;
 const totalVideos = youtubeVideos.length;
 const totalCerts = accreditations.length;
 const totalAwards = awardsAndCertificates.length;

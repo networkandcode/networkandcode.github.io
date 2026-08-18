@@ -1,0 +1,725 @@
+[
+  {
+    "id": 3842447,
+    "title": "Simple A2A implementation with Strands",
+    "description": "A2A has become like a standard for enabling agent to agent communication, we could use the a2a-sdk...",
+    "url": "https://dev.to/aws-builders/simple-a2a-implementation-with-strands-2n7",
+    "published_at": "2026-06-07T18:38:48Z",
+    "tag_list": [
+      "ai",
+      "aws",
+      "agentskills",
+      "llm"
+    ],
+    "cover_image": "https://media2.dev.to/dynamic/image/width=1000,height=420,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fi8ymeydsxm4rg7pnh9sb.png",
+    "reading_time_minutes": 4,
+    "positive_reactions_count": 6,
+    "comments_count": 0
+  },
+  {
+    "id": 3742084,
+    "title": "Basics of Gemma 4 with Google ADK",
+    "description": "This is a submission for the Gemma 4 Challenge: Write About Gemma 4  Nothing fancy here :), we  shall...",
+    "url": "https://dev.to/networkandcode/basics-of-gemma-4-with-google-adk-4jh4",
+    "published_at": "2026-05-24T17:26:52Z",
+    "tag_list": [
+      "devchallenge",
+      "gemmachallenge",
+      "gemma",
+      "googlecloud"
+    ],
+    "cover_image": "https://media2.dev.to/dynamic/image/width=1000,height=420,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fow4r7ol7woqw415ci70z.png",
+    "reading_time_minutes": 4,
+    "positive_reactions_count": 6,
+    "comments_count": 0
+  },
+  {
+    "id": 3589318,
+    "title": "Text to SQL with AWS Bedrock Structured KB",
+    "description": "Hi 👋, In this post we shall explore Bedrock's structured KB with this architecture: Upload CSVs to S3...",
+    "url": "https://dev.to/aws-builders/aws-bedrock-kb-with-glue-data-catalog-1j9g",
+    "published_at": "2026-05-03T17:57:36Z",
+    "tag_list": [
+      "aws",
+      "sql",
+      "claude",
+      "ai"
+    ],
+    "cover_image": "https://media2.dev.to/dynamic/image/width=1000,height=420,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fftf9swslpsu8qscuqilh.png",
+    "reading_time_minutes": 5,
+    "positive_reactions_count": 5,
+    "comments_count": 0
+  },
+  {
+    "id": 2877144,
+    "title": "🚀 Sample RAG app with Strands, Reflex and S3",
+    "description": "Hi 👋, these are some setup instructions for the app that lets store some notes for subjects 📚 in S3...",
+    "url": "https://dev.to/aws-builders/sample-rag-app-with-strands-reflex-and-s3-4n6m",
+    "published_at": "2025-09-29T16:16:13Z",
+    "tag_list": [
+      "aws",
+      "rag",
+      "vectordatabase",
+      "llm"
+    ],
+    "cover_image": "https://media2.dev.to/dynamic/image/width=1000,height=420,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fplmpseutf6t7krfzwt79.webp",
+    "reading_time_minutes": 2,
+    "positive_reactions_count": 8,
+    "comments_count": 0
+  },
+  {
+    "id": 2844653,
+    "title": "New Relic Template for Strands",
+    "description": "Hi 👋, we’ll see about observability with New Relic / OTEL, for Strands Agents that shows some quick...",
+    "url": "https://dev.to/aws-builders/new-relic-template-for-strands-33p",
+    "published_at": "2025-09-14T10:05:17Z",
+    "tag_list": [
+      "aws",
+      "newrelic",
+      "mcp",
+      "kubernetes"
+    ],
+    "cover_image": "https://media2.dev.to/dynamic/image/width=1000,height=420,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fi9xbqvhh5v0fdymwl5cp.png",
+    "reading_time_minutes": 2,
+    "positive_reactions_count": 7,
+    "comments_count": 0
+  },
+  {
+    "id": 2808938,
+    "title": "OTEL Observability with Langfuse for Strands Agents",
+    "description": "Hi 👋, in this post we shall see how to use Open Telemetry and Langfuse cloud to observe LLM calls...",
+    "url": "https://dev.to/aws-builders/otel-observability-with-langfuse-for-strands-agents-3eon",
+    "published_at": "2025-08-30T06:44:51Z",
+    "tag_list": [
+      "aws",
+      "llm",
+      "mcp",
+      "monitoring"
+    ],
+    "cover_image": "https://media2.dev.to/dynamic/image/width=1000,height=420,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fgc8douesqa70bbzs0d8l.png",
+    "reading_time_minutes": 3,
+    "positive_reactions_count": 10,
+    "comments_count": 0
+  },
+  {
+    "id": 2633843,
+    "title": "A simple screening agent with CrewAI",
+    "description": "Let's try a simple exercise with CrewAI with a single agent and task, that parses information it has...",
+    "url": "https://dev.to/aws-builders/a-simple-screening-agent-with-crewai-539l",
+    "published_at": "2025-06-28T17:26:14Z",
+    "tag_list": [
+      "aws",
+      "llm",
+      "python",
+      "ai"
+    ],
+    "cover_image": "https://media2.dev.to/dynamic/image/width=1000,height=420,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Ft50zrclm9wcqyh44r0um.png",
+    "reading_time_minutes": 4,
+    "positive_reactions_count": 6,
+    "comments_count": 0
+  },
+  {
+    "id": 2459863,
+    "title": "GitHub MCP with Amazon Q CLI",
+    "description": "Hi 👋, let's explore some MCP stuff with the amazon q developer cli. We shall try onboarding a new...",
+    "url": "https://dev.to/aws-builders/mcp-with-amazon-q-cli-ac9",
+    "published_at": "2025-05-06T06:31:02Z",
+    "tag_list": [
+      "aws",
+      "mcp",
+      "github",
+      "nextjs"
+    ],
+    "cover_image": "https://media2.dev.to/dynamic/image/width=1000,height=420,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fjlb6iwqht4njpfl51jf3.webp",
+    "reading_time_minutes": 4,
+    "positive_reactions_count": 15,
+    "comments_count": 0
+  },
+  {
+    "id": 2034225,
+    "title": "OTEL Auto Instrumentation Demo for SpringBoot",
+    "description": "Hello 👋, this post is about auto instrumenting a spring boot app with the otel agent running on EKS,...",
+    "url": "https://dev.to/aws-builders/otel-auto-instrumentation-demo-for-springboot-gmk",
+    "published_at": "2024-10-11T17:36:59Z",
+    "tag_list": [
+      "monitoring",
+      "springboot",
+      "aws",
+      "kubernetes"
+    ],
+    "cover_image": "https://media2.dev.to/dynamic/image/width=1000,height=420,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fn7bpdgsjgcmqipfbcgb1.png",
+    "reading_time_minutes": 9,
+    "positive_reactions_count": 9,
+    "comments_count": 1
+  },
+  {
+    "id": 2021670,
+    "title": "AWS ALB(Ingress) access logs on Grafana",
+    "description": "Hi 👋, we shall explore the following use case in this post: Let's say you have an EKS cluster, and...",
+    "url": "https://dev.to/aws-builders/aws-albingress-access-logs-on-grafana-25em",
+    "published_at": "2024-10-01T10:05:48Z",
+    "tag_list": [
+      "aws",
+      "kubernetes",
+      "lambda",
+      "monitoring"
+    ],
+    "cover_image": "https://media2.dev.to/dynamic/image/width=1000,height=420,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2F235bq6gkozgamld01qhn.jpeg",
+    "reading_time_minutes": 6,
+    "positive_reactions_count": 14,
+    "comments_count": 1
+  },
+  {
+    "id": 1927367,
+    "title": "OTEL Demo with EKS and New Relic",
+    "description": "Hi👋, In this post we shall deploy the OTEL demo app on EKS, and send the metrics, logs and traces to...",
+    "url": "https://dev.to/aws-builders/otel-demo-with-and-eks-and-newrelic-3j52",
+    "published_at": "2024-07-18T04:09:25Z",
+    "tag_list": [
+      "aws",
+      "newrelic",
+      "kubernetes",
+      "sre"
+    ],
+    "cover_image": "https://media2.dev.to/dynamic/image/width=1000,height=420,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fdyvayx3ij8o3cyyg464r.png",
+    "reading_time_minutes": 4,
+    "positive_reactions_count": 7,
+    "comments_count": 0
+  },
+  {
+    "id": 1921421,
+    "title": "Grafana OTEL App Observability Demo",
+    "description": "Introduction   We are going to explore the built in app observability solution on Grafana...",
+    "url": "https://dev.to/networkandcode/grafana-otel-app-observability-demo-552j",
+    "published_at": "2024-07-12T17:20:00Z",
+    "tag_list": [
+      "grafana",
+      "otel",
+      "observability",
+      "kubernetes"
+    ],
+    "cover_image": "https://media2.dev.to/dynamic/image/width=1000,height=420,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fz61l81rukn698b056t57.png",
+    "reading_time_minutes": 5,
+    "positive_reactions_count": 13,
+    "comments_count": 0
+  },
+  {
+    "id": 1857211,
+    "title": "Synthetic Monitoring with Grafana Cloud and Lambda",
+    "description": "🕐Time for some synthetic monitoring fun with Grafana...📊 We'd deploy a simple function on AWS Lambda...",
+    "url": "https://dev.to/aws-builders/synthetic-monitoring-with-grafana-cloud-1n5b",
+    "published_at": "2024-05-18T08:48:03Z",
+    "tag_list": [
+      "aws",
+      "monitoring",
+      "http",
+      "javascript"
+    ],
+    "cover_image": "https://media2.dev.to/dynamic/image/width=1000,height=420,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fvvleso6jt686i30pmi1l.png",
+    "reading_time_minutes": 6,
+    "positive_reactions_count": 7,
+    "comments_count": 0
+  },
+  {
+    "id": 1849681,
+    "title": "Logging demo with OTEL Collector, CloudWatch and Grafana",
+    "description": "Hello 👋, in this post, we would be using the OTEL Demo App with OpenTelemetry Collector and export...",
+    "url": "https://dev.to/aws-builders/logging-demo-with-otel-collector-cloudwatch-and-grafana-53l4",
+    "published_at": "2024-05-11T14:18:27Z",
+    "tag_list": [
+      "aws",
+      "monitoring",
+      "kubernetes",
+      "cloudnative"
+    ],
+    "cover_image": null,
+    "reading_time_minutes": 3,
+    "positive_reactions_count": 13,
+    "comments_count": 2
+  },
+  {
+    "id": 1835021,
+    "title": "OTEL Tracing demo with ADOT, AWS X-Ray and Grafana",
+    "description": "Introduction   Hello 👋, In this post we'll see about sending traces from a demo app to AWS...",
+    "url": "https://dev.to/aws-builders/tracing-demo-with-aws-x-ray-and-grafana-1pb5",
+    "published_at": "2024-04-26T10:01:17Z",
+    "tag_list": [
+      "aws",
+      "grafana",
+      "kubernetes",
+      "otel"
+    ],
+    "cover_image": "https://media2.dev.to/dynamic/image/width=1000,height=420,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fsource.unsplash.com%2Ffeatured%3Ftrace",
+    "reading_time_minutes": 4,
+    "positive_reactions_count": 9,
+    "comments_count": 1
+  },
+  {
+    "id": 1634892,
+    "title": "M/L Learning Byte: Linear Regression",
+    "description": "Hello 👋, in this post, we shall see the procedures involved in training a simple linear model with...",
+    "url": "https://dev.to/aws-builders/ml-learning-byte-linear-regression-21f9",
+    "published_at": "2023-10-23T11:21:23Z",
+    "tag_list": [
+      "machinelearning",
+      "python",
+      "jupyter",
+      "aws"
+    ],
+    "cover_image": "https://media2.dev.to/dynamic/image/width=1000,height=420,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fsource.unsplash.com%2Ffeatured%2F%3Fmaths",
+    "reading_time_minutes": 7,
+    "positive_reactions_count": 3,
+    "comments_count": 0
+  },
+  {
+    "id": 1641266,
+    "title": "Amazon Grafana demo with EKS",
+    "description": "Hello 👋, in the previous post, we have seen about Grafana Cloud with an AWS subscription. In this...",
+    "url": "https://dev.to/aws-builders/amazon-grafana-demo-with-eks-3mfp",
+    "published_at": "2023-10-21T17:11:14Z",
+    "tag_list": [
+      "sre",
+      "devops",
+      "aws",
+      "kubernetes"
+    ],
+    "cover_image": "https://media2.dev.to/dynamic/image/width=1000,height=420,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fsource.unsplash.com%2Ffeatured%2F%3Fcolor%26box",
+    "reading_time_minutes": 6,
+    "positive_reactions_count": 8,
+    "comments_count": 4
+  },
+  {
+    "id": 1636535,
+    "title": "Grafana on AWS Marketplace",
+    "description": "Hi there 👋, We will see how to launch Grafana cloud from AWS in an easy way, with no installation...",
+    "url": "https://dev.to/aws-builders/grafana-on-aws-marketplace-3189",
+    "published_at": "2023-10-16T17:24:44Z",
+    "tag_list": [
+      "aws",
+      "devops",
+      "sre",
+      "cloud"
+    ],
+    "cover_image": "https://media2.dev.to/dynamic/image/width=1000,height=420,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fsource.unsplash.com%2Ffeatured%2F%3Fchart",
+    "reading_time_minutes": 4,
+    "positive_reactions_count": 7,
+    "comments_count": 0
+  },
+  {
+    "id": 1636216,
+    "title": "M/L Learning Byte: Load, Split and Scale Data",
+    "description": "Let's play with some data in Pandas. I am using a notebook for this purpose that's created inside a...",
+    "url": "https://dev.to/aws-builders/ml-learning-byte-load-split-and-scale-data-1n31",
+    "published_at": "2023-10-16T12:37:21Z",
+    "tag_list": [
+      "machinelearning",
+      "datascience",
+      "python",
+      "aws"
+    ],
+    "cover_image": "https://media2.dev.to/dynamic/image/width=1000,height=420,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fsource.unsplash.com%2Ffeatured%2F%3Fdatascience",
+    "reading_time_minutes": 8,
+    "positive_reactions_count": 2,
+    "comments_count": 0
+  },
+  {
+    "id": 1502604,
+    "title": "Deploy HarperDB on ROSA (Red Hat OpenShift Service on AWS)",
+    "description": "In this post, we would be deploying HarperDB on ROSA (Red Hat OpenShift Service on AWS). Let's begin...",
+    "url": "https://dev.to/aws-builders/deploy-harperdb-on-rosa-red-hat-openshift-service-on-aws-4jge",
+    "published_at": "2023-06-13T00:44:35Z",
+    "tag_list": [
+      "aws",
+      "harperdb",
+      "kubernetes",
+      "openshift"
+    ],
+    "cover_image": "https://media2.dev.to/dynamic/image/width=1000,height=420,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fsource.unsplash.com%2Ffeatured%2F%3Fcontainer",
+    "reading_time_minutes": 7,
+    "positive_reactions_count": 25,
+    "comments_count": 0
+  },
+  {
+    "id": 1479382,
+    "title": "Injecting AWS secrets to HarperDB container with Python",
+    "description": "In this post we'll see how we can inject the username and password secrets stored in AWS as...",
+    "url": "https://dev.to/aws-builders/injecting-aws-secrets-to-harperdb-container-with-python-2df6",
+    "published_at": "2023-05-27T02:28:05Z",
+    "tag_list": [
+      "aws",
+      "harperdb",
+      "kubernetes",
+      "python"
+    ],
+    "cover_image": "https://media2.dev.to/dynamic/image/width=1000,height=420,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fsource.unsplash.com%2Ffeatured%2F%3Ffiles",
+    "reading_time_minutes": 7,
+    "positive_reactions_count": 19,
+    "comments_count": 0
+  },
+  {
+    "id": 1476692,
+    "title": "Notes app with NextJS",
+    "description": "What I built   I developed a simple notes app with NextJS that authenticates via Auth0 and...",
+    "url": "https://dev.to/networkandcode/notes-app-with-nextjs-2l4g",
+    "published_at": "2023-05-22T18:04:26Z",
+    "tag_list": [
+      "githubhack23",
+      "nextjs",
+      "auth0",
+      "harperdb"
+    ],
+    "cover_image": "https://media2.dev.to/dynamic/image/width=1000,height=420,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fsource.unsplash.com%2Ffeatured%2F%3Fnote",
+    "reading_time_minutes": 3,
+    "positive_reactions_count": 6,
+    "comments_count": 0
+  },
+  {
+    "id": 1366057,
+    "title": "Query HarperDB's REST API via Apollo GraphQL",
+    "description": "Introduction   Hi there 👋, in this post, we shall launch an Apollo server with node, and...",
+    "url": "https://dev.to/networkandcode/query-harperdbs-rest-api-via-apollo-graphql-21n1",
+    "published_at": "2023-02-17T01:31:55Z",
+    "tag_list": [
+      "apolloserver",
+      "graphql",
+      "harperdb",
+      "rest"
+    ],
+    "cover_image": "https://media2.dev.to/dynamic/image/width=1000,height=420,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fsource.unsplash.com%2Ffeatured%2F%3Fcoding",
+    "reading_time_minutes": 9,
+    "positive_reactions_count": 2,
+    "comments_count": 0
+  },
+  {
+    "id": 1347479,
+    "title": "HarperDB Helm chart on Artifact Hub",
+    "description": "Introduction   Hey 👋, in this post, we shall see how to create a helm chart for HarperDB...",
+    "url": "https://dev.to/networkandcode/harperdb-helm-chart-on-artifact-hub-3066",
+    "published_at": "2023-02-03T01:25:37Z",
+    "tag_list": [
+      "web3",
+      "crypto",
+      "webdev",
+      "offers"
+    ],
+    "cover_image": null,
+    "reading_time_minutes": 9,
+    "positive_reactions_count": 7,
+    "comments_count": 0
+  },
+  {
+    "id": 1328881,
+    "title": "HarperDB with Anthos on GKE",
+    "description": "Introduction   Anthos is a service from Google cloud using which we can deploy and manage...",
+    "url": "https://dev.to/networkandcode/harperdb-with-anthos-on-gke-2nef",
+    "published_at": "2023-01-17T21:40:20Z",
+    "tag_list": [
+      "softwaredevelopment",
+      "showdev"
+    ],
+    "cover_image": null,
+    "reading_time_minutes": 4,
+    "positive_reactions_count": 10,
+    "comments_count": 1
+  },
+  {
+    "id": 1328337,
+    "title": "HarperDB with Helm on EKS",
+    "description": "This post builds on top of this where we discussed how to launch HarperDB on EKS with kubectl. Here,...",
+    "url": "https://dev.to/aws-builders/harperdb-with-helm-on-eks-3fb9",
+    "published_at": "2023-01-13T17:34:28Z",
+    "tag_list": [],
+    "cover_image": null,
+    "reading_time_minutes": 4,
+    "positive_reactions_count": 3,
+    "comments_count": 0
+  },
+  {
+    "id": 1322254,
+    "title": "HarperDB on EKS",
+    "description": "Hi there 👋, let's see how to deploy HarperDB on EKS, and then test it with an API call from CURL. You...",
+    "url": "https://dev.to/aws-builders/harperdb-on-eks-1bcb",
+    "published_at": "2023-01-09T14:05:18Z",
+    "tag_list": [
+      "security",
+      "webdev",
+      "showdev"
+    ],
+    "cover_image": null,
+    "reading_time_minutes": 6,
+    "positive_reactions_count": 2,
+    "comments_count": 0
+  },
+  {
+    "id": 1264535,
+    "title": "Subscribe to AWS IoT topic on InfluxDB",
+    "description": "Hey 👋, here is my first post after the community builder renewal 😆. In this post, we would send some...",
+    "url": "https://dev.to/aws-builders/send-messages-from-aws-iot-to-influxdb-via-native-mqtt-subscription-3366",
+    "published_at": "2022-11-20T10:00:47Z",
+    "tag_list": [
+      "aws",
+      "influxdb",
+      "iot",
+      "mqtt"
+    ],
+    "cover_image": "https://media2.dev.to/dynamic/image/width=1000,height=420,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fimages.unsplash.com%2Fphoto-1545259741-2ea3ebf61fa3%3Fixlib%3Drb-4.0.3%26ixid%3DMnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8%26auto%3Dformat%26fit%3Dcrop%26w%3D1770%26q%3D80",
+    "reading_time_minutes": 3,
+    "positive_reactions_count": 7,
+    "comments_count": 0
+  },
+  {
+    "id": 1214459,
+    "title": "GCP Anthos Cluster on AWS",
+    "description": "Anthos is a software offering from Google, using which we can build kubernetes clusters on nodes both...",
+    "url": "https://dev.to/aws-builders/gcp-anthos-cluster-on-aws-19p8",
+    "published_at": "2022-10-08T15:27:02Z",
+    "tag_list": [
+      "anthos",
+      "aws",
+      "gcp",
+      "kubernetes"
+    ],
+    "cover_image": null,
+    "reading_time_minutes": 7,
+    "positive_reactions_count": 3,
+    "comments_count": 0
+  },
+  {
+    "id": 1178676,
+    "title": "AWS CloudTrail log file validation",
+    "description": "Introduction   CloudTrail lets us log all API calls in our AWS cloud. In this post, we shall...",
+    "url": "https://dev.to/aws-builders/aws-cloudtrail-log-file-validation-1ehl",
+    "published_at": "2022-08-29T10:21:00Z",
+    "tag_list": [
+      "aws",
+      "cloudtrail",
+      "logging",
+      "s3"
+    ],
+    "cover_image": null,
+    "reading_time_minutes": 5,
+    "positive_reactions_count": 7,
+    "comments_count": 0
+  },
+  {
+    "id": 1142707,
+    "title": "AWS IoT pub/sub over MQTT",
+    "description": "Introduction   Hello, in this  post we would create an IoT thing on AWS, use it's...",
+    "url": "https://dev.to/aws-builders/aws-iot-pubsub-over-mqtt-1oig",
+    "published_at": "2022-07-17T09:53:29Z",
+    "tag_list": [
+      "aws",
+      "iot",
+      "python",
+      "mqtt"
+    ],
+    "cover_image": "https://media2.dev.to/dynamic/image/width=1000,height=420,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fsource.unsplash.com%2Ffeatured%2F%3Fdevice",
+    "reading_time_minutes": 6,
+    "positive_reactions_count": 21,
+    "comments_count": 2
+  },
+  {
+    "id": 1134616,
+    "title": "Setup IoT core on Google cloud with Terraform",
+    "description": "Hello 👋, we shall see how to provision a minimal IoT infrastructure on Google cloud with...",
+    "url": "https://dev.to/networkandcode/setup-iot-core-on-google-cloud-with-terraform-4h6a",
+    "published_at": "2022-07-07T15:01:16Z",
+    "tag_list": [
+      "cloud",
+      "googlecloud",
+      "iot",
+      "terraform"
+    ],
+    "cover_image": "https://media2.dev.to/dynamic/image/width=1000,height=420,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fsource.unsplash.com%2Ffeatured%2F%3Fiot",
+    "reading_time_minutes": 5,
+    "positive_reactions_count": 3,
+    "comments_count": 0
+  },
+  {
+    "id": 1128316,
+    "title": "Trying my hands on Neo4j with some IoT data",
+    "description": "Introduction   Hello 👋, time for some GraphDB...  Neo4j is a Graph DB written  in Java, the...",
+    "url": "https://dev.to/networkandcode/trying-my-hands-on-neo4j-with-some-iot-data-28g7",
+    "published_at": "2022-06-30T12:17:44Z",
+    "tag_list": [
+      "iot",
+      "neo4j",
+      "graphdb",
+      "cypher"
+    ],
+    "cover_image": "https://media2.dev.to/dynamic/image/width=1000,height=420,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Finuytab8tztbxzg7oa21.png",
+    "reading_time_minutes": 6,
+    "positive_reactions_count": 7,
+    "comments_count": 0
+  },
+  {
+    "id": 1100409,
+    "title": "A sample Alexa skill on AWS with Serverless",
+    "description": "Hey all 👋 we are gonna see how to setup an Alexa skill for a  trivia related to space events, using...",
+    "url": "https://dev.to/aws-builders/setup-an-alexa-skill-with-serverless-1gck",
+    "published_at": "2022-05-31T13:59:32Z",
+    "tag_list": [
+      "aws",
+      "serverless",
+      "node",
+      "alexa"
+    ],
+    "cover_image": "https://media2.dev.to/dynamic/image/width=1000,height=420,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fsource.unsplash.com%2Ffeatured%2F%3Fgalaxy",
+    "reading_time_minutes": 7,
+    "positive_reactions_count": 6,
+    "comments_count": 0
+  },
+  {
+    "id": 1089065,
+    "title": "Cricket scoring app with Appwrite and NextJS(contd.)",
+    "description": "Hey all 👋, this is in continuation to the previous post, that covered changes done on the...",
+    "url": "https://dev.to/networkandcode/cricket-scoring-app-with-appwrite-and-nextjscontd-2k64",
+    "published_at": "2022-05-19T11:32:57Z",
+    "tag_list": [
+      "nextjs",
+      "react",
+      "tailwindcss",
+      "appwrite"
+    ],
+    "cover_image": "https://media2.dev.to/dynamic/image/width=1000,height=420,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fgpy1g909crhvzohtys42.png",
+    "reading_time_minutes": 5,
+    "positive_reactions_count": 8,
+    "comments_count": 0
+  },
+  {
+    "id": 1082505,
+    "title": "Cricket scoring app using Appwrite & NextJS",
+    "description": "Overview of My Submission   Hi, this is an attempt to learn appwrite by trying out a single...",
+    "url": "https://dev.to/networkandcode/cricket-scoring-app-using-appwrite-nextjs-3730",
+    "published_at": "2022-05-11T18:39:10Z",
+    "tag_list": [
+      "appwritehack",
+      "nextjs",
+      "cricket",
+      "webdev"
+    ],
+    "cover_image": null,
+    "reading_time_minutes": 2,
+    "positive_reactions_count": 7,
+    "comments_count": 3
+  },
+  {
+    "id": 1050662,
+    "title": "Serverless backend setup for a todo list in AWS",
+    "description": "Hello 👋, in this post 📝 we are going to build a simple backend for a todo application using AWS...",
+    "url": "https://dev.to/aws-builders/serverless-backend-setup-for-a-todo-list-in-aws-189l",
+    "published_at": "2022-04-10T12:52:45Z",
+    "tag_list": [
+      "aws",
+      "serverless",
+      "lambda",
+      "api"
+    ],
+    "cover_image": "https://media2.dev.to/dynamic/image/width=1000,height=420,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fzvkovl930kmnoxq2kom8.PNG",
+    "reading_time_minutes": 6,
+    "positive_reactions_count": 9,
+    "comments_count": 0
+  },
+  {
+    "id": 1028011,
+    "title": "NextJS deployment via AWS CodeCommit / Amplify",
+    "description": "Hey All 👋, Let's see how to add the NextJS starter code in an AWS CodeCommit repo and deploy it with...",
+    "url": "https://dev.to/aws-builders/nextjs-deployment-via-aws-codecommit-amplify-6oj",
+    "published_at": "2022-03-19T17:03:40Z",
+    "tag_list": [
+      "aws",
+      "nextjs",
+      "cicd",
+      "amplify"
+    ],
+    "cover_image": "https://media2.dev.to/dynamic/image/width=1000,height=420,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fgiblb0upo4c546upnakd.PNG",
+    "reading_time_minutes": 4,
+    "positive_reactions_count": 13,
+    "comments_count": 0
+  },
+  {
+    "id": 957199,
+    "title": "Run Svelte/Solid app on AWS Cloud9",
+    "description": "Hey all 👋, let's say you do not have a system with sufficient memory / CPU, to write code on IDE and...",
+    "url": "https://dev.to/aws-builders/run-svelte-app-on-aws-cloud9-4j5b",
+    "published_at": "2022-01-16T11:33:38Z",
+    "tag_list": [
+      "aws",
+      "cloud",
+      "solidjs",
+      "svelte"
+    ],
+    "cover_image": null,
+    "reading_time_minutes": 5,
+    "positive_reactions_count": 10,
+    "comments_count": 2
+  },
+  {
+    "id": 917875,
+    "title": "Setup an IAM user in AWS via CLI",
+    "description": "Hey all, 👋 we shall see the following in this post: 📜   Create a group Attach policies ✍️ to the...",
+    "url": "https://dev.to/aws-builders/aws-iam-setup-user-via-cli-45bb",
+    "published_at": "2021-12-05T11:19:02Z",
+    "tag_list": [
+      "aws",
+      "iam",
+      "jq",
+      "security"
+    ],
+    "cover_image": null,
+    "reading_time_minutes": 4,
+    "positive_reactions_count": 7,
+    "comments_count": 0
+  },
+  {
+    "id": 897816,
+    "title": "Launch AWS EC2 instances the hard way with CLI",
+    "description": "Hey All 👋, in this post we shall launch 3 AWS EC2 instances and test SSH connectivity to those...  We...",
+    "url": "https://dev.to/aws-builders/aws-ec2-launch-instances-the-hard-way-with-cli-2ga3",
+    "published_at": "2021-11-14T12:11:43Z",
+    "tag_list": [
+      "aws",
+      "ec2",
+      "linux",
+      "kubernetes"
+    ],
+    "cover_image": null,
+    "reading_time_minutes": 6,
+    "positive_reactions_count": 6,
+    "comments_count": 0
+  },
+  {
+    "id": 865633,
+    "title": "Setup an AWS EKS cluster and deploy OWASP juice shop",
+    "description": "Let's setup an EKS cluster and then install the  OWASP Juice Shop on it using kubernetes manifests.  ...",
+    "url": "https://dev.to/aws-builders/aws-eks-setup-cluster-and-deploy-owasp-juice-shop-214j",
+    "published_at": "2021-10-16T09:00:00Z",
+    "tag_list": [
+      "kubernetes",
+      "aws",
+      "owasp",
+      "eks"
+    ],
+    "cover_image": null,
+    "reading_time_minutes": 6,
+    "positive_reactions_count": 7,
+    "comments_count": 0
+  },
+  {
+    "id": 863227,
+    "title": "Bootstrap a Kubernetes cluster with RKE",
+    "description": "Rancher Kubernetes Engine ( RKE ) is a popular tool using which we can bootstrap kubernetes clusters...",
+    "url": "https://dev.to/networkandcode/kubernetes-bootstrap-a-cluster-with-rke-1f9n",
+    "published_at": "2021-10-14T07:56:52Z",
+    "tag_list": [
+      "kubernetes",
+      "rancher",
+      "linode",
+      "linux"
+    ],
+    "cover_image": null,
+    "reading_time_minutes": 4,
+    "positive_reactions_count": 5,
+    "comments_count": 0
+  }
+]
