@@ -35,7 +35,7 @@ export const workExperienceAchievements: WorkRole[] = [
     company: "Juniper Networks",
     role: "Product Consultant 3",
     location: "Bangalore, India",
-    period: "4 Feb 2019 — 14 Jun 2019",
+    period: "Feb 2019 — Jun 2019",
     highlights: [
       "Individual technical contributor for drafting LLDs/HLDs, simulating labs on VMM, and assisting ISP customers with deployment & support in testbeds/POCs and Production.",
       "Executed design, validation, testing, deployment, acceptance testing, knowledge transfer, and post-installation support.",
@@ -49,7 +49,7 @@ export const workExperienceAchievements: WorkRole[] = [
     company: "Mphasis Ltd",
     role: "Sr. Principal Infrastructure Engineer",
     location: "Chennai, India",
-    period: "6 Sep 2016 — 18 Jan 2019",
+    period: "Sep 2016 — Jan 2019",
     highlights: [
       "Led a team of 10+ members, managing task assignments, activity reports, performance ratings, and nominations — team contributed 40+ SOPs, 50+ client appreciations, and 20+ monthly awards.",
       "Implemented LAN & WLAN setups of 50+ sites in APJ & EMEA with varying scopes (new setups, migrations, split-up & mergers, decommissioning).",
@@ -60,22 +60,55 @@ export const workExperienceAchievements: WorkRole[] = [
     ]
   },
   {
-    company: "HCL Technologies / BRT India",
-    role: "Sr. Analyst / Sr. Network Engineer",
+    company: "HCL Technologies",
+    role: "Sr. Analyst",
     location: "Chennai, India",
-    period: "20 May 2013 — 12 Aug 2016",
+    period: "Mar 2015 — Aug 2016",
     highlights: [
-      "Part of the Global IT Networks Business Onboarding team: network design, implementation, and project coordination for business expansion, redesign, and migrations.",
+      "Global IT Networks Business Onboarding team: network design, implementation, and project coordination for business expansion, redesign, and migrations.",
       "Designed end-to-end networks, prepared RFPs, HLDs, LLDs in Visio, and BOMs for LAN/WLAN/WAN inventory and links.",
       "Implemented Microsoft Azure ExpressRoute setups, IPsec (Client-to-Site / Site-to-Site) / MPLS L3 VPNs, and shared/dedicated LANs.",
       "Installed and configured new Cisco IOS and Juniper JunOS EX/MX devices, setting up OSPF and BGP routing protocols."
     ]
   },
   {
+    company: "BRT India",
+    role: "Sr. Network Engineer",
+    location: "Chennai, India",
+    period: "May 2013 — Mar 2015",
+    highlights: [
+      "Prepared low-level designs (LLDs) with firm architectural quotes for enterprise LAN/WAN deployments and MPLS provider integrations.",
+      "Followed ITIL change management processes for adding VLANs, VRFs, and IP VPN routes towards shared internet gateways.",
+      "Provisioned Cisco and Juniper routing and switching equipment with OSPF and BGP configurations, providing handover and UAT to global NOC."
+    ]
+  },
+  {
+    company: "Sutherland Global Services",
+    role: "Sr. Consultant",
+    location: "Cochin, India",
+    period: "Feb 2012 — Sep 2012",
+    highlights: [
+      "Delivered Tier-3 technical escalation support over phone, chat, and remote desktop for complex enterprise networking devices, links, and system peripherals.",
+      "Configured network router port forwarding, NAT, and remote access protocols to troubleshoot CCTV, system services, and device connectivity.",
+      "Diagnosed and resolved advanced operating system errors, software networking configurations, and application protocols."
+    ]
+  },
+  {
+    company: "CSS Corp",
+    role: "Sr. Support Engineer",
+    location: "Chennai, India",
+    period: "Mar 2011 — Feb 2012",
+    highlights: [
+      "Provided technical assistance for VoIP gateway installations, VoIP adapter line provisioning, audio packet routing, and call completion troubleshooting.",
+      "Configured and resolved connectivity issues on network modems, routers, VoIP devices, and enterprise telecommunications equipment for US & Canada clients.",
+      "Maintained 100% CSAT ratings while meeting SLA requirements on incoming enterprise technical escalations."
+    ]
+  },
+  {
     company: "Gecom",
     role: "Sr. Project Engineer",
     location: "Bahrain",
-    period: "11 Jan 2010 — 11 Jan 2011",
+    period: "Jan 2010 — Jan 2011",
     highlights: [
       "Site survey, installation, commissioning, documentation, maintenance, and support for modems/routers/WAPs/switches, PBX, CCTVs/DVRs, biometric infra, and Clipsal C-Bus intelligent lighting automation.",
       "Orchestrated Clipsal C-Bus intelligent lighting automation wiring and switch event programming for Ministry projects and World Trade Center maintenance.",
