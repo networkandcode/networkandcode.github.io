@@ -139,28 +139,6 @@ const categoriesList = ['All', 'Agentic AI & LLMs', 'Kubernetes', 'Observability
         Explore {allPosts.length} technical blog posts across Agentic AI, Kubernetes, OpenTelemetry, AWS, Fullstack, and Cloud Automation.
       </p>
 
-      <div class="channels-banner glass-card">
-        <div class="channel-col">
-          <div class="channel-info">
-            <span class="channel-tag devto">DEV.to</span>
-            <span class="channel-desc">{devtoData.length} Cloud, AI & Observability Posts</span>
-          </div>
-          <a href="https://dev.to/networkandcode" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-sm">
-            dev.to/networkandcode &rarr;
-          </a>
-        </div>
-        <div class="channel-divider"></div>
-        <div class="channel-col">
-          <div class="channel-info">
-            <span class="channel-tag hashnode">Hashnode</span>
-            <span class="channel-desc">{hashnodeData.length} Web Apps & Fullstack Posts</span>
-          </div>
-          <a href="https://networkandcode.hashnode.dev" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-sm">
-            networkandcode.hashnode.dev &rarr;
-          </a>
-        </div>
-      </div>
-
       <div class="search-container">
         <div class="search-box glass-card">
           <span class="search-icon">🔍</span>
@@ -334,64 +312,8 @@ const categoriesList = ['All', 'Agentic AI & LLMs', 'Kubernetes', 'Observability
   .archive-subtitle {
     color: var(--text-muted);
     max-width: 680px;
-    margin: 0 auto 1.5rem;
-    font-size: 1.1rem;
-  }
-
-  .channels-banner {
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    padding: 1.25rem 1.5rem;
-    font-size: 0.95rem;
-    max-width: 900px;
     margin: 0 auto 2rem;
-    gap: 1.5rem;
-  }
-
-  .channel-col {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1.25rem;
-    flex: 1;
-  }
-
-  .channel-info {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.25rem;
-  }
-
-  .channel-tag {
-    font-size: 0.75rem;
-    font-weight: 700;
-    padding: 0.15rem 0.5rem;
-    border-radius: 4px;
-  }
-
-  .channel-tag.devto {
-    background: rgba(129, 140, 248, 0.15);
-    color: var(--accent-indigo);
-    border: 1px solid rgba(129, 140, 248, 0.3);
-  }
-
-  .channel-tag.hashnode {
-    background: rgba(59, 130, 246, 0.15);
-    color: #3b82f6;
-    border: 1px solid rgba(59, 130, 246, 0.3);
-  }
-
-  .channel-desc {
-    font-size: 0.85rem;
-    color: var(--text-muted);
-  }
-
-  .channel-divider {
-    width: 1px;
-    height: 40px;
-    background: var(--border-glass);
+    font-size: 1.1rem;
   }
 
   .search-container {
@@ -626,22 +548,5 @@ const categoriesList = ['All', 'Agentic AI & LLMs', 'Kubernetes', 'Observability
     font-size: 0.78rem;
     color: var(--text-muted);
     opacity: 0.75;
-  }
-
-  @media (max-width: 768px) {
-    .channels-banner {
-      flex-direction: column;
-      align-items: stretch;
-      gap: 1.25rem;
-    }
-
-    .channel-divider {
-      width: 100%;
-      height: 1px;
-    }
-
-    .channel-col {
-      justify-content: space-between;
-    }
   }
 </style>

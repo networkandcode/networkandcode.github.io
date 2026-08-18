@@ -45,15 +45,15 @@ export const contributedRepositories: ContributedRepo[] = [
     name: "boutique-bot",
     fullName: "networkandcode/boutique-bot",
     url: "https://github.com/networkandcode/boutique-bot",
-    description: "Automated e-commerce & retail bot with real-time stock notifications, instant order alerts via Telegram, and automated inventory sync.",
-    language: "Node.js / JavaScript",
+    description: "AI conversational shopping assistant powered by Google Gemini, Model Context Protocol (MCP) agent framework, and Streamlit.",
+    language: "Python / Streamlit",
     role: "Creator & Maintainer"
   },
   {
     name: "brailleboard",
     fullName: "networkandcode/brailleboard",
     url: "https://github.com/networkandcode/brailleboard",
-    description: "Text-to-Braille conversion web application built with Appwrite backend, Next.js frontend, and Web Speech API for accessibility.",
+    description: "Accessibility-focused web app converting text to Braille, built with Appwrite backend, Next.js, and Web Speech API.",
     language: "TypeScript / Next.js",
     role: "Creator & Lead Developer"
   },
@@ -61,7 +61,7 @@ export const contributedRepositories: ContributedRepo[] = [
     name: "cricscore",
     fullName: "networkandcode/cricscore",
     url: "https://github.com/networkandcode/cricscore",
-    description: "Live cricket match scoring app with real-time score updates, match stats, and database management.",
+    description: "Single-user cricket match scoring app tracking live match statistics and state persistence with Appwrite and Next.js.",
     language: "TypeScript / Next.js",
     role: "Creator & Maintainer"
   },
@@ -69,15 +69,15 @@ export const contributedRepositories: ContributedRepo[] = [
     name: "notes-app",
     fullName: "networkandcode/notes-app",
     url: "https://github.com/networkandcode/notes-app",
-    description: "Full-stack serverless notes application featuring instant search, dynamic tags, and cloud database persistence.",
-    language: "TypeScript / React",
+    description: "Full-stack note-taking web application with Auth0 authentication, Next.js API routes, and HarperDB database storage.",
+    language: "TypeScript / Next.js",
     role: "Creator & Maintainer"
   },
   {
     name: "sms",
     fullName: "networkandcode/sms",
     url: "https://github.com/networkandcode/sms",
-    description: "Comprehensive school administrative dashboard deployed on Linode cloud with student records, attendance, and role-based access.",
+    description: "School administrative management application deployed on Linode cloud with student records and administrative workflows.",
     language: "TypeScript / Next.js",
     role: "Creator & Maintainer"
   }
