@@ -1,16 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { getCollection } from 'astro:content';
 import cvData from '../data/cv.json';
-import devtoData from '../data/devtoArticles.json';
-import hashnodeData from '../data/hashnodeArticles.json';
-import { awardsAndCertificates } from '../data/certificates';
-import { featuredProjects } from '../data/projects';
-import { accreditations } from '../data/accreditations';
-import { youtubeVideos } from '../data/videos';
-import { githubProfileSummary } from '../data/githubStats';
-
-const posts = await getCollection('blog');
 
 const coreCompetencies = [
   {
@@ -34,14 +24,6 @@ const coreCompetencies = [
     desc: "Next.js, TypeScript, Appwrite, HarperDB, Neo4j Graph DB, Python FastAPI, GraphQL Apollo."
   }
 ];
-
-const validDevTo = (devtoData as any[]).filter(a => !((a.description || '').toLowerCase().includes('networkandcode.github.io')));
-const validHashnode = (hashnodeData as any[]).filter(a => !((a.description || '').toLowerCase().includes('networkandcode.github.io')));
-const totalPosts = posts.length + validDevTo.length + validHashnode.length;
-const totalVideos = youtubeVideos.length;
-const totalCerts = accreditations.length;
-const totalAwards = awardsAndCertificates.length;
-const totalProjects = featuredProjects.length;
 ---
 
 <BaseLayout title="Shakir Ahmed Ibrahim | Cloud Architecture, AI Systems & Systems Engineering Portfolio">
@@ -55,29 +37,6 @@ const totalProjects = featuredProjects.length;
       <p class="hero-subtitle">
         Building and developing resilient Web Applications, Agentic AI Systems, Cloud Infrastructure, Kubernetes Automation, and Enterprise Observability Pipelines.
       </p>
-
-      <!-- Key Impact Metrics Banner -->
-      <div class="metrics-grid glass-card">
-        <a href="/blog" class="metric-item metric-link">
-          <span class="metric-num">{totalPosts}</span>
-          <span class="metric-label">Blog Posts</span>
-        </a>
-        <div class="metric-divider"></div>
-        <a href="/accreditations" class="metric-item metric-link">
-          <span class="metric-num">{totalCerts}</span>
-          <span class="metric-label">Accreditations & Certifications</span>
-        </a>
-        <div class="metric-divider"></div>
-        <a href="/awards" class="metric-item metric-link">
-          <span class="metric-num">{totalAwards}</span>
-          <span class="metric-label">Awards</span>
-        </a>
-        <div class="metric-divider"></div>
-        <a href="/videos" class="metric-item metric-link">
-          <span class="metric-num">{totalVideos}</span>
-          <span class="metric-label">Video Tutorials</span>
-        </a>
-      </div>
 
       <div class="hero-actions">
         <a href={cvData.url} target="_blank" rel="noopener" class="btn btn-primary">
@@ -122,17 +81,32 @@ const totalProjects = featuredProjects.length;
     </div>
   </section>
 
+  <!-- Core Competencies Section -->
+  <section class="section">
+    <div class="container">
+      <div class="section-header text-center">
+        <div>
+          <h2 class="section-title">Core Engineering Domains</h2>
+          <p class="section-subtitle">Deep specialization in scalable systems, AI orchestration, cloud platforms, and full-stack software.</p>
+        </div>
+      </div>
 
-
-
-
-
-
+      <div class="competencies-grid">
+        {coreCompetencies.map((comp) => (
+          <div class="glass-card competency-card">
+            <div class="comp-icon">{comp.icon}</div>
+            <h3 class="comp-title">{comp.title}</h3>
+            <p class="comp-desc">{comp.desc}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
 </BaseLayout>
 
 <style>
   .hero-section {
-    padding: 4.5rem 0 3.5rem;
+    padding: 5rem 0 4rem;
     text-align: center;
   }
 
@@ -162,52 +136,6 @@ const totalProjects = featuredProjects.length;
     max-width: 720px;
     margin: 0 auto 2.5rem;
     line-height: 1.6;
-  }
-
-  .metrics-grid {
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    max-width: 900px;
-    margin: 0 auto 2.5rem;
-    padding: 1.5rem;
-    flex-wrap: wrap;
-    gap: 1rem;
-  }
-
-  .metric-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-decoration: none;
-    transition: transform 0.2s ease;
-  }
-
-  .metric-link:hover {
-    transform: translateY(-2px);
-  }
-
-  .metric-link:hover .metric-num {
-    color: var(--accent-indigo);
-    text-shadow: 0 0 12px var(--glow-indigo);
-  }
-
-  .metric-num {
-    font-size: 1.8rem;
-    font-weight: 800;
-    color: var(--accent-blue);
-  }
-
-  .metric-label {
-    font-size: 0.85rem;
-    color: var(--text-muted);
-    font-weight: 500;
-  }
-
-  .metric-divider {
-    width: 1px;
-    height: 36px;
-    background: var(--border-glass);
   }
 
   .hero-actions {
@@ -274,7 +202,6 @@ const totalProjects = featuredProjects.length;
   .section-title {
     font-size: 2rem;
     font-weight: 800;
-
   }
 
   .section-subtitle {
@@ -283,261 +210,87 @@ const totalProjects = featuredProjects.length;
     font-size: 1rem;
   }
 
-  .view-all-link {
-    font-weight: 600;
+  .competencies-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .competency-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 2rem;
+  }
+
+  .comp-icon {
+    font-size: 2.25rem;
+  }
+
+  .comp-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+  }
+
+  .comp-desc {
+    color: var(--text-muted);
     font-size: 0.95rem;
-  }
-
-  .pillars-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: 1.5rem;
-
-  }
-
-  .pillar-card {
-    text-align: center;
-    padding: 2rem 1.5rem;
-  }
-
-  .pillar-icon {
-    font-size: 2.5rem;
-    margin-bottom: 1rem;
-  }
-
-  .pillar-title {
-    font-size: 1.2rem;
-    font-weight: 700;
-    margin-bottom: 0.5rem;
-  }
-
-  .pillar-desc {
-    color: var(--text-muted);
-    font-size: 0.9rem;
-    line-height: 1.5;
-  }
-
-  .portfolio-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 1.5rem;
-  }
-
-  .project-card {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    gap: 0.75rem;
-  }
-
-  .project-card h3 {
-    font-size: 1.2rem;
-    font-weight: 700;
-  }
-
-  .project-card p {
-    color: var(--text-muted);
-    font-size: 0.92rem;
-  }
-
-  .pill-group {
-    display: flex;
-    gap: 0.4rem;
-    flex-wrap: wrap;
-  }
-
-  .tech-tag {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid var(--border-glass);
-    color: var(--text-muted);
-    font-size: 0.75rem;
-    padding: 0.2rem 0.5rem;
-    border-radius: 6px;
-  }
-
-  .two-col-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
-    gap: 1.75rem;
-  }
-
-  .flex-col-between {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    gap: 1.5rem;
-  }
-
-  .card-badge-header {
-    font-size: 0.8rem;
-    font-weight: 700;
-    color: var(--accent-blue);
-    margin-bottom: 0.25rem;
-  }
-
-  .card-block-title {
-    font-size: 1.4rem;
-    font-weight: 700;
-  }
-
-  .card-block-desc {
-    color: var(--text-muted);
-    font-size: 0.9rem;
-    margin-top: 0.25rem;
-    margin-bottom: 1.25rem;
-  }
-
-  .cert-compact-list {
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: 0.6rem;
-    font-size: 0.9rem;
-  }
-
-  .cert-dot {
-    color: var(--accent-blue);
-    margin-right: 0.4rem;
-  }
-
-  .issuer-text {
-    color: var(--text-muted);
-    font-size: 0.85rem;
-  }
-
-  .block-btn {
-    align-self: flex-start;
-    text-align: center;
-  }
-
-  .video-preview-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0.6rem;
-  }
-
-  .mini-video-item {
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-    font-size: 0.9rem;
-    color: var(--text-main);
-  }
-
-  .mini-video-item:hover {
-    color: var(--accent-blue);
-  }
-
-  .play-icon {
-    color: var(--accent-indigo);
-    font-size: 0.75rem;
-  }
-
-  .github-mini-stats {
-    display: flex;
-    gap: 1.25rem;
-  }
-
-  .stat-box {
-    display: flex;
-    flex-direction: column;
-    background: rgba(255, 255, 255, 0.04);
-    padding: 0.75rem 1rem;
-    border-radius: 10px;
-    border: 1px solid var(--border-glass);
-  }
-
-  .stat-num {
-    font-size: 1.3rem;
-    font-weight: 800;
-    color: var(--accent-blue);
-  }
-
-  .stat-lbl {
-    font-size: 0.75rem;
-    color: var(--text-muted);
-  }
-
-  .recent-posts-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: 1.5rem;
-  }
-
-  .post-card {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    gap: 0.75rem;
-  }
-
-  .post-date {
-    font-size: 0.8rem;
-    color: var(--text-muted);
-  }
-
-  .post-title {
-    font-size: 1.05rem;
-    font-weight: 600;
-    line-height: 1.4;
-  }
-
-  .post-title a {
-    color: var(--text-main);
-  }
-
-  .post-title a:hover {
-    color: var(--accent-blue);
-  }
-
-  .read-more {
-    font-size: 0.85rem;
-    font-weight: 600;
+    line-height: 1.6;
   }
 
   .exp-overview-card {
-    padding: 2.25rem 2rem;
+    padding: 2.5rem;
+  }
+
+  .card-badge-header {
+    display: inline-block;
+    padding: 0.35rem 0.85rem;
+    border-radius: 6px;
+    background: rgba(99, 102, 241, 0.15);
+    color: var(--accent-indigo);
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+  }
+
+  .card-block-title {
+    font-size: 1.75rem;
+    font-weight: 800;
   }
 
   .exp-text {
     font-size: 1.05rem;
+    line-height: 1.7;
     color: var(--text-muted);
-    line-height: 1.65;
     margin-bottom: 1.5rem;
   }
 
   .exp-bullets {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    border-top: 1px solid var(--border-glass);
+    padding-top: 1.5rem;
   }
 
   .exp-bullet-item {
     display: flex;
+    gap: 0.75rem;
     align-items: flex-start;
-    gap: 0.85rem;
     font-size: 0.95rem;
-    line-height: 1.55;
-    color: var(--text-main);
+    line-height: 1.6;
+    color: var(--text-muted);
   }
 
   .bullet-icon {
     font-size: 1.25rem;
+    flex-shrink: 0;
+    margin-top: 0.1rem;
   }
 
   @media (max-width: 768px) {
     .hero-title {
       font-size: 2.5rem;
-    }
-    .two-col-grid {
-      grid-template-columns: 1fr;
-    }
-    .metrics-grid {
-      flex-direction: column;
-      gap: 1rem;
-    }
-    .metric-divider {
-      display: none;
     }
   }
 </style>
