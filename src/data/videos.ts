@@ -32,4 +32,4 @@ export const youtubeVideos: YouTubeVideo[] = [
   { id: "-TJuiY9KppE", title: "Docker tutorial for beginners: Install InfluxDB", url: "https://www.youtube.com/watch?v=-TJuiY9KppE", thumbnail: "https://i.ytimg.com/vi/-TJuiY9KppE/hqdefault.jpg", category: "Docker & Containers" }
 ];
 
-export const YOUTUBE_CHANNEL_URL = "https://www.youtube.com/@kubetrain";
+export const YOUTUBE_CHANNEL_URL = "https://www.youtube.com/@networkandcode-yt";
