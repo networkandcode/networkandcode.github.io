@@ -7,9 +7,9 @@ export interface Accreditation {
 
 export const accreditations: Accreditation[] = [
   {
-    name: "Google Cloud Certified Professional Machine Learning Engineer",
-    issuer: "Google Cloud / Credly",
-    badgeUrl: "https://www.credly.com/badges/34941099-1748-4461-ba2c-fcd4d025dacf/public_url",
+    name: "AWS Certified Generative AI Developer - Professional",
+    issuer: "Amazon Web Services / Credly",
+    badgeUrl: "https://www.credly.com/badges/0e141bf9-9918-431d-afc8-842be8bdf50b/public_url",
     category: "AI & Machine Learning"
   },
   {

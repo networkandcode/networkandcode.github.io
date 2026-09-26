@@ -23,9 +23,15 @@ import cvData from '../data/cv.json';
         <a href="https://linkedin.com/in/networkandcode" target="_blank" rel="noopener" class="btn btn-secondary">LinkedIn &rarr;</a>
       </div>
 
-      <p class="hero-note">
-        <em>Note:</em> Check the header / menu above to access sections like <strong>Blog</strong>, <strong>Videos</strong>, <strong>Hobby Projects</strong>, <strong>Work Achievements</strong>, <strong>Certifications</strong> & <strong>Awards</strong>.
-      </p>
+      <div class="hero-nav-pills">
+        <span class="pills-label">Explore:</span>
+        <a href="/blog" class="nav-pill">Blog</a>
+        <a href="/videos" class="nav-pill">Videos</a>
+        <a href="/projects" class="nav-pill">Hobby Projects</a>
+        <a href="/achievements" class="nav-pill">Work Achievements</a>
+        <a href="/accreditations" class="nav-pill">Certifications</a>
+        <a href="/awards" class="nav-pill">Awards</a>
+      </div>
     </div>
   </section>
 
@@ -110,14 +116,47 @@ import cvData from '../data/cv.json';
     flex-wrap: wrap;
   }
 
-  .hero-note {
-    margin-top: 1.25rem;
+  .hero-nav-pills {
+    margin-top: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
     font-size: 0.875rem;
+  }
+
+  .pills-label {
     color: var(--text-muted);
-    max-width: 620px;
-    margin-left: auto;
-    margin-right: auto;
-    line-height: 1.5;
+    font-weight: 500;
+    margin-right: 0.25rem;
+  }
+
+  .nav-pill {
+    padding: 0.35rem 0.8rem;
+    border-radius: 9999px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-glass);
+    color: var(--text-muted);
+    font-weight: 500;
+    font-size: 0.85rem;
+    transition: all 0.2s ease;
+  }
+
+  .nav-pill:hover {
+    color: var(--text-main);
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--border-hover);
+    transform: translateY(-1px);
+    opacity: 1;
+  }
+
+  [data-theme="light"] .nav-pill {
+    background: rgba(0, 0, 0, 0.04);
+  }
+
+  [data-theme="light"] .nav-pill:hover {
+    background: rgba(0, 0, 0, 0.08);
   }
 
   .btn {
