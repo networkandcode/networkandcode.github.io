@@ -7,6 +7,12 @@ export interface Accreditation {
 
 export const accreditations: Accreditation[] = [
   {
+    name: "GitHub Agentic AI Developer",
+    issuer: "Microsoft / GitHub",
+    badgeUrl: "https://learn.microsoft.com/api/credentials/share/en-gb/ShakirAhmedIbrahim-7900/BFE90047D39B1AC9?sharingId=FFE0D97E583BFCA",
+    category: "AI & Machine Learning"
+  },
+  {
     name: "AWS Certified Generative AI Developer - Professional",
     issuer: "Amazon Web Services / Credly",
     badgeUrl: "https://www.credly.com/badges/0e141bf9-9918-431d-afc8-842be8bdf50b/public_url",
