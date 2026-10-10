@@ -7,6 +7,12 @@ export interface Accreditation {
 
 export const accreditations: Accreditation[] = [
   {
+    name: "Claude Certified Architect - Professional",
+    issuer: "Anthropic / Credly",
+    badgeUrl: "https://www.credly.com/badges/790f58da-4d45-4f7c-8c18-f923a355dc4c/public_url",
+    category: "AI & Machine Learning"
+  },
+  {
     name: "GitHub Agentic AI Developer",
     issuer: "Microsoft / GitHub",
     badgeUrl: "https://learn.microsoft.com/api/credentials/share/en-gb/ShakirAhmedIbrahim-7900/BFE90047D39B1AC9?sharingId=FFE0D97E583BFCA",
